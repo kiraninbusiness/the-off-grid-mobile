@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "The Off Grid",
+    "slug": "the-off-grid",
+    "version": "3.0.0",
+    "orientation": "portrait",
+    "scheme": "theoffgrid",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "in.theoffgrid.app"
+    },
+    "android": {
+      "package": "in.theoffgrid.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0a0a0a"
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "theoffgrid.in",
+              "pathPrefix": "/product"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
+    },
+    "plugins": [
+      [
+        "expo-router"
+      ],
+      [
+        "expo-notifications"
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  },
+  "version": "3.0.0"
+}
