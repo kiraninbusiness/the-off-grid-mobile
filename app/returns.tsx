@@ -91,7 +91,7 @@ export default function Returns() {
         <View style={s.orderRow}><Text style={s.order}>ORDER #{order.id}</Text><Text style={s.delivered}>DELIVERED</Text></View>
         {!!formatDate(order.created_at) && <Text style={s.date}>Placed {formatDate(order.created_at)}</Text>}
         <Text style={s.amount}>₹{Number(order.total ?? order.total_amount ?? 0).toLocaleString('en-IN')}</Text>
-        <Pressable disabled={busyId !== null} style={[s.btn, busyId !== null && s.disabled]} onPress={() => request(order)}>{busyId === order.id ? <ActivityIndicator color="#fff" /> : <Text style={s.btnText}>SUBMIT {type.toUpperCase()} REQUEST</Text>}</Pressable>
+        <Pressable disabled={busyId !== null || loading || refreshing} accessibilityRole="button" accessibilityLabel={`Submit ${type} request for order ${order.id}`} accessibilityState={{ disabled: busyId !== null || loading || refreshing }} style={[s.btn, (busyId !== null || loading || refreshing) && s.disabled]} onPress={() => request(order)}>{busyId === order.id ? <ActivityIndicator color="#fff" /> : <Text style={s.btnText}>SUBMIT {type.toUpperCase()} REQUEST</Text>}</Pressable>
       </View>) : <Text style={s.empty}>{orders.length ? 'No delivered orders are currently eligible, or a request is already in progress.' : 'Your delivered orders will appear here when available.'}</Text>}
 
       <Text style={[s.section, { marginTop: 28 }]}>MY REQUESTS</Text>
@@ -102,7 +102,7 @@ export default function Returns() {
         {!!formatDate(item.created_at) && <Text style={s.date}>Submitted {formatDate(item.created_at)}</Text>}
       </View>) : <Text style={s.empty}>You have no return or exchange requests yet.</Text>}
 
-      <Text style={s.note}>Requests are subject to The Off Grid's return policy and backend approval. Submission does not guarantee eligibility or a refund.</Text>
+      <Text style={s.note} accessibilityLiveRegion="polite">Requests are subject to The Off Grid's return policy and backend approval. Submission does not guarantee eligibility or a refund.</Text>
     </ScrollView>
   );
 }
