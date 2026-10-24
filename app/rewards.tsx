@@ -4,10 +4,11 @@ import {useFocusEffect,useRouter} from 'expo-router';
 import {api} from '../src/lib/api';
 export default function Rewards(){
  const router=useRouter();
- const [data,setData]=useState<any>(null),[busy,setBusy]=useState(true);
- const load=useCallback(()=>{setBusy(true);api.customerLoyalty().then(setData).catch(()=>setData(null)).finally(()=>setBusy(false))},[]);
+ const [data,setData]=useState<any>(null),[busy,setBusy]=useState(true),[error,setError]=useState('');
+ const load=useCallback(async()=>{setBusy(true);setError('');try{const result=await api.customerLoyalty();setData(result??null)}catch(e:any){setError(e?.message||'Unable to load your loyalty details. Please try again.')}finally{setBusy(false)}},[]);
  useFocusEffect(useCallback(()=>{load()},[load]));
  if(busy&&!data)return <View style={s.center}><ActivityIndicator/></View>;
+ if(!busy&&!data&&error)return <View style={s.center}><Text style={s.section}>REWARDS UNAVAILABLE</Text><Text style={s.empty}>{error}</Text><Pressable accessibilityRole="button" onPress={load} style={s.ref}><Text style={s.refText}>TRY AGAIN</Text></Pressable></View>;
  const numeric=(value:any)=>{const n=Number(value);return Number.isFinite(n)&&n>0?n:0}; const points=numeric(data?.points),spend=numeric(data?.delivered_spend),transactions=Array.isArray(data?.transactions)?data.transactions:[],tier=spend>=25000?'PLATINUM':spend>=10000?'GOLD':'SILVER',next=tier==='SILVER'?10000:tier==='GOLD'?25000:0,progress=next?Math.max(0,Math.min(1,spend/next)):1;
  return <ScrollView style={s.page} refreshControl={<RefreshControl refreshing={busy} onRefresh={load}/>} contentContainerStyle={{paddingBottom:50}}>
  <Text style={s.eyebrow}>THE OFF GRID / MEMBERSHIP</Text><Text style={s.title}>OFF GRID CLUB</Text><View style={s.hero}><Text style={s.tier}>{tier}</Text><Text style={s.points}>{points.toLocaleString('en-IN')}</Text><Text style={s.caption}>LOYALTY POINTS</Text><Text style={s.rule}>Earn points from qualifying purchases. Your balance is stored on the account, not only on this device.</Text></View>
