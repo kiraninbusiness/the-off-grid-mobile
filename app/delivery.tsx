@@ -67,12 +67,12 @@ export default function Delivery() {
         onSubmitEditing={check}
       />
       <Text style={s.helper}>{pin.length}/6 digits</Text>
-      <Pressable style={[s.btn, busy && s.btnDisabled]} onPress={check} disabled={busy} accessibilityRole="button">
+      <Pressable style={[s.btn, busy && s.btnDisabled]} onPress={check} disabled={busy} accessibilityRole="button" accessibilityLabel={busy ? "Checking delivery availability" : "Check delivery for entered pincode"} accessibilityState={{ disabled: busy }}>
         {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.btnText}>CHECK PINCODE</Text>}
       </Pressable>
       {!!error && <View style={s.errorBox} accessibilityLiveRegion="polite"><Text style={s.errorTitle}>UNABLE TO CHECK</Text><Text style={s.errorText}>{error}</Text>{!busy && pin.length === 6 && <Pressable onPress={check} style={s.retry}><Text style={s.retryText}>TRY AGAIN</Text></Pressable>}</View>}
       {result && !error && (
-        <View style={s.result} accessibilityLiveRegion="polite">
+        <View style={s.result} accessibilityLiveRegion="polite" accessible>
           <Text style={s.status}>{result.serviceable ? 'DELIVERY AVAILABLE' : 'NOT SERVICEABLE'}</Text>
           <Text style={s.main}>{result.serviceable ? (result.estimated_days ? `Estimated ${result.estimated_days} day${Number(result.estimated_days) === 1 ? '' : 's'}` : 'We deliver to your area') : (result.message || 'Delivery is not available for this pincode right now.')}</Text>
           {result.serviceable && <>
