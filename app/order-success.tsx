@@ -10,13 +10,14 @@ export default function OrderSuccess(){
  const rawPayment=Array.isArray(params.payment)?params.payment[0]:params.payment;
  const orderId=String(rawId||'').trim();
  const online=rawPayment==='online';
+ const pending=rawPayment==='pending';
  return <ScrollView style={s.page} contentContainerStyle={s.content}>
   <Text style={s.brand}>THE OFF GRID</Text>
   <View style={s.icon}><Ionicons name="checkmark" size={40} color="#fff"/></View>
-  <Text style={s.kicker}>{online?'PAYMENT CONFIRMED':'ORDER PLACED'}</Text>
-  <Text style={s.title}>{online?'YOU’RE ALL SET.':'THANK YOU.'}</Text>
-  <Text style={s.copy}>{online?'Your payment was verified successfully. We’ll keep you updated as your order moves forward.':'Your order has been received. You can follow its progress from your account.'}</Text>
-  {!!orderId&&<View style={s.orderBox}><Text style={s.orderLabel}>ORDER REFERENCE</Text><Text selectable style={s.orderNumber}>#{orderId}</Text><Text style={s.orderHint}>Keep this reference for your records.</Text></View>}
+  <Text style={s.kicker}>{online?'PAYMENT CONFIRMED':pending?'PAYMENT VERIFICATION PENDING':'ORDER PLACED'}</Text>
+  <Text style={s.title}>{pending?'PLEASE CHECK YOUR ORDER.':online?'YOU’RE ALL SET.':'THANK YOU.'}</Text>
+  <Text style={s.copy}>{pending?'Your payment result was received, but we could not confirm it with the server just now. Do not try to pay again yet. Open My Orders and refresh the status before taking further action.':online?'Your payment was verified successfully. We’ll keep you updated as your order moves forward.':'Your order has been received. You can follow its progress from your account.'}</Text>
+  {!!orderId&&<View style={s.orderBox}><Text style={s.orderLabel}>ORDER REFERENCE</Text><Text selectable style={s.orderNumber}>#{orderId}</Text><Text style={s.orderHint}>{pending?'Keep this reference. Check its payment status in My Orders before trying another payment.':'Keep this reference for your records.'}</Text></View>}
   <View style={s.info}><Ionicons name="notifications-outline" size={20} color="#111"/><View style={s.infoText}><Text style={s.infoTitle}>STAY IN THE LOOP</Text><Text style={s.infoCopy}>Open My Orders to see the latest status and shipment tracking details when available.</Text></View></View>
   <Pressable accessibilityRole="button" style={s.primary} onPress={()=>router.replace(orderId?('/orders?orderId='+encodeURIComponent(orderId)):'/orders')}><Text style={s.primaryText}>VIEW MY ORDER  →</Text></Pressable>
   <Pressable accessibilityRole="button" style={s.secondary} onPress={()=>router.replace('/(tabs)/shop')}><Text style={s.secondaryText}>CONTINUE SHOPPING</Text></Pressable>
