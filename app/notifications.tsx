@@ -45,9 +45,14 @@ export default function Notifications() {
   const unread = items.filter(item => !isRead(item));
   const mark = async (item: any) => {
     if (isRead(item) || actionBusy) return;
+    const id = Number(item.id);
+    if (!Number.isFinite(id) || id <= 0) {
+      setActionError('This notification cannot be marked as read right now. Refresh and try again.');
+      return;
+    }
     setActionBusy(true); setActionError('');
     try {
-      await api.readNotification(Number(item.id));
+      await api.readNotification(id);
       setItems(current => current.map(n => String(n.id) === String(item.id) ? { ...n, read_at: new Date().toISOString(), read: true, is_read: true } : n));
     } catch (e: any) {
       setActionError(e?.message || 'Could not mark this notification as read. Please try again.');
@@ -72,15 +77,15 @@ export default function Notifications() {
         <Pressable onPress={() => r.back()} accessibilityRole="button" accessibilityLabel="Close notifications" style={s.close}><Ionicons name="close" size={23} color="#111" /></Pressable>
       </View>
 
-      {unread.length > 0 && <Pressable disabled={actionBusy} onPress={markAll} style={[s.readAllButton, actionBusy && s.disabled]}><Text style={s.readAll}>{actionBusy ? 'UPDATING…' : 'MARK ALL AS READ'}</Text></Pressable>}
+      {unread.length > 0 && <Pressable disabled={actionBusy} onPress={markAll} accessibilityRole="button" accessibilityLabel={`Mark all ${unread.length} notifications as read`} accessibilityState={{ disabled: actionBusy }} style={[s.readAllButton, actionBusy && s.disabled]}><Text style={s.readAll}>{actionBusy ? 'UPDATING…' : 'MARK ALL AS READ'}</Text></Pressable>}
       {actionBusy && <View style={s.actionLoading}><ActivityIndicator size="small" color="#111" /><Text style={s.helper}>Updating notifications…</Text></View>}
-      {!!actionError && <View style={s.errorBox} accessibilityLiveRegion="polite"><Text style={s.errorText}>{actionError}</Text><Pressable onPress={() => load(true)} style={s.retry}><Text style={s.retryText}>REFRESH & RETRY</Text></Pressable></View>}
+      {!!actionError && <View style={s.errorBox} accessibilityLiveRegion="polite"><Text style={s.errorText}>{actionError}</Text><Pressable onPress={() => load(true)} style={s.retry} accessibilityRole="button" accessibilityLabel="Refresh notifications and retry"><Text style={s.retryText}>REFRESH & RETRY</Text></Pressable></View>}
 
-      {busy ? <View style={s.center}><ActivityIndicator size="small" color="#111" /><Text style={s.helper}>Loading notifications…</Text></View> : error ? <View style={s.errorBox}><Text style={s.errorText}>{error}</Text><Pressable onPress={() => load(true)} disabled={refreshing} style={s.retry}><Text style={s.retryText}>{refreshing ? 'RETRYING…' : 'TRY AGAIN'}</Text></Pressable></View> : !items.length ? <View style={s.emptyWrap}><Ionicons name="notifications-outline" size={30} color="#888" /><Text style={s.emptyTitle}>YOU'RE ALL CAUGHT UP</Text><Text style={s.empty}>New order and account updates will appear here.</Text><Pressable onPress={() => load(true)} disabled={refreshing} style={s.refresh}><Text style={s.retryText}>{refreshing ? 'REFRESHING…' : 'REFRESH ↻'}</Text></Pressable></View> : <>
-        <Pressable onPress={() => load(true)} disabled={refreshing} style={s.refreshTop}><Text style={s.retryText}>{refreshing ? 'REFRESHING…' : 'REFRESH ↻'}</Text></Pressable>
+      {busy ? <View style={s.center}><ActivityIndicator size="small" color="#111" /><Text style={s.helper}>Loading notifications…</Text></View> : error ? <View style={s.errorBox}><Text style={s.errorText}>{error}</Text><Pressable onPress={() => load(true)} disabled={refreshing} style={s.retry} accessibilityRole="button" accessibilityLabel="Try loading notifications again"><Text style={s.retryText}>{refreshing ? 'RETRYING…' : 'TRY AGAIN'}</Text></Pressable></View> : !items.length ? <View style={s.emptyWrap}><Ionicons name="notifications-outline" size={30} color="#888" /><Text style={s.emptyTitle}>YOU'RE ALL CAUGHT UP</Text><Text style={s.empty}>New order and account updates will appear here.</Text><Pressable onPress={() => load(true)} disabled={refreshing} style={s.refresh} accessibilityRole="button" accessibilityLabel="Refresh notifications"><Text style={s.retryText}>{refreshing ? 'REFRESHING…' : 'REFRESH ↻'}</Text></Pressable></View> : <>
+        <Pressable onPress={() => load(true)} disabled={refreshing} style={s.refreshTop} accessibilityRole="button" accessibilityLabel="Refresh notifications"><Text style={s.retryText}>{refreshing ? 'REFRESHING…' : 'REFRESH ↻'}</Text></Pressable>
         {items.map((item, index) => {
           const read = isRead(item);
-          return <Pressable key={String(item.id ?? item.created_at ?? index)} onPress={() => mark(item)} disabled={read || actionBusy} accessibilityRole="button" accessibilityState={{ selected: !read, disabled: read || actionBusy }} style={[s.item, !read && s.unread]}>
+          return <Pressable key={String(item.id ?? item.created_at ?? index)} onPress={() => mark(item)} disabled={read || actionBusy} accessibilityRole="button" accessibilityLabel={`${item.title || item.type || 'The Off Grid notification'}${read ? ', read' : ', unread. Tap to mark as read'}`} accessibilityState={{ selected: !read, disabled: read || actionBusy }} style={[s.item, !read && s.unread]}>
             <View style={[s.dot, read && s.readDot]} />
             <View style={s.itemContent}>
               <View style={s.itemHead}><Text style={s.itemTitle}>{item.title || item.type || 'THE OFF GRID'}</Text>{!read && <Text style={s.new}>NEW</Text>}</View>
