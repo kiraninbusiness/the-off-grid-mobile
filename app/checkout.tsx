@@ -31,7 +31,7 @@ export default function Checkout(){
    const orderItems=cart.map(x=>({productId:Number(x.product_id),quantity:Number(x.quantity),selectedSize:x.selected_size?.trim()||null,selectedColor:x.selected_color?.trim()||null}));const shippingDetails={name:f.name.trim(),phone:f.phone.replace(/\D/g,''),email:f.email.trim().toLowerCase(),address:f.address.trim(),city:f.city.trim(),state:f.state.trim(),pincode:f.pincode.trim()};const response=await api.createOrder({items:orderItems,shipping:shippingDetails,payment_method:payment,coupon_code:coupon?.code||''});
    const order=response?.order||response?.data?.order||response;
    if(!order?.id)throw new Error('The server did not return a valid order. Please try again.');
-   if(payment==='cod'){await refresh();Alert.alert('Order confirmed',`Order #${order.id}`,[{text:'VIEW ORDER',onPress:()=>r.replace('/orders') }]);return;}
+   if(payment==='cod'){await refresh();r.replace({pathname:'/order-success',params:{orderId:String(order.id),payment:'cod'}});return;}
    let Razorpay:any;
    try{Razorpay=require('react-native-razorpay').default||require('react-native-razorpay');}catch{await api.cancelPayment(order.id);throw new Error('Online payments require a development/production build with Razorpay enabled. Use COD in Expo Go.');}
    const serverTotal=Number(order.total);
@@ -41,7 +41,7 @@ export default function Checkout(){
    let result:any;
    try { result=await Razorpay.open(options); } catch (paymentError:any) { await api.cancelPayment(order.id).catch(()=>{}); throw new Error(paymentError?.description||paymentError?.message||'Payment was cancelled.'); }
    const verified=await api.verifyPayment({orderId:order.id,razorpay_order_id:result.razorpay_order_id,razorpay_payment_id:result.razorpay_payment_id,razorpay_signature:result.razorpay_signature});
-   await refresh();Alert.alert('Payment successful',`Order #${verified.id||order.id}`,[{text:'VIEW ORDER',onPress:()=>r.replace('/orders')}]);
+   await refresh();r.replace({pathname:'/order-success',params:{orderId:String(verified.id||order.id),payment:'online'}});
   }catch(e:any){Alert.alert('Checkout failed',e.message||'Please try again.')}finally{checkoutInFlight.current=false;setBusy(false)}
  };
  if(!user)return <View style={s.center}><Text style={s.title}>CHECKOUT</Text><Text style={s.note}>Sign in before checkout.</Text><Pressable style={s.btn} onPress={()=>r.push('/(tabs)/profile')}><Text style={s.btnText}>SIGN IN</Text></Pressable></View>;
