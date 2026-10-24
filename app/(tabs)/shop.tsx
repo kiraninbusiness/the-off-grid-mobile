@@ -1,4 +1,4 @@
-import React,{useCallback,useEffect,useMemo,useState} from 'react';
+import React,{useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {View,Text,TextInput,ScrollView,StyleSheet,ActivityIndicator,Pressable,Modal} from 'react-native';
 import {useFocusEffect,useLocalSearchParams} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
@@ -17,7 +17,7 @@ export default function Shop(){
  const colours=useMemo(()=>Array.from(new Set(products.map(p=>label(p.color||p.colour).toUpperCase()).filter(Boolean))).sort(),[products]);
  const sizes=useMemo(()=>Array.from(new Set(products.flatMap(productSizes))).sort(),[products]);
  useEffect(()=>{if(params.cat)setActive(String(params.cat).toUpperCase())},[params.cat]);
- const loadProducts=useCallback(()=>{const t=setTimeout(()=>{setLoading(true);api.products(q.trim()?('?q='+encodeURIComponent(q.trim())):'').then(x=>{setApiError('');setProducts(listFrom(x))}).catch((e:any)=>{setApiError(e?.message||'Unable to load products');setProducts([])}).finally(()=>setLoading(false))},250);return()=>clearTimeout(t)},[q]);
+ const requestId=useRef(0);\n const loadProducts=useCallback(()=>{const id=++requestId.current;const t=setTimeout(()=>{setLoading(true);api.products(q.trim()?('?q='+encodeURIComponent(q.trim())):'').then(x=>{if(id!==requestId.current)return;setApiError('');setProducts(listFrom(x))}).catch((e:any)=>{if(id!==requestId.current)return;setApiError(e?.message||'Unable to load products');setProducts([])}).finally(()=>{if(id===requestId.current)setLoading(false)})},250);return()=>{clearTimeout(t);if(requestId.current===id)requestId.current++}},[q]);
  useFocusEffect(useCallback(()=>loadProducts(),[loadProducts]));
  const filtered=useMemo(()=>{let x=active==='ALL'?products:products.filter(p=>label(p.category).toUpperCase().includes(active));if(price==='under2000')x=x.filter(p=>Number(p.price)<=2000);if(price==='2000to4000')x=x.filter(p=>Number(p.price)>2000&&Number(p.price)<=4000);if(price==='over4000')x=x.filter(p=>Number(p.price)>4000);if(size!=='all')x=x.filter(p=>productSizes(p).includes(size));if(colour!=='all')x=x.filter(p=>label(p.color||p.colour).toUpperCase()===colour);if(inStockOnly)x=x.filter(p=>stock(p)===true);if(saleOnly)x=x.filter(p=>discount(p)>0);if(sort==='low')x=[...x].sort((a,b)=>Number(a.price)-Number(b.price));if(sort==='high')x=[...x].sort((a,b)=>Number(b.price)-Number(a.price));if(sort==='discount')x=[...x].sort((a,b)=>discount(b)-discount(a));if(sort==='rating')x=[...x].sort((a,b)=>Number(b.rating||b.average_rating||0)-Number(a.rating||a.average_rating||0));return x},[products,active,price,size,colour,inStockOnly,saleOnly,sort]);
  const activeFilters=[price!=='all',size!=='all',colour!=='all',inStockOnly,saleOnly].filter(Boolean).length;
