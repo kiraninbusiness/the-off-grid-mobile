@@ -1,10 +1,14 @@
-import React,{useCallback,useMemo,useState} from 'react';
+import React,{useCallback,useEffect,useMemo,useState} from 'react';
 import {View,Text,TextInput,ScrollView,StyleSheet,ActivityIndicator,Pressable,Modal} from 'react-native';
-import {useFocusEffect} from 'expo-router';
+import {useFocusEffect,useLocalSearchParams} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons'; import ProductCard from '../../src/components/ProductCard'; import {api,listFrom} from '../../src/lib/api';
-const cats=['ALL','T-SHIRTS','SHIRTS','BOTTOMS','OUTERWEAR','ACCESSORIES'];
 export default function Shop(){
+ const params=useLocalSearchParams<{cat?:string}>();
  const [products,setProducts]=useState<any[]>([]),[q,setQ]=useState(''),[active,setActive]=useState('ALL'),[sort,setSort]=useState('latest'),[price,setPrice]=useState('all'),[filterOpen,setFilterOpen]=useState(false),[loading,setLoading]=useState(true),[apiError,setApiError]=useState('');
+ // Categories come from the live catalogue so chips always match real products (admin-added categories included).
+ const cats=useMemo(()=>{const found=products.map(p=>String(p.category||'').toUpperCase()).filter(Boolean);return ['ALL',...Array.from(new Set([...found,...(active!=='ALL'?[active]:[])]))]},[products,active]);
+ // Home category chips deep-link here with ?cat=HOODIES.
+ useEffect(()=>{if(params.cat)setActive(String(params.cat).toUpperCase())},[params.cat]);
  const loadProducts=useCallback(()=>{const t=setTimeout(()=>{setLoading(true);api.products(q?`?q=${encodeURIComponent(q)}`:'').then(x=>{setApiError('');setProducts(listFrom(x))}).catch((e:any)=>{setApiError(e?.message||'Unable to load products');setProducts([])}).finally(()=>setLoading(false))},220);return()=>clearTimeout(t)},[q]);
  useFocusEffect(useCallback(()=>loadProducts(),[loadProducts]));
  const filtered=useMemo(()=>{let x=active==='ALL'?products:products.filter(p=>String(p.category||'').toUpperCase().includes(active));if(price==='under2000')x=x.filter(p=>Number(p.price)<=2000);if(price==='2000to4000')x=x.filter(p=>Number(p.price)>2000&&Number(p.price)<=4000);if(price==='over4000')x=x.filter(p=>Number(p.price)>4000);if(sort==='low')x=[...x].sort((a,b)=>Number(a.price)-Number(b.price));if(sort==='high')x=[...x].sort((a,b)=>Number(b.price)-Number(a.price));return x},[products,active,price,sort]);
