@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { api } from '../src/lib/api';
 import { useStore } from '../src/store/store';
@@ -13,19 +13,21 @@ export default function Support() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [sent, setSent] = useState(false);
+  const sending = useRef(false);
 
   const send = async () => {
-    if (busy) return;
+    if (sending.current || busy) return;
     const clean = message.trim();
     if (clean.length < 10) { setError('Please describe your issue in at least 10 characters.'); return; }
     if (clean.length > MAX_MESSAGE) { setError('Keep your message within 1,500 characters.'); return; }
+    sending.current = true;
     setBusy(true); setError(''); setSent(false);
     try {
       await api.submitSupport({ name: user?.name?.trim() || 'The Off Grid customer', email: user?.email?.trim() || '', topic, message: clean });
       setMessage(''); setSent(true);
     } catch (e: any) {
       setError(e?.message || 'Your request could not be sent. Please try again.');
-    } finally { setBusy(false); }
+    } finally { sending.current = false; setBusy(false); }
   };
 
   return (
