@@ -14,6 +14,8 @@ export default function Delivery() {
     const normalized = pin.replace(/\D/g, '').slice(0, 6);
     setPin(normalized);
     if (!/^[1-9][0-9]{5}$/.test(normalized)) {
+      requestId.current += 1;
+      setBusy(false);
       setResult(null);
       setError('Enter a valid 6-digit Indian pincode.');
       return;
@@ -66,7 +68,7 @@ export default function Delivery() {
         returnKeyType="done"
         onSubmitEditing={check}
       />
-      <Text style={s.helper}>{pin.length}/6 digits</Text>
+      <Text style={s.helper} accessibilityLiveRegion="polite">{pin.length}/6 digits</Text>
       <Pressable style={[s.btn, busy && s.btnDisabled]} onPress={check} disabled={busy} accessibilityRole="button" accessibilityLabel={busy ? "Checking delivery availability" : "Check delivery for entered pincode"} accessibilityState={{ disabled: busy }}>
         {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.btnText}>CHECK PINCODE</Text>}
       </Pressable>
