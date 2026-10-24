@@ -48,6 +48,11 @@ export default function Returns() {
   const eligible = orders.filter(o => ['delivered', 'complete', 'completed'].includes(String(o.status || '').trim().toLowerCase().replace(/[ -]+/g, '_')) && !returns.some(r => String(r.order_id ?? r.order?.id) === String(o.id) && !terminal.has(String(r.status || 'pending').trim().toLowerCase().replace(/[ -]+/g, '_'))));
 
   const request = async (order: any) => {
+    const orderId = order?.id;
+    if (orderId === null || orderId === undefined || !String(orderId).trim()) {
+      setNotice('This order is missing its order ID. Refresh your orders and try again.');
+      return;
+    }
     const cleanReason = reason === 'Other' ? customReason.trim() : reason;
     if (cleanReason.length < 3) { setNotice('Please describe your return reason.'); return; }
     if (type === 'exchange' && !exchangeSize.trim()) { setNotice('Enter the size you want to exchange for.'); return; }
@@ -56,8 +61,8 @@ export default function Returns() {
     setNotice('');
     setError('');
     try {
-      await api.createReturn({ order_id: order.id, reason: cleanReason, type, ...(type === 'exchange' ? { exchange_size: exchangeSize.trim().toUpperCase() } : {}) });
-      setNotice(`Your ${type} request for order #${order.id} was submitted.`);
+      await api.createReturn({ order_id: orderId, reason: cleanReason, type, ...(type === 'exchange' ? { exchange_size: exchangeSize.trim().toUpperCase() } : {}) });
+      setNotice(`Your ${type} request for order #${orderId} was submitted.`);
       setExchangeSize('');
       await load(true);
     } catch (e: any) {
