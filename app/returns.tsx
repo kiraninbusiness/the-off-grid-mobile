@@ -6,7 +6,25 @@ import { api, listFrom } from '../src/lib/api';
 const formatDate = (value: any) => { if (!value) return ''; const date = new Date(value); return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('en-IN'); };
 const formatAmount = (value: any) => { if (value === null || value === undefined || String(value).trim() === '') return 'Amount unavailable'; const amount = Number(value); return Number.isFinite(amount) && amount >= 0 ? `₹${amount.toLocaleString('en-IN')}` : 'Amount unavailable'; };
 const reasons = ['Size / fit', 'Damaged item', 'Wrong item received', 'Quality issue', 'Changed my mind', 'Other'];
-const terminal = new Set(['cancelled', 'rejected', 'completed', 'refunded', 'closed']);
+const terminal = new Set(['cancelled', 'canceled', 'rejected', 'completed', 'refunded', 'closed', 'exchanged']);
+const normalizeStatus = (value: any) => String(value || 'requested').trim().toLowerCase().replace(/[ -]+/g, '_');
+const statusCopy: Record<string, string> = {
+  requested: 'Your request has been submitted and is waiting for review.',
+  pending: 'Your request has been submitted and is waiting for review.',
+  approved: 'Your request has been approved. Follow any return instructions shared by support.',
+  received: 'The returned item has been received.',
+  rejected: 'This request was not approved. Contact support if you need clarification.',
+  refunded: 'The refund is marked as processed. Your bank or payment provider may take additional time to show it.',
+  exchanged: 'The exchange has been processed. Check replacement shipment details below.',
+  cancelled: 'This request was cancelled.',
+  canceled: 'This request was cancelled.',
+  closed: 'This request is closed.',
+};
+const safeTrackingUrl = (value: any) => {
+  if (typeof value !== 'string') return null;
+  try { const url = new URL(value); return url.protocol === 'https:' || url.protocol === 'http:' ? url.toString() : null; }
+  catch { return null; }
+};
 export default function Returns() {
   const [orders, setOrders] = useState<any[]>([]);
   const [returns, setReturns] = useState<any[]>([]);
@@ -47,7 +65,7 @@ export default function Returns() {
     return () => { requestId.current++; };
   }, [load]));
 
-  const eligible = orders.filter(o => ['delivered', 'complete', 'completed'].includes(String(o.status || '').trim().toLowerCase().replace(/[ -]+/g, '_')) && !returns.some(r => String(r.order_id ?? r.order?.id) === String(o.id) && !terminal.has(String(r.status || 'pending').trim().toLowerCase().replace(/[ -]+/g, '_'))));
+  const eligible = orders.filter(o => { const status = normalizeStatus(o.status); const delivered = ['delivered', 'complete', 'completed'].includes(status); const deliveredAt = o.delivered_at ? new Date(o.delivered_at).getTime() : null; const windowClosed = deliveredAt !== null && Number.isFinite(deliveredAt) && Date.now() > deliveredAt + 10 * 24 * 60 * 60 * 1000; return delivered && !windowClosed && !returns.some(r => String(r.order_id ?? r.order?.id) === String(o.id) && !terminal.has(normalizeStatus(r.status))); });
 
   const request = async (order: any) => {
     const orderId = order?.id;
@@ -101,15 +119,30 @@ export default function Returns() {
         {!!formatDate(order.created_at) && <Text style={s.date}>Placed {formatDate(order.created_at)}</Text>}
         <Text style={s.amount}>{formatAmount(order.total ?? order.total_amount)}</Text>
         <Pressable disabled={busyId !== null || loading || refreshing} accessibilityRole="button" accessibilityLabel={`Submit ${type} request for order ${order.id}`} accessibilityState={{ disabled: busyId !== null || loading || refreshing }} style={[s.btn, (busyId !== null || loading || refreshing) && s.disabled]} onPress={() => request(order)}>{busyId === order.id ? <ActivityIndicator color="#fff" /> : <Text style={s.btnText}>SUBMIT {type.toUpperCase()} REQUEST</Text>}</Pressable>
-      </View>) : <Text style={s.empty}>{orders.length ? 'No delivered orders are currently eligible, or a request is already in progress.' : 'Your delivered orders will appear here when available.'}</Text>}
+      </View>) : <Text style={s.empty}>{orders.length ? 'No delivered orders are currently eligible. The 10-day return window may have closed, or a request may already be in progress.' : 'Your delivered orders will appear here when available.'}</Text>}
 
       <Text style={[s.section, { marginTop: 28 }]}>MY REQUESTS</Text>
-      {loading && returns.length === 0 ? null : returns.length ? returns.map(item => <View key={String(item.id)} style={s.requestCard}>
-        <View style={s.orderRow}><Text style={s.order}>REQUEST #{item.id}</Text><Text style={s.status}>{String(item.status || 'pending').replace(/[_-]/g, ' ').toUpperCase()}</Text></View>
-        <Text style={s.date}>Order #{item.order_id ?? item.order?.id ?? '—'} · {String(item.type || 'return').toUpperCase()}</Text>
-        {!!item.reason && <Text style={s.requestReason}>{item.reason}</Text>}
-        {!!formatDate(item.created_at) && <Text style={s.date}>Submitted {formatDate(item.created_at)}</Text>}
-      </View>) : <Text style={s.empty}>You have no return or exchange requests yet.</Text>}
+      {loading && returns.length === 0 ? null : returns.length ? returns.map(item => {
+        const status = normalizeStatus(item.status);
+        const trackingUrl = safeTrackingUrl(item.replacement_tracking_url);
+        return <View key={String(item.id)} style={s.requestCard}>
+          <View style={s.orderRow}><Text style={s.order}>REQUEST #{item.id}</Text><Text style={[s.status, (status === 'rejected' || status === 'cancelled' || status === 'canceled') && s.statusNegative, (status === 'refunded' || status === 'exchanged' || status === 'received') && s.statusPositive]}>{status.replace(/[_-]/g, ' ').toUpperCase()}</Text></View>
+          <Text style={s.date}>Order #{item.order_id ?? item.order?.id ?? '—'} · {String(item.type || 'return').toUpperCase()}</Text>
+          {!!item.reason && <Text style={s.requestReason}>{item.reason}</Text>}
+          {!!formatDate(item.created_at) && <Text style={s.date}>Submitted {formatDate(item.created_at)}</Text>}
+          <Text style={s.statusExplanation}>{statusCopy[status] || 'Your request status was updated. Contact support if you need help with the next step.'}</Text>
+          {item.type === 'exchange' && !!item.exchange_size && <Text style={s.detailLine}>Requested size: <Text style={s.detailValue}>{String(item.exchange_size).toUpperCase()}</Text></Text>}
+          {item.refund_amount !== null && item.refund_amount !== undefined && <Text style={s.detailLine}>Refund amount: <Text style={s.detailValue}>{formatAmount(item.refund_amount)}</Text></Text>}
+          {!!item.replacement_status && <View style={s.shipmentBox}>
+            <Text style={s.shipmentTitle}>REPLACEMENT SHIPMENT · {String(item.replacement_status).replace(/[_-]/g, ' ').toUpperCase()}</Text>
+            {!!item.replacement_courier && <Text style={s.detailLine}>Courier: <Text style={s.detailValue}>{item.replacement_courier}</Text></Text>}
+            {!!item.replacement_awb && <Text style={s.detailLine}>Tracking / AWB: <Text style={s.detailValue}>{item.replacement_awb}</Text></Text>}
+            {!!formatDate(item.replacement_shipped_at) && <Text style={s.date}>Shipped {formatDate(item.replacement_shipped_at)}</Text>}
+            {!!formatDate(item.replacement_delivered_at) && <Text style={s.date}>Delivered {formatDate(item.replacement_delivered_at)}</Text>}
+            {trackingUrl && <Pressable accessibilityRole="link" style={s.trackLink} onPress={() => { import('react-native').then(({ Linking }) => Linking.openURL(trackingUrl).catch(() => setNotice('Unable to open the replacement tracking link.'))); }}><Text style={s.trackLinkText}>TRACK REPLACEMENT ↗</Text></Pressable>}
+          </View>}
+        </View>;
+      }) : <Text style={s.empty}>You have no return or exchange requests yet.</Text>}
 
       <Text style={s.note} accessibilityLiveRegion="polite">Requests are subject to The Off Grid's return policy and backend approval. Submission does not guarantee eligibility or a refund.</Text>
     </ScrollView>
@@ -120,5 +153,5 @@ const s = StyleSheet.create({
   label:{fontSize:9,fontWeight:'900',letterSpacing:1.2,color:'#222',marginTop:12},choices:{flexDirection:'row',gap:8,marginTop:9,marginBottom:14},choice:{borderWidth:1,borderColor:'#ddd',paddingHorizontal:16,paddingVertical:12},choiceActive:{backgroundColor:'#111',borderColor:'#111'},choiceText:{fontSize:10,fontWeight:'800',color:'#222',letterSpacing:1},choiceTextActive:{color:'#fff'},
   reasons:{flexDirection:'row',flexWrap:'wrap',gap:8,marginTop:10,marginBottom:12},reason:{borderWidth:1,borderColor:'#ddd',paddingHorizontal:11,paddingVertical:10},reasonActive:{borderColor:'#111',backgroundColor:'#f2f2f2'},reasonText:{fontSize:11,color:'#444'},reasonTextActive:{color:'#111',fontWeight:'800'},input:{borderWidth:1,borderColor:'#ddd',padding:13,marginTop:10,marginBottom:10,color:'#111'},
   sectionRow:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginTop:18,marginBottom:8},section:{fontSize:10,fontWeight:'900',letterSpacing:1.4,color:'#111'},refresh:{fontSize:9,fontWeight:'800',letterSpacing:.7,color:'#555'},card:{borderTopWidth:1,borderTopColor:'#ddd',paddingVertical:18},orderRow:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',gap:8},order:{fontSize:11,fontWeight:'900',color:'#111'},delivered:{fontSize:8,fontWeight:'900',letterSpacing:.8,color:'#36734b'},date:{fontSize:10,color:'#777',marginTop:6},amount:{fontSize:18,fontWeight:'900',marginTop:8,color:'#111'},btn:{backgroundColor:'#111',padding:14,alignItems:'center',justifyContent:'center',minHeight:44,marginTop:12},disabled:{opacity:.65},btnText:{color:'#fff',fontSize:9,fontWeight:'900',letterSpacing:1},empty:{color:'#777',fontSize:12,lineHeight:18,paddingVertical:16},loading:{flexDirection:'row',alignItems:'center',gap:10,paddingVertical:18},
-  requestCard:{borderTopWidth:1,borderTopColor:'#eee',paddingVertical:15},status:{fontSize:9,fontWeight:'900',letterSpacing:.8,color:'#555'},requestReason:{fontSize:12,color:'#444',marginTop:8},notice:{borderWidth:1,borderColor:'#b8d9c1',backgroundColor:'#f6fbf7',padding:12,marginBottom:12},noticeText:{color:'#245b36',fontSize:12,lineHeight:18},errorBox:{borderWidth:1,borderColor:'#e4c0c0',backgroundColor:'#fff8f8',padding:12,marginBottom:12},errorText:{fontSize:12,color:'#8a2525',lineHeight:18},retry:{alignSelf:'flex-start',paddingTop:10,paddingRight:12},retryText:{fontSize:10,fontWeight:'900',letterSpacing:1,color:'#111'},note:{fontSize:9,color:'#999',lineHeight:15,marginTop:20}
+  requestCard:{borderTopWidth:1,borderTopColor:'#eee',paddingVertical:15},status:{fontSize:9,fontWeight:'900',letterSpacing:.8,color:'#555'},statusNegative:{color:'#a12622'},statusPositive:{color:'#18794e'},statusExplanation:{fontSize:11,color:'#555',lineHeight:17,marginTop:10},detailLine:{fontSize:11,color:'#666',marginTop:8,lineHeight:16},detailValue:{fontWeight:'800',color:'#222'},shipmentBox:{marginTop:12,padding:12,backgroundColor:'#f7f7f7',borderWidth:1,borderColor:'#eee'},shipmentTitle:{fontSize:9,fontWeight:'900',letterSpacing:.7,color:'#222',marginBottom:5},trackLink:{alignSelf:'flex-start',marginTop:12,paddingVertical:9,paddingHorizontal:10,borderWidth:1,borderColor:'#111'},trackLinkText:{fontSize:9,fontWeight:'900',letterSpacing:.6,color:'#111'},requestReason:{fontSize:12,color:'#444',marginTop:8},notice:{borderWidth:1,borderColor:'#b8d9c1',backgroundColor:'#f6fbf7',padding:12,marginBottom:12},noticeText:{color:'#245b36',fontSize:12,lineHeight:18},errorBox:{borderWidth:1,borderColor:'#e4c0c0',backgroundColor:'#fff8f8',padding:12,marginBottom:12},errorText:{fontSize:12,color:'#8a2525',lineHeight:18},retry:{alignSelf:'flex-start',paddingTop:10,paddingRight:12},retryText:{fontSize:10,fontWeight:'900',letterSpacing:1,color:'#111'},note:{fontSize:9,color:'#999',lineHeight:15,marginTop:20}
 });
