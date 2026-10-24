@@ -1,8 +1,9 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View, RefreshControl } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { api, listFrom } from '../src/lib/api';
 
+const formatDate = (value: any) => { if (!value) return ''; const date = new Date(value); return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('en-IN'); };
 const reasons = ['Size / fit', 'Damaged item', 'Wrong item received', 'Quality issue', 'Changed my mind', 'Other'];
 const terminal = new Set(['cancelled', 'rejected', 'completed', 'refunded', 'closed']);
 export default function Returns() {
@@ -67,7 +68,7 @@ export default function Returns() {
   };
 
   return (
-    <ScrollView style={s.page} contentContainerStyle={s.content}>
+    <ScrollView style={s.page} contentContainerStyle={s.content} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor="#111" colors={["#111"]} />}>
       <Text style={s.eyebrow}>THE OFF GRID / SUPPORT</Text>
       <Text style={s.title}>RETURNS</Text>
       <Text style={s.copy}>Request a return or exchange for a delivered order and track your existing requests here.</Text>
@@ -88,7 +89,7 @@ export default function Returns() {
       <View style={s.sectionRow}><Text style={s.section}>ELIGIBLE ORDERS</Text><Pressable onPress={() => load(true)} disabled={refreshing}><Text style={s.refresh}>{refreshing ? 'REFRESHING…' : 'REFRESH ↻'}</Text></Pressable></View>
       {loading ? <View style={s.loading}><ActivityIndicator color="#111" /><Text style={s.empty}>Loading your orders…</Text></View> : eligible.length ? eligible.map(order => <View key={String(order.id)} style={s.card}>
         <View style={s.orderRow}><Text style={s.order}>ORDER #{order.id}</Text><Text style={s.delivered}>DELIVERED</Text></View>
-        {!!order.created_at && <Text style={s.date}>Placed {new Date(order.created_at).toLocaleDateString('en-IN')}</Text>}
+        {!!formatDate(order.created_at) && <Text style={s.date}>Placed {formatDate(order.created_at)}</Text>}
         <Text style={s.amount}>₹{Number(order.total ?? order.total_amount ?? 0).toLocaleString('en-IN')}</Text>
         <Pressable disabled={busyId !== null} style={[s.btn, busyId !== null && s.disabled]} onPress={() => request(order)}>{busyId === order.id ? <ActivityIndicator color="#fff" /> : <Text style={s.btnText}>SUBMIT {type.toUpperCase()} REQUEST</Text>}</Pressable>
       </View>) : <Text style={s.empty}>{orders.length ? 'No delivered orders are currently eligible, or a request is already in progress.' : 'Your delivered orders will appear here when available.'}</Text>}
@@ -98,7 +99,7 @@ export default function Returns() {
         <View style={s.orderRow}><Text style={s.order}>REQUEST #{item.id}</Text><Text style={s.status}>{String(item.status || 'pending').replace(/[_-]/g, ' ').toUpperCase()}</Text></View>
         <Text style={s.date}>Order #{item.order_id ?? item.order?.id ?? '—'} · {String(item.type || 'return').toUpperCase()}</Text>
         {!!item.reason && <Text style={s.requestReason}>{item.reason}</Text>}
-        {!!item.created_at && <Text style={s.date}>Submitted {new Date(item.created_at).toLocaleDateString('en-IN')}</Text>}
+        {!!formatDate(item.created_at) && <Text style={s.date}>Submitted {formatDate(item.created_at)}</Text>}
       </View>) : <Text style={s.empty}>You have no return or exchange requests yet.</Text>}
 
       <Text style={s.note}>Requests are subject to The Off Grid's return policy and backend approval. Submission does not guarantee eligibility or a refund.</Text>
