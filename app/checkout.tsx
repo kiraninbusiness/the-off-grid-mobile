@@ -28,7 +28,7 @@ export default function Checkout(){
   checkoutInFlight.current=true;
   setBusy(true);
   try{
-   const orderItems=cart.map(x=>({productId:Number(x.product_id),quantity:Number(x.quantity),selectedSize:x.selected_size?.trim()||null,selectedColor:x.selected_color?.trim()||null}));const shippingDetails={name:f.name.trim(),phone:f.phone.replace(/\\D/g,''),email:f.email.trim().toLowerCase(),address:f.address.trim(),city:f.city.trim(),state:f.state.trim(),pincode:f.pincode.trim()};const response=await api.createOrder({items:orderItems,shipping:shippingDetails,payment_method:payment,coupon_code:coupon?.code||''});
+   const orderItems=cart.map(x=>({productId:Number(x.product_id),quantity:Number(x.quantity),selectedSize:x.selected_size?.trim()||null,selectedColor:x.selected_color?.trim()||null}));const shippingDetails={name:f.name.trim(),phone:f.phone.replace(/\D/g,''),email:f.email.trim().toLowerCase(),address:f.address.trim(),city:f.city.trim(),state:f.state.trim(),pincode:f.pincode.trim()};const response=await api.createOrder({items:orderItems,shipping:shippingDetails,payment_method:payment,coupon_code:coupon?.code||''});
    const order=response?.order||response?.data?.order||response;
    if(!order?.id)throw new Error('The server did not return a valid order. Please try again.');
    if(payment==='cod'){await refresh();Alert.alert('Order confirmed',`Order #${order.id}`,[{text:'VIEW ORDER',onPress:()=>r.replace('/orders') }]);return;}
