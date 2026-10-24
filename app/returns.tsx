@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View, RefreshControl } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, View, RefreshControl } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { api, listFrom } from '../src/lib/api';
 
@@ -139,7 +139,7 @@ export default function Returns() {
             {!!item.replacement_awb && <Text style={s.detailLine}>Tracking / AWB: <Text style={s.detailValue}>{item.replacement_awb}</Text></Text>}
             {!!formatDate(item.replacement_shipped_at) && <Text style={s.date}>Shipped {formatDate(item.replacement_shipped_at)}</Text>}
             {!!formatDate(item.replacement_delivered_at) && <Text style={s.date}>Delivered {formatDate(item.replacement_delivered_at)}</Text>}
-            {trackingUrl && <Pressable accessibilityRole="link" style={s.trackLink} onPress={() => { import('react-native').then(({ Linking }) => Linking.openURL(trackingUrl).catch(() => setNotice('Unable to open the replacement tracking link.'))); }}><Text style={s.trackLinkText}>TRACK REPLACEMENT ↗</Text></Pressable>}
+            {trackingUrl && <Pressable accessibilityRole="link" style={s.trackLink} onPress={() => { Linking.openURL(trackingUrl).catch(() => setNotice('Unable to open the replacement tracking link.')); }}><Text style={s.trackLinkText}>TRACK REPLACEMENT ↗</Text></Pressable>}
           </View>}
         </View>;
       }) : <Text style={s.empty}>You have no return or exchange requests yet.</Text>}
