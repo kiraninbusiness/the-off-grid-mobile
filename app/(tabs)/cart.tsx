@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useRef,useState} from 'react';
 import {View,Text,ScrollView,Image,Pressable,StyleSheet,Alert,ActivityIndicator,RefreshControl} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
@@ -8,14 +8,14 @@ import FreeShippingBar from '../../src/components/FreeShippingBar';
 const FALLBACK='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=500&q=80';
 const money=(n:any)=>{const amount=Number(n);return Number.isFinite(amount)&&amount>=0?'₹'+amount.toLocaleString('en-IN'):'Amount unavailable'};
 export default function Cart(){
- const {cart,remove,clearCart,updateQuantity,refresh}=useStore();const r=useRouter();const [busy,setBusy]=useState<string[]>([]);const [failedImages,setFailedImages]=useState<string[]>([]);
+ const {cart,remove,clearCart,updateQuantity,refresh}=useStore();const r=useRouter();const [busy,setBusy]=useState<string[]>([]);const [failedImages,setFailedImages]=useState<string[]>([]);const activeActions=useRef(new Set<string>());
  const validCartItem=(x:any)=>Number.isFinite(Number(x.product_id))&&Number(x.product_id)>0&&Number.isFinite(Number(x.price))&&Number(x.price)>0&&Number.isInteger(Number(x.quantity))&&Number(x.quantity)>=1&&Number(x.quantity)<=99;
  const hasInvalidItems=cart.some(x=>!validCartItem(x));
  const safePrice=(x:any)=>Number.isFinite(Number(x.price))&&Number(x.price)>0?Number(x.price):0;
  const safeQuantity=(x:any)=>Number.isInteger(Number(x.quantity))&&Number(x.quantity)>=1&&Number(x.quantity)<=99?Number(x.quantity):1;
  const subtotal=cart.reduce((a,x)=>a+safePrice(x)*safeQuantity(x),0);
  const shipping=subtotal===0||subtotal>=1499?0:99;const total=subtotal+shipping;
- const act=async(key:string,fn:()=>Promise<void>)=>{if(busy.includes(key))return;setBusy(x=>[...x,key]);try{await fn()}catch(e:any){Alert.alert('Bag update failed',e?.message||'Please try again.')}finally{setBusy(x=>x.filter(v=>v!==key))}};
+ const act=async(key:string,fn:()=>Promise<void>)=>{if(activeActions.current.has(key))return;activeActions.current.add(key);setBusy(x=>x.includes(key)?x:[...x,key]);try{await fn()}catch(e:any){Alert.alert('Bag update failed',e?.message||'Please try again.')}finally{activeActions.current.delete(key);setBusy(x=>x.filter(v=>v!==key))}};
  const itemId=(x:any)=>x.id??x.guest_id??`${x.product_id}|${x.selected_size||''}|${x.selected_color||''}`;
  const clearAll=()=>Alert.alert('Clear your bag?',`Remove all ${cart.length} item${cart.length===1?'':'s'} from your bag?`,[{text:'KEEP',style:'cancel'},{text:'CLEAR BAG',style:'destructive',onPress:()=>act('clear-cart',clearCart)}]);
  return <ScrollView style={s.page} contentContainerStyle={{paddingBottom:35}} refreshControl={<RefreshControl refreshing={busy.includes('refresh-cart')} onRefresh={()=>act('refresh-cart',refresh)} tintColor="#111" colors={["#111"]}/>}><Text style={s.eyebrow}>THE OFF GRID / YOUR SELECTION</Text><View style={s.titleRow}><Text style={s.title}>YOUR BAG <Text style={s.itemCount}>({cart.length})</Text></Text>{!!cart.length&&<Pressable accessibilityRole="button" accessibilityLabel="Clear all items from bag" disabled={busy.includes('clear-cart')} onPress={clearAll} style={s.clearBag}><Text style={s.clearBagText}>{busy.includes('clear-cart')?'CLEARING…':'CLEAR BAG'}</Text></Pressable>}</View>
