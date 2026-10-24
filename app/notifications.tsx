@@ -5,6 +5,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { api, listFrom } from '../src/lib/api';
 
 const isRead = (item: any) => Boolean(item.read_at || item.read === true || item.is_read === true);
+const formatDate = (value: any) => {
+  if (!value) return '';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '' : date.toLocaleString('en-IN');
+};
 export default function Notifications() {
   const [items, setItems] = useState<any[]>([]);
   const [busy, setBusy] = useState(true);
@@ -19,6 +24,7 @@ export default function Notifications() {
     const id = ++requestId.current;
     refresh ? setRefreshing(true) : setBusy(true);
     setError('');
+    setActionError('');
     try {
       const data = await api.notifications();
       if (id === requestId.current) setItems(listFrom(data, ['notifications', 'items', 'data', 'results']));
@@ -79,7 +85,7 @@ export default function Notifications() {
             <View style={s.itemContent}>
               <View style={s.itemHead}><Text style={s.itemTitle}>{item.title || item.type || 'THE OFF GRID'}</Text>{!read && <Text style={s.new}>NEW</Text>}</View>
               <Text style={s.itemBody}>{item.message || item.body || item.description || 'You have a new update.'}</Text>
-              {!!item.created_at && <Text style={s.date}>{new Date(item.created_at).toLocaleString('en-IN')}</Text>}
+              {!!formatDate(item.created_at) && <Text style={s.date}>{formatDate(item.created_at)}</Text>}
               {!read && <Text style={s.tapHint}>TAP TO MARK AS READ</Text>}
             </View>
           </Pressable>;
