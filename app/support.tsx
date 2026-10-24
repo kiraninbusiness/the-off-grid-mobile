@@ -15,6 +15,7 @@ export default function Support() {
   const [sent, setSent] = useState(false);
 
   const send = async () => {
+    if (busy) return;
     const clean = message.trim();
     if (clean.length < 10) { setError('Please describe your issue in at least 10 characters.'); return; }
     if (clean.length > MAX_MESSAGE) { setError('Keep your message within 1,500 characters.'); return; }
