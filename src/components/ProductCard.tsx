@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import {View, Text, Image, Pressable, StyleSheet} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter} from 'expo-router';
@@ -24,6 +24,7 @@ function stockState(p: any): boolean | null {
 
 export default function ProductCard({p}: {p: any}) {
   const r = useRouter();
+  const [imageFailed,setImageFailed] = useState(false);
   const {wishlist, toggleWish, add} = useStore();
   const liked = wishlist.some((id: any) => String(id) === String(p.id));
   const price = Number(p.price || 0);
@@ -43,7 +44,7 @@ export default function ProductCard({p}: {p: any}) {
     <View style={s.card}>
       <Pressable accessibilityRole="button" accessibilityLabel={`View ${p.name || 'product'}`} onPress={openProduct}>
         <View style={s.media}>
-          <Image source={{uri: p.image || p.images?.[0] || FALLBACK_IMAGE}} style={s.img} resizeMode="cover" />
+          <Image source={{uri: imageFailed ? FALLBACK_IMAGE : p.image || p.images?.[0] || FALLBACK_IMAGE}} onError={() => setImageFailed(true)} style={s.img} resizeMode="cover" />
           <View style={s.badge}><Text style={s.badgeText}>{discount > 0 ? `-${discount}%` : 'NEW'}</Text></View>
           <Pressable accessibilityRole="button" accessibilityLabel={liked ? 'Remove from wishlist' : 'Add to wishlist'} hitSlop={8} style={s.heart} onPress={() => toggleWish(p.id)}>
             <Ionicons name={liked ? 'heart' : 'heart-outline'} size={18} color={liked ? '#b4232f' : '#111'} />
