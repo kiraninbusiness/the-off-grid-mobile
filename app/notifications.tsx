@@ -56,8 +56,8 @@ export default function Notifications() {
           await api.readNotification(id);
           setItems(current => current.map(n => String(n.id) === String(item.id) ? { ...n, read_at: new Date().toISOString(), read: true, is_read: true } : n));
         } catch (e: any) {
-          setActionError(e?.message || 'Could not mark this notification as read. Please try again.');
-          return;
+          // A failed read receipt should not block access to the related order or product.
+          setActionError(e?.message || 'Could not mark this notification as read. You can still open its related content.');
         } finally { setActionBusy(false); }
       }
     }
