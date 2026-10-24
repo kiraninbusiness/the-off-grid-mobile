@@ -43,14 +43,17 @@ export default function Profile() {
 
   const submit = async () => {
     if (busy) return;
-    if (mode === 'register' && name.trim().length < 2) { setError('Enter your full name.'); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setError('Enter a valid email address.'); return; }
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
+    const cleanReferral = referral.trim().toUpperCase();
+    if (mode === 'register' && cleanName.length < 2) { setError('Enter your full name.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) { setError('Enter a valid email address.'); return; }
     if (!password) { setError('Enter your password.'); return; }
     if (mode === 'register' && password.length < 12) { setError('Use a password with at least 12 characters.'); return; }
     setBusy(true); setError(''); setNotice('');
     try {
-      if (mode === 'login') await login(email, password);
-      else await register(name, email, password, referral);
+      if (mode === 'login') await login(cleanEmail, password);
+      else await register(cleanName, cleanEmail, password, cleanReferral);
       setPassword('');
     } catch (e: any) {
       setError(e?.message || (mode === 'login' ? 'Please check your details and try again.' : 'Could not create your account. Please try again.'));
