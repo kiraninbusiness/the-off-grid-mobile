@@ -29,7 +29,7 @@ export default function Checkout(){
   if(!cart.length)return Alert.alert('Your bag is empty','Add a piece before checking out.');
   if(!Number.isFinite(subtotal)||subtotal<=0||cart.some(x=>!Number.isFinite(Number(x.product_id))||Number(x.product_id)<=0||!Number.isInteger(Number(x.quantity))||Number(x.quantity)<1||Number(x.quantity)>99||!Number.isFinite(Number(x.price))||Number(x.price)<=0))return Alert.alert('Check your bag','One or more items have invalid product, price or quantity details. Return to your bag and try again.');
   if(!f.name.trim()||!/^[6-9][0-9]{9}$/.test(f.phone.replace(/\D/g,''))||!f.address.trim()||!f.city.trim()||!f.state.trim()||!/^[1-9][0-9]{5}$/.test(f.pincode))return Alert.alert('Complete your delivery details','Enter your name, address, city and state, a valid 10-digit Indian mobile number and a 6-digit PIN code.');
-  if(f.email.trim()&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim()))return Alert.alert('Check your email','Enter a valid email address or leave the field blank.');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim()))return Alert.alert('Check your email','Enter a valid email address. It is required for order confirmation.');
   checkoutInFlight.current=true;
   setBusy(true);
   try{
