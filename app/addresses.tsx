@@ -1,4 +1,4 @@
-import React,{useCallback,useState} from 'react';
+import React,{useCallback,useRef,useState} from 'react';
 import {ScrollView,View,Text,StyleSheet,ActivityIndicator,Pressable} from 'react-native';
 import {useFocusEffect} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
@@ -6,8 +6,9 @@ import {api,listFrom} from '../src/lib/api';
 
 export default function Addresses(){
  const [addresses,setAddresses]=useState<any[]>([]),[busy,setBusy]=useState(true),[error,setError]=useState('');
- const load=useCallback(async()=>{setBusy(true);setError('');try{const result=await api.addresses();setAddresses(listFrom<any>(result,['items','addresses','data','results']));}catch(e:any){setError(e?.message||'Unable to load saved addresses. Please try again.');}finally{setBusy(false);}},[]);
- useFocusEffect(useCallback(()=>{load();},[load]));
+ const requestId=useRef(0);
+ const load=useCallback(async()=>{const id=++requestId.current;setBusy(true);setError('');try{const result=await api.addresses();if(id===requestId.current)setAddresses(listFrom<any>(result,['items','addresses','data','results']));}catch(e:any){if(id===requestId.current)setError(e?.message||'Unable to load saved addresses. Please try again.');}finally{if(id===requestId.current)setBusy(false);}},[]);
+ useFocusEffect(useCallback(()=>{load();return()=>{requestId.current++;};},[load]));
  return <ScrollView style={s.page} contentContainerStyle={s.content}><Text style={s.eyebrow}>THE OFF GRID / ACCOUNT</Text><Text style={s.title}>ADDRESSES</Text><Text style={s.intro}>Your saved delivery details, all in one place.</Text>
  {busy?<ActivityIndicator style={{marginTop:28}} size="large" color="#111"/>:error?<View style={s.state}><Ionicons name="cloud-offline-outline" size={28} color="#777"/><Text style={s.stateTitle}>ADDRESSES UNAVAILABLE</Text><Text style={s.stateCopy}>{error}</Text><Pressable style={s.button} onPress={load}><Text style={s.buttonText}>TRY AGAIN</Text></Pressable></View>:addresses.length===0?<View style={s.state}><Ionicons name="location-outline" size={30} color="#777"/><Text style={s.stateTitle}>NO SAVED ADDRESSES</Text><Text style={s.stateCopy}>Your delivery addresses will appear here when you save them during checkout or in your profile.</Text></View>:addresses.map((a:any,index:number)=><View style={s.card} key={String(a.id??index)}><View style={s.cardTop}><View style={s.labelWrap}><Ionicons name="location-outline" size={15} color="#111"/><Text style={s.label}>{String(a.label||'ADDRESS').toUpperCase()}</Text></View>{a.is_default||a.isDefault?<View style={s.defaultBadge}><Text style={s.defaultText}>DEFAULT</Text></View>:null}</View><Text style={s.name}>{a.name||a.full_name||'Recipient'}</Text><Text style={s.address}>{a.address||a.address_line1||''}{a.address_line2?'\n'+a.address_line2:''}</Text><Text style={s.address}>{[a.city,a.state].filter(Boolean).join(', ')}{a.pincode||a.postal_code?' — '+(a.pincode||a.postal_code):''}</Text>{a.phone||a.mobile?<View style={s.phoneRow}><Ionicons name="call-outline" size={14} color="#777"/><Text style={s.phone}>{a.phone||a.mobile}</Text></View>:null}</View>)}</ScrollView>;
 }
