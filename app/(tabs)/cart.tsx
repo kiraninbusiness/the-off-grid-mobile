@@ -6,7 +6,7 @@ import {useStore} from '../../src/store/store';
 import FreeShippingBar from '../../src/components/FreeShippingBar';
 
 const FALLBACK='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=500&q=80';
-const money=(n:number)=>'₹'+Number(n||0).toLocaleString('en-IN');
+const money=(n:any)=>{const amount=Number(n);return Number.isFinite(amount)&&amount>=0?'₹'+amount.toLocaleString('en-IN'):'Amount unavailable'};
 export default function Cart(){
  const {cart,remove,clearCart,updateQuantity,refresh}=useStore();const r=useRouter();const [busy,setBusy]=useState<string[]>([]);const [failedImages,setFailedImages]=useState<string[]>([]);
  const validCartItem=(x:any)=>Number.isFinite(Number(x.product_id))&&Number(x.product_id)>0&&Number.isFinite(Number(x.price))&&Number(x.price)>0&&Number.isInteger(Number(x.quantity))&&Number(x.quantity)>=1&&Number(x.quantity)<=99;
