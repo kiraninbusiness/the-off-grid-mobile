@@ -58,7 +58,7 @@ export default function ProductCard({p}: {p: any}) {
           {discount > 0 && <Text style={s.off}>{discount}% OFF</Text>}
         </View>
       </Pressable>
-      <Pressable accessibilityRole="button" style={[s.add, available === false && s.disabled]} onPress={quickAdd} disabled={available === false}>
+      <Pressable accessibilityRole="button" accessibilityLabel={`${available === false ? "Sold out" : sizes.length ? "Choose size for" : available === null ? "View details for" : "Quick add"} ${p.name || "product"}`} style={[s.add, available === false && s.disabled]} onPress={quickAdd} disabled={available === false}>
         <Text style={s.addText}>{available === false ? 'SOLD OUT' : sizes.length ? 'CHOOSE SIZE' : available === null ? 'VIEW DETAILS' : 'QUICK ADD'}</Text>
       </Pressable>
     </View>
