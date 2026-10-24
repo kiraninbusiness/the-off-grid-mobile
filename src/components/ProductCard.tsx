@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {View, Text, Image, Pressable, StyleSheet} from 'react-native';
+import {View, Text, Image, Pressable, StyleSheet, Alert} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter} from 'expo-router';
 import {useStore} from '../store/store';
@@ -20,6 +20,7 @@ function stockState(p: any): boolean | null {
 export default function ProductCard({p}: {p: any}) {
   const r = useRouter();
   const [imageFailed,setImageFailed] = useState(false);
+  const [wishBusy,setWishBusy] = useState(false);
   const {wishlist, toggleWish, add} = useStore();
   const liked = wishlist.some((value: any) => String(typeof value === 'object' ? (value?.id ?? value?.product_id) : value) === String(p.id));
   const rawPrice = Number(p.price);
@@ -36,9 +37,17 @@ export default function ProductCard({p}: {p: any}) {
     if (!available) return;
     try { await add(p); } catch { openProduct(); }
   };
-  const toggleWishlist = (event: any) => {
+  const toggleWishlist = async (event: any) => {
     event?.stopPropagation?.();
-    toggleWish(p.id);
+    if (wishBusy || p.id == null) return;
+    setWishBusy(true);
+    try {
+      await toggleWish(Number(p.id));
+    } catch (error: any) {
+      Alert.alert('Wishlist not updated', error?.message || 'Please check your connection and try again.');
+    } finally {
+      setWishBusy(false);
+    }
   };
 
   return (
@@ -47,7 +56,7 @@ export default function ProductCard({p}: {p: any}) {
         <View style={s.media}>
           <Image source={{uri: imageFailed ? FALLBACK_IMAGE : p.image || p.images?.[0] || FALLBACK_IMAGE}} onError={() => setImageFailed(true)} style={s.img} resizeMode="cover" />
           <View style={s.badge}><Text style={s.badgeText}>{discount > 0 ? `-${discount}%` : 'NEW'}</Text></View>
-          <Pressable accessibilityRole="button" accessibilityLabel={liked ? 'Remove from wishlist' : 'Add to wishlist'} hitSlop={8} style={s.heart} onPress={toggleWishlist}>
+          <Pressable accessibilityRole="button" accessibilityLabel={wishBusy ? 'Updating wishlist' : liked ? 'Remove from wishlist' : 'Add to wishlist'} accessibilityState={{disabled:wishBusy,busy:wishBusy,selected:liked}} disabled={wishBusy} hitSlop={8} style={s.heart} onPress={toggleWishlist}>
             <Ionicons name={liked ? 'heart' : 'heart-outline'} size={18} color={liked ? '#b4232f' : '#111'} />
           </Pressable>
           {available === false && <View style={s.sold}><Text style={s.soldText}>SOLD OUT</Text></View>}
