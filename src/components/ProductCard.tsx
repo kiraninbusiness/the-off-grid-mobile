@@ -21,15 +21,18 @@ export default function ProductCard({p}: {p: any}) {
   const r = useRouter();
   const [imageFailed,setImageFailed] = useState(false);
   const {wishlist, toggleWish, add} = useStore();
-  const liked = wishlist.some((id: any) => String(id) === String(p.id));
-  const price = Number(p.price || 0);
-  const oldPrice = Number(p.old_price || p.compare_at_price || 0);
+  const liked = wishlist.some((value: any) => String(typeof value === 'object' ? (value?.id ?? value?.product_id) : value) === String(p.id));
+  const rawPrice = Number(p.price);
+  const price = Number.isFinite(rawPrice) && rawPrice >= 0 ? rawPrice : 0;
+  const rawOldPrice = Number(p.old_price ?? p.compare_at_price);
+  const oldPrice = Number.isFinite(rawOldPrice) && rawOldPrice > 0 ? rawOldPrice : 0;
   const discount = oldPrice > price && price > 0 ? Math.round(((oldPrice - price) / oldPrice) * 100) : 0;
   const available = stockState(p);
   const sizes = Array.isArray(p.sizes) ? p.sizes : Array.isArray(p.variants) ? p.variants.map((v: any) => v?.size).filter(Boolean) : [];
+  const hasColourVariants = (Array.isArray(p.colors) && p.colors.length > 0) || (Array.isArray(p.variants) && p.variants.some((v: any) => Boolean(v?.color ?? v?.colour)));
   const openProduct = () => r.push(`/product/${p.id}` as any);
   const quickAdd = async () => {
-    if (sizes.length || available === null) { openProduct(); return; }
+    if (sizes.length || hasColourVariants || available === null) { openProduct(); return; }
     if (!available) return;
     try { await add(p); } catch { openProduct(); }
   };
@@ -57,8 +60,8 @@ export default function ProductCard({p}: {p: any}) {
           {discount > 0 && <Text style={s.off}>{discount}% OFF</Text>}
         </View>
       </Pressable>
-      <Pressable accessibilityRole="button" accessibilityLabel={`${available === false ? "Sold out" : sizes.length ? "Choose size for" : available === null ? "View details for" : "Quick add"} ${p.name || "product"}`} style={[s.add, available === false && s.disabled]} onPress={quickAdd} disabled={available === false}>
-        <Text style={s.addText}>{available === false ? 'SOLD OUT' : sizes.length ? 'CHOOSE SIZE' : available === null ? 'VIEW DETAILS' : 'QUICK ADD'}</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel={`${available === false ? "Sold out" : sizes.length || hasColourVariants ? "Choose product options for" : available === null ? "View details for" : "Quick add"} ${p.name || "product"}`} style={[s.add, available === false && s.disabled]} onPress={quickAdd} disabled={available === false}>
+        <Text style={s.addText}>{available === false ? 'SOLD OUT' : sizes.length || hasColourVariants ? 'CHOOSE OPTIONS' : available === null ? 'VIEW DETAILS' : 'QUICK ADD'}</Text>
       </Pressable>
     </View>
   );
