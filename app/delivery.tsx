@@ -3,6 +3,15 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 
 import { api } from '../src/lib/api';
 
 type Result = { serviceable: boolean; message?: string; estimated_days?: string | number; cod?: boolean; free_shipping_threshold?: number };
+const formatEta = (value: any): string => {
+  if (value === null || value === undefined || String(value).trim() === '') return '';
+  const text = String(value).trim();
+  if (/^\d+(?:\.\d+)?$/.test(text)) {
+    const days = Number(text);
+    return days === 1 ? 'Estimated 1 day' : `Estimated ${text} days`;
+  }
+  return text;
+};
 const parseFlag = (value: any): boolean | null => {
   if (typeof value === 'boolean') return value;
   if (typeof value === 'number' && (value === 0 || value === 1)) return value === 1;
@@ -92,7 +101,7 @@ export default function Delivery() {
       {result && !error && (
         <View style={s.result} accessibilityLiveRegion="polite" accessible accessibilityLabel={result.serviceable?'Delivery available for this pincode':'Delivery unavailable for this pincode'}>
           <Text style={s.status}>{result.serviceable ? 'DELIVERY AVAILABLE' : 'NOT SERVICEABLE'}</Text>
-          <Text style={s.main}>{result.serviceable ? (result.estimated_days ? `Estimated ${result.estimated_days} day${Number(result.estimated_days) === 1 ? '' : 's'}` : 'We deliver to your area') : (result.message || 'Delivery is not available for this pincode right now.')}</Text>
+          <Text style={s.main}>{result.serviceable ? (formatEta(result.estimated_days) || 'We deliver to your area') : (result.message || 'Delivery is not available for this pincode right now.')}</Text>
           {result.serviceable && <>
             <View style={s.divider} />
             <Text style={s.line}>CASH ON DELIVERY</Text>
