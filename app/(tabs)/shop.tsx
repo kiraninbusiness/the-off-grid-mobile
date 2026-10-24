@@ -7,7 +7,7 @@ import {api,listFrom} from '../../src/lib/api';
 
 const label=(v:any)=>String(v??'').trim();
 const productSizes=(p:any):string[]=>Array.isArray(p.sizes)?p.sizes.map(label).filter(Boolean):Array.isArray(p.variants)?p.variants.map((v:any)=>label(v?.size)).filter(Boolean):p.size?[label(p.size)]:[];
-const stock=(p:any):boolean|null=>{const n=p.stock_quantity??p.inventory??p.stockCount;if(typeof n==='number')return n>0;if(typeof p.stock==='number')return p.stock>0;for(const k of ['in_stock','is_available','available','stock'])if(typeof p[k]==='boolean')return p[k];return null};
+const stock=(p:any):boolean|null=>{const n=p.stock_quantity??p.inventory??p.stockCount??p.stock;if(typeof n==='number'&&Number.isFinite(n))return n>0;if(typeof n==='string'&&n.trim()!==''&&Number.isFinite(Number(n)))return Number(n)>0;for(const k of ['in_stock','is_available','available','stock'])if(typeof p[k]==='boolean')return p[k];return null};
 const discount=(p:any)=>{const price=Number(p.price||0),old=Number(p.old_price||p.compare_at_price||0);return old>price&&price>0?Math.round((old-price)/old*100):0};
 
 export default function Shop(){
