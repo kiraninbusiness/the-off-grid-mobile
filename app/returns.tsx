@@ -77,12 +77,12 @@ export default function Returns() {
 
       <Text style={s.label}>REQUEST TYPE</Text>
       <View style={s.choices}>
-        {(['return', 'exchange'] as const).map(value => <Pressable key={value} accessibilityRole="button" accessibilityState={{ selected: type === value }} style={[s.choice, type === value && s.choiceActive]} onPress={() => { setType(value); setNotice(''); }}><Text style={[s.choiceText, type === value && s.choiceTextActive]}>{value.toUpperCase()}</Text></Pressable>)}
+        {(['return', 'exchange'] as const).map(value => <Pressable key={value} accessibilityRole="button" accessibilityLabel={value === 'return' ? 'Request a return' : 'Request an exchange'} accessibilityState={{ selected: type === value }} hitSlop={4} style={[s.choice, type === value && s.choiceActive]} onPress={() => { setType(value); setNotice(''); }}><Text style={[s.choiceText, type === value && s.choiceTextActive]}>{value.toUpperCase()}</Text></Pressable>)}
       </View>
 
       <Text style={s.label}>REASON</Text>
-      <View style={s.reasons}>{reasons.map(value => <Pressable key={value} style={[s.reason, reason === value && s.reasonActive]} onPress={() => { setReason(value); setNotice(''); }}><Text style={[s.reasonText, reason === value && s.reasonTextActive]}>{value}</Text></Pressable>)}</View>
-      {reason === 'Other' && <TextInput value={customReason} onChangeText={setCustomReason} placeholder="Describe your reason" placeholderTextColor="#999" style={s.input} maxLength={300} />}
+      <View style={s.reasons}>{reasons.map(value => <Pressable key={value} accessibilityRole="button" accessibilityLabel={`Return reason: ${value}`} accessibilityState={{ selected: reason === value }} hitSlop={3} style={[s.reason, reason === value && s.reasonActive]} onPress={() => { setReason(value); setNotice(''); }}><Text style={[s.reasonText, reason === value && s.reasonTextActive]}>{value}</Text></Pressable>)}</View>
+      {reason === 'Other' && <TextInput accessibilityLabel="Describe your return reason" value={customReason} onChangeText={setCustomReason} placeholder="Describe your reason" placeholderTextColor="#999" style={s.input} maxLength={300} />}
       {type === 'exchange' && <><Text style={s.label}>REQUESTED SIZE</Text><TextInput value={exchangeSize} onChangeText={value => setExchangeSize(value.replace(/[^a-zA-Z0-9 -]/g, '').slice(0, 12))} placeholder="e.g. M, L, XL or 32" placeholderTextColor="#999" style={s.input} autoCapitalize="characters" maxLength={12} /></>}
 
       <View style={s.sectionRow}><Text style={s.section}>ELIGIBLE ORDERS</Text><Pressable onPress={() => load(true)} disabled={refreshing}><Text style={s.refresh}>{refreshing ? 'REFRESHING…' : 'REFRESH ↻'}</Text></Pressable></View>
