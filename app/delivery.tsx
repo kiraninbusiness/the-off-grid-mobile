@@ -3,6 +3,16 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 
 import { api } from '../src/lib/api';
 
 type Result = { serviceable: boolean; message?: string; estimated_days?: string | number; cod?: boolean; free_shipping_threshold?: number };
+const parseFlag = (value: any): boolean | null => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number' && (value === 0 || value === 1)) return value === 1;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (['true', 'yes', '1', 'available', 'serviceable'].includes(normalized)) return true;
+    if (['false', 'no', '0', 'unavailable', 'not serviceable', 'not_serviceable'].includes(normalized)) return false;
+  }
+  return null;
+};
 export default function Delivery() {
   const [pin, setPin] = useState('');
   const [result, setResult] = useState<Result | null>(null);
@@ -25,15 +35,21 @@ export default function Delivery() {
     setResult(null);
     setError('');
     try {
-      const data: any = await api.serviceability(normalized);
+      const response: any = await api.serviceability(normalized);
       if (id !== requestId.current) return;
-      const serviceable = data?.serviceable === true || data?.available === true || data?.is_serviceable === true;
+      const data: any = response?.data ?? response?.result ?? response;
+      const serviceability = parseFlag(data?.serviceable ?? data?.is_serviceable ?? data?.available ?? data?.deliverable);
+      if (serviceability === null) {
+        throw new Error(data?.message || data?.reason || 'The delivery service could not confirm availability for this pincode. Please try again later.');
+      }
+      const codFlag = parseFlag(data?.cod ?? data?.cod_available ?? data?.cash_on_delivery);
+      const threshold = Number(data?.free_shipping_threshold ?? data?.freeShippingThreshold ?? 1499);
       setResult({
-        serviceable,
-        message: data?.message || data?.reason || (serviceable ? '' : 'Delivery is not available for this pincode right now.'),
+        serviceable: serviceability,
+        message: data?.message || data?.reason || (serviceability ? '' : 'Delivery is not available for this pincode right now.'),
         estimated_days: data?.estimated_days ?? data?.estimatedDays ?? data?.eta,
-        cod: data?.cod === true || data?.cod_available === true,
-        free_shipping_threshold: Number(data?.free_shipping_threshold ?? data?.freeShippingThreshold ?? 1499),
+        cod: codFlag === true,
+        free_shipping_threshold: Number.isFinite(threshold) && threshold >= 0 ? threshold : 1499,
       });
     } catch (e: any) {
       if (id === requestId.current) setError(e?.message || 'Could not check this pincode. Please try again.');
