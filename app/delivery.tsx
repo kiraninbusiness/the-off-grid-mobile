@@ -11,7 +11,7 @@ export default function Delivery() {
   const requestId = useRef(0);
 
   const check = async () => {
-    const normalized = pin.replace(/\\D/g, '').slice(0, 6);
+    const normalized = pin.replace(/\D/g, '').slice(0, 6);
     setPin(normalized);
     if (!/^[1-9][0-9]{5}$/.test(normalized)) {
       setResult(null);
@@ -42,7 +42,7 @@ export default function Delivery() {
 
   const onPinChange = (value: string) => {
     requestId.current += 1;
-    setPin(value.replace(/\\D/g, '').slice(0, 6));
+    setPin(value.replace(/\D/g, '').slice(0, 6));
     setResult(null);
     setError('');
     setBusy(false);
