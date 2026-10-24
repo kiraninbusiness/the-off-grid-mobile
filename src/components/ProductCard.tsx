@@ -8,17 +8,12 @@ const money = (v: any) => `₹${Number(v || 0).toLocaleString('en-IN')}`;
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80';
 
 function stockState(p: any): boolean | null {
-  // API deployments may serialize database quantities as numeric strings.
   const quantity = p.stock_quantity ?? p.inventory ?? p.stockCount ?? p.stock;
   if (typeof quantity === 'number' && Number.isFinite(quantity)) return quantity > 0;
-  if (typeof quantity === 'string' && quantity.trim() !== '' && Number.isFinite(Number(quantity))) {
-    return Number(quantity) > 0;
-  }
+  if (typeof quantity === 'string' && quantity.trim() !== '' && Number.isFinite(Number(quantity))) return Number(quantity) > 0;
   for (const key of ['in_stock', 'is_available', 'available', 'stock']) {
     if (typeof p[key] === 'boolean') return p[key];
   }
-  // Unknown inventory should not be advertised as sold out; the product detail
-  // screen remains responsible for confirming availability before purchase.
   return null;
 }
 
@@ -34,10 +29,13 @@ export default function ProductCard({p}: {p: any}) {
   const sizes = Array.isArray(p.sizes) ? p.sizes : Array.isArray(p.variants) ? p.variants.map((v: any) => v?.size).filter(Boolean) : [];
   const openProduct = () => r.push(`/product/${p.id}` as any);
   const quickAdd = async () => {
-    // Never put a size-dependent product in the cart without a selected size.
     if (sizes.length || available === null) { openProduct(); return; }
     if (!available) return;
     try { await add(p); } catch { openProduct(); }
+  };
+  const toggleWishlist = (event: any) => {
+    event?.stopPropagation?.();
+    toggleWish(p.id);
   };
 
   return (
@@ -46,7 +44,7 @@ export default function ProductCard({p}: {p: any}) {
         <View style={s.media}>
           <Image source={{uri: imageFailed ? FALLBACK_IMAGE : p.image || p.images?.[0] || FALLBACK_IMAGE}} onError={() => setImageFailed(true)} style={s.img} resizeMode="cover" />
           <View style={s.badge}><Text style={s.badgeText}>{discount > 0 ? `-${discount}%` : 'NEW'}</Text></View>
-          <Pressable accessibilityRole="button" accessibilityLabel={liked ? 'Remove from wishlist' : 'Add to wishlist'} hitSlop={8} style={s.heart} onPress={() => toggleWish(p.id)}>
+          <Pressable accessibilityRole="button" accessibilityLabel={liked ? 'Remove from wishlist' : 'Add to wishlist'} hitSlop={8} style={s.heart} onPress={toggleWishlist}>
             <Ionicons name={liked ? 'heart' : 'heart-outline'} size={18} color={liked ? '#b4232f' : '#111'} />
           </Pressable>
           {available === false && <View style={s.sold}><Text style={s.soldText}>SOLD OUT</Text></View>}
@@ -67,21 +65,11 @@ export default function ProductCard({p}: {p: any}) {
 }
 
 const s = StyleSheet.create({
-  card: {width: '48%', marginBottom: 27},
-  media: {position: 'relative', backgroundColor: '#f3f3f1'},
-  img: {width: '100%', height: 238, backgroundColor: '#f3f3f1'},
+  card: {width: '48%', marginBottom: 27}, media: {position: 'relative', backgroundColor: '#f3f3f1'}, img: {width: '100%', height: 238, backgroundColor: '#f3f3f1'},
   heart: {position: 'absolute', right: 9, top: 9, width: 36, height: 36, borderRadius: 18, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'},
-  badge: {position: 'absolute', left: 9, top: 9, backgroundColor: '#111', paddingHorizontal: 7, paddingVertical: 5},
-  badgeText: {color: '#fff', fontSize: 8, fontWeight: '900', letterSpacing: 1},
-  sold: {position: 'absolute', bottom: 0, left: 0, right: 0, padding: 8, backgroundColor: '#111'},
-  soldText: {color: '#fff', fontSize: 9, fontWeight: '900', textAlign: 'center'},
-  cat: {fontSize: 8, letterSpacing: 1.1, color: '#777', marginTop: 9, textTransform: 'uppercase'},
-  name: {fontSize: 13, fontWeight: '700', marginTop: 4, minHeight: 34},
-  priceRow: {flexDirection: 'row', alignItems: 'baseline', flexWrap: 'wrap', gap: 6, marginTop: 5},
-  price: {fontSize: 13, fontWeight: '900'},
-  oldPrice: {fontSize: 11, color: '#999', textDecorationLine: 'line-through'},
-  off: {fontSize: 9, fontWeight: '800', color: '#16803b', letterSpacing: 0.4},
-  add: {borderWidth: 1, borderColor: '#111', paddingVertical: 11, marginTop: 10, alignItems: 'center', minHeight: 40, justifyContent: 'center'},
-  disabled: {borderColor: '#ddd', backgroundColor: '#f6f6f6'},
-  addText: {fontSize: 9, fontWeight: '900', letterSpacing: 1},
+  badge: {position: 'absolute', left: 9, top: 9, backgroundColor: '#111', paddingHorizontal: 7, paddingVertical: 5}, badgeText: {color: '#fff', fontSize: 8, fontWeight: '900', letterSpacing: 1},
+  sold: {position: 'absolute', bottom: 0, left: 0, right: 0, padding: 8, backgroundColor: '#111'}, soldText: {color: '#fff', fontSize: 9, fontWeight: '900', textAlign: 'center'},
+  cat: {fontSize: 8, letterSpacing: 1.1, color: '#777', marginTop: 9, textTransform: 'uppercase'}, name: {fontSize: 13, fontWeight: '700', marginTop: 4, minHeight: 34},
+  priceRow: {flexDirection: 'row', alignItems: 'baseline', flexWrap: 'wrap', gap: 6, marginTop: 5}, price: {fontSize: 13, fontWeight: '900'}, oldPrice: {fontSize: 11, color: '#999', textDecorationLine: 'line-through'}, off: {fontSize: 9, fontWeight: '800', color: '#16803b', letterSpacing: 0.4},
+  add: {borderWidth: 1, borderColor: '#111', paddingVertical: 11, marginTop: 10, alignItems: 'center', minHeight: 40, justifyContent: 'center'}, disabled: {borderColor: '#ddd', backgroundColor: '#f6f6f6'}, addText: {fontSize: 9, fontWeight: '900', letterSpacing: 1},
 });
