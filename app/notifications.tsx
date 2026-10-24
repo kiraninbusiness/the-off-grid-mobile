@@ -43,30 +43,38 @@ export default function Notifications() {
     return () => { requestId.current++; };
   }, [load]));
   const unread = items.filter(item => !isRead(item));
+  const actionLock = useRef(false);
+
   const openNotification = async (item: any) => {
-    if (actionBusy) return;
-    const payload = item.data && typeof item.data === 'object' ? item.data : item.metadata && typeof item.metadata === 'object' ? item.metadata : {};
-    const orderId = item.order_id ?? item.orderId ?? payload.order_id ?? payload.orderId;
-    const productId = item.product_id ?? item.productId ?? payload.product_id ?? payload.productId;
-    if (!isRead(item)) {
-      const id = Number(item.id);
-      if (Number.isFinite(id) && id > 0) {
-        setActionBusy(true); setActionError('');
-        try {
-          await api.readNotification(id);
-          setItems(current => current.map(n => String(n.id) === String(item.id) ? { ...n, read_at: new Date().toISOString(), read: true, is_read: true } : n));
-        } catch (e: any) {
-          // A failed read receipt should not block access to the related order or product.
-          setActionError(e?.message || 'Could not mark this notification as read. You can still open its related content.');
-        } finally { setActionBusy(false); }
+    if (actionLock.current || actionBusy) return;
+    actionLock.current = true;
+    try {
+      const payload = item.data && typeof item.data === 'object' ? item.data : item.metadata && typeof item.metadata === 'object' ? item.metadata : {};
+      const orderId = item.order_id ?? item.orderId ?? payload.order_id ?? payload.orderId;
+      const productId = item.product_id ?? item.productId ?? payload.product_id ?? payload.productId;
+      if (!isRead(item)) {
+        const id = Number(item.id);
+        if (Number.isFinite(id) && id > 0) {
+          setActionBusy(true); setActionError('');
+          try {
+            await api.readNotification(id);
+            setItems(current => current.map(n => String(n.id) === String(item.id) ? { ...n, read_at: new Date().toISOString(), read: true, is_read: true } : n));
+          } catch (e: any) {
+            // A failed read receipt should not block access to the related order or product.
+            setActionError(e?.message || 'Could not mark this notification as read. You can still open its related content.');
+          } finally { setActionBusy(false); }
+        }
       }
+      if (orderId != null && String(orderId).trim()) r.push(('/orders?orderId=' + encodeURIComponent(String(orderId))) as any);
+      else if (productId != null && String(productId).trim()) r.push(('/product/' + encodeURIComponent(String(productId))) as any);
+    } finally {
+      actionLock.current = false;
     }
-    if (orderId != null && String(orderId).trim()) r.push(('/orders?orderId=' + encodeURIComponent(String(orderId))) as any);
-    else if (productId != null && String(productId).trim()) r.push(('/product/' + encodeURIComponent(String(productId))) as any);
   };
 
   const markAll = async () => {
-    if (!unread.length || actionBusy) return;
+    if (!unread.length || actionLock.current || actionBusy) return;
+    actionLock.current = true;
     setActionBusy(true); setActionError('');
     try {
       await api.readAllNotifications();
@@ -74,7 +82,7 @@ export default function Notifications() {
       setItems(current => current.map(n => ({ ...n, read_at: n.read_at || now, read: true, is_read: true })));
     } catch (e: any) {
       setActionError(e?.message || 'Could not mark all notifications as read. Please try again.');
-    } finally { setActionBusy(false); }
+    } finally { actionLock.current = false; setActionBusy(false); }
   };
 
   return (
