@@ -14,7 +14,7 @@ export default function Cart(){
  const safePrice=(x:any)=>Number.isFinite(Number(x.price))&&Number(x.price)>0?Number(x.price):0;
  const safeQuantity=(x:any)=>Number.isInteger(Number(x.quantity))&&Number(x.quantity)>=1&&Number(x.quantity)<=99?Number(x.quantity):1;
  const subtotal=cart.reduce((a,x)=>a+safePrice(x)*safeQuantity(x),0);
- const shipping=subtotal===0||subtotal>=1499?0:99;const total=subtotal+shipping;
+ const shipping=subtotal===0||subtotal>=1499?0:79;const total=subtotal+shipping;
  const act=async(key:string,fn:()=>Promise<void>)=>{if(activeActions.current.has(key))return;activeActions.current.add(key);setBusy(x=>x.includes(key)?x:[...x,key]);try{await fn()}catch(e:any){Alert.alert('Bag update failed',e?.message||'Please try again.')}finally{activeActions.current.delete(key);setBusy(x=>x.filter(v=>v!==key))}};
  const itemId=(x:any)=>x.id??x.guest_id??`${x.product_id}|${x.selected_size||''}|${x.selected_color||''}`;
  const clearAll=()=>Alert.alert('Clear your bag?',`Remove all ${cart.length} item${cart.length===1?'':'s'} from your bag?`,[{text:'KEEP',style:'cancel'},{text:'CLEAR BAG',style:'destructive',onPress:()=>act('clear-cart',clearCart)}]);
