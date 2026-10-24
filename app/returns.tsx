@@ -4,6 +4,7 @@ import { useFocusEffect } from 'expo-router';
 import { api, listFrom } from '../src/lib/api';
 
 const formatDate = (value: any) => { if (!value) return ''; const date = new Date(value); return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('en-IN'); };
+const formatAmount = (value: any) => { if (value === null || value === undefined || String(value).trim() === '') return 'Amount unavailable'; const amount = Number(value); return Number.isFinite(amount) && amount >= 0 ? `₹${amount.toLocaleString('en-IN')}` : 'Amount unavailable'; };
 const reasons = ['Size / fit', 'Damaged item', 'Wrong item received', 'Quality issue', 'Changed my mind', 'Other'];
 const terminal = new Set(['cancelled', 'rejected', 'completed', 'refunded', 'closed']);
 export default function Returns() {
@@ -95,7 +96,7 @@ export default function Returns() {
       {loading ? <View style={s.loading}><ActivityIndicator color="#111" /><Text style={s.empty}>Loading your orders…</Text></View> : eligible.length ? eligible.map(order => <View key={String(order.id)} style={s.card}>
         <View style={s.orderRow}><Text style={s.order}>ORDER #{order.id}</Text><Text style={s.delivered}>DELIVERED</Text></View>
         {!!formatDate(order.created_at) && <Text style={s.date}>Placed {formatDate(order.created_at)}</Text>}
-        <Text style={s.amount}>₹{Number(order.total ?? order.total_amount ?? 0).toLocaleString('en-IN')}</Text>
+        <Text style={s.amount}>{formatAmount(order.total ?? order.total_amount)}</Text>
         <Pressable disabled={busyId !== null || loading || refreshing} accessibilityRole="button" accessibilityLabel={`Submit ${type} request for order ${order.id}`} accessibilityState={{ disabled: busyId !== null || loading || refreshing }} style={[s.btn, (busyId !== null || loading || refreshing) && s.disabled]} onPress={() => request(order)}>{busyId === order.id ? <ActivityIndicator color="#fff" /> : <Text style={s.btnText}>SUBMIT {type.toUpperCase()} REQUEST</Text>}</Pressable>
       </View>) : <Text style={s.empty}>{orders.length ? 'No delivered orders are currently eligible, or a request is already in progress.' : 'Your delivered orders will appear here when available.'}</Text>}
 
