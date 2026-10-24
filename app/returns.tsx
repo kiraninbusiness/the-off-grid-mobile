@@ -73,7 +73,7 @@ export default function Returns() {
       <Text style={s.title}>RETURNS</Text>
       <Text style={s.copy}>Request a return or exchange for a delivered order and track your existing requests here.</Text>
 
-      {!!notice && <View style={s.notice}><Text style={s.noticeText}>{notice}</Text></View>}
+      {!!notice && <View style={s.notice} accessible accessibilityLiveRegion="polite"><Text style={s.noticeText}>{notice}</Text></View>}
       {!!error && <View style={s.errorBox} accessibilityLiveRegion="polite"><Text style={s.errorText}>{error}</Text><Pressable onPress={() => load(true)} disabled={refreshing} style={s.retry}><Text style={s.retryText}>{refreshing ? 'RETRYING…' : 'RETRY'}</Text></Pressable></View>}
 
       <Text style={s.label}>REQUEST TYPE</Text>
@@ -83,7 +83,7 @@ export default function Returns() {
 
       <Text style={s.label}>REASON</Text>
       <View style={s.reasons}>{reasons.map(value => <Pressable key={value} accessibilityRole="button" accessibilityLabel={`Return reason: ${value}`} accessibilityState={{ selected: reason === value }} hitSlop={3} style={[s.reason, reason === value && s.reasonActive]} onPress={() => { setReason(value); setNotice(''); }}><Text style={[s.reasonText, reason === value && s.reasonTextActive]}>{value}</Text></Pressable>)}</View>
-      {reason === 'Other' && <TextInput accessibilityLabel="Describe your return reason" value={customReason} onChangeText={setCustomReason} placeholder="Describe your reason" placeholderTextColor="#999" style={s.input} maxLength={300} />}
+      {reason === 'Other' && <TextInput accessibilityLabel="Describe your return reason" accessibilityLabel="Custom return reason" accessibilityHint="Describe the reason in at least 3 characters" value={customReason} onChangeText={setCustomReason} placeholder="Describe your reason" placeholderTextColor="#999" style={s.input} maxLength={300} />}
       {type === 'exchange' && <><Text style={s.label}>REQUESTED SIZE</Text><TextInput value={exchangeSize} onChangeText={value => setExchangeSize(value.replace(/[^a-zA-Z0-9 -]/g, '').slice(0, 12))} placeholder="e.g. M, L, XL or 32" placeholderTextColor="#999" style={s.input} autoCapitalize="characters" maxLength={12} /></>}
 
       <View style={s.sectionRow}><Text style={s.section}>ELIGIBLE ORDERS</Text><Pressable onPress={() => load(true)} disabled={refreshing}><Text style={s.refresh}>{refreshing ? 'REFRESHING…' : 'REFRESH ↻'}</Text></Pressable></View>
