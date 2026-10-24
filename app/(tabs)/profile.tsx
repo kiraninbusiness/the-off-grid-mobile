@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useStore } from '../../src/store/store';
 import { api } from '../../src/lib/api';
 import { useRouter } from 'expo-router';
@@ -8,98 +8,14 @@ export default function Profile() {
   const { user, login, register, logout, refresh } = useStore();
   const r = useRouter();
   const [mode, setMode] = useState<'login' | 'register'>('login');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [referral, setReferral] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [edit, setEdit] = useState(false);
-  const [profileName, setProfileName] = useState('');
-  const [profileEmail, setProfileEmail] = useState('');
-  const [notice, setNotice] = useState('');
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    setProfileName(String(user?.name || ''));
-    setProfileEmail(String(user?.email || ''));
-  }, [user?.name, user?.email]);
-
-  const saveProfile = async () => {
-    if (busy) return;
-    const cleanName = profileName.trim();
-    const cleanEmail = profileEmail.trim().toLowerCase();
-    if (cleanName.length < 2) { setError('Enter a name with at least 2 characters.'); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) { setError('Enter a valid email address.'); return; }
-    setBusy(true); setError(''); setNotice('');
-    try {
-      await api.profileUpdate({ name: cleanName, email: cleanEmail });
-      await refresh();
-      setEdit(false);
-      setNotice('Your profile has been updated.');
-    } catch (e: any) {
-      setError(e?.message || 'Could not save your profile. Please try again.');
-    } finally { setBusy(false); }
-  };
-
-  const submit = async () => {
-    if (busy) return;
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanName = name.trim();
-    const cleanReferral = referral.trim().toUpperCase();
-    if (mode === 'register' && cleanName.length < 2) { setError('Enter your full name.'); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) { setError('Enter a valid email address.'); return; }
-    if (!password) { setError('Enter your password.'); return; }
-    if (mode === 'register' && password.length < 12) { setError('Use a password with at least 12 characters.'); return; }
-    setBusy(true); setError(''); setNotice('');
-    try {
-      if (mode === 'login') await login(cleanEmail, password);
-      else await register(cleanName, cleanEmail, password, cleanReferral);
-      setPassword('');
-    } catch (e: any) {
-      setError(e?.message || (mode === 'login' ? 'Please check your details and try again.' : 'Could not create your account. Please try again.'));
-    } finally { setBusy(false); }
-  };
-
-  if (user) return (
-    <ScrollView style={s.page} contentContainerStyle={s.content}>
-      <Text style={s.eyebrow}>THE OFF GRID</Text><Text style={s.title}>ACCOUNT</Text>
-      {!!notice && <View style={s.success}><Text style={s.successText}>{notice}</Text></View>}
-      {!!error && <View style={s.error}><Text style={s.errorText}>{error}</Text><Pressable onPress={() => setError('')}><Text style={s.dismiss}>DISMISS</Text></Pressable></View>}
-      {!edit ? <>
-        <Text style={s.name}>{user.name || 'The Off Grid customer'}</Text><Text style={s.email}>{user.email || ''}</Text>
-        <Pressable style={s.editButton} onPress={() => { setProfileName(String(user.name || '')); setProfileEmail(String(user.email || '')); setEdit(true); setError(''); setNotice(''); }}><Text style={s.editButtonText}>EDIT PROFILE</Text></Pressable>
-      </> : <>
-        <Text style={s.label}>FULL NAME</Text><TextInput accessibilityLabel="Profile full name" style={s.input} value={profileName} onChangeText={setProfileName} maxLength={100} editable={!busy} placeholder="Full name" placeholderTextColor="#999" />
-        <Text style={s.label}>EMAIL ADDRESS</Text><TextInput accessibilityLabel="Profile email address" style={s.input} value={profileEmail} onChangeText={setProfileEmail} maxLength={254} autoCapitalize="none" keyboardType="email-address" editable={!busy} placeholder="Email address" placeholderTextColor="#999" />
-        <Pressable style={[s.primary, busy && s.disabled]} disabled={busy} onPress={saveProfile}>{busy ? <ActivityIndicator color="#fff" /> : <Text style={s.primaryText}>SAVE PROFILE</Text>}</Pressable>
-        <Pressable style={s.cancelEdit} disabled={busy} onPress={() => { setEdit(false); setError(''); setProfileName(String(user.name || '')); setProfileEmail(String(user.email || '')); }}><Text style={s.cancelText}>CANCEL</Text></Pressable>
-      </>}
-      <Text style={s.section}>YOUR ACCOUNT</Text>
-      {[
-        ['MY ORDERS', '/orders'], ['ADDRESSES', '/addresses'], ['NOTIFICATIONS', '/notifications'], ['OFF GRID CLUB', '/rewards'], ['REFER & EARN', '/referrals'], ['RETURNS & REFUNDS', '/returns'], ['CHECK DELIVERY', '/delivery'], ['HELP & SUPPORT', '/support'], ['GIFT CARDS', '/gift-cards']
-      ].map(([label, path]) => <Pressable key={path} style={s.item} onPress={() => r.push(path as any)}><Text style={s.itemText}>{label}</Text><Text style={s.arrow}>→</Text></Pressable>)}
-      <Pressable style={s.logout} onPress={logout}><Text style={s.logoutText}>LOG OUT</Text></Pressable>
-    </ScrollView>
-  );
-
-  return (
-    <ScrollView style={s.page} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
-      <Text style={s.eyebrow}>THE OFF GRID</Text><Text style={s.title}>{mode === 'login' ? 'SIGN IN' : 'CREATE ACCOUNT'}</Text>
-      <Text style={s.sub}>{mode === 'login' ? 'Access your orders, wishlist and saved addresses.' : 'Create an account to keep your orders, wishlist and addresses together.'}</Text>
-      {!!error && <View style={s.error}><Text style={s.errorText}>{error}</Text></View>}
-      {mode === 'register' && <><Text style={s.label}>FULL NAME</Text><TextInput style={s.input} placeholder="Full name" placeholderTextColor="#999" value={name} onChangeText={v => { setName(v); setError(''); }} maxLength={100} editable={!busy} /> <Text style={s.label}>REFERRAL CODE (OPTIONAL)</Text><TextInput style={s.input} placeholder="Referral code" placeholderTextColor="#999" value={referral} onChangeText={setReferral} autoCapitalize="characters" maxLength={40} editable={!busy} /></>}
-      <Text style={s.label}>EMAIL ADDRESS</Text><TextInput accessibilityLabel="Email address" style={s.input} placeholder="Email" placeholderTextColor="#999" autoCapitalize="none" keyboardType="email-address" value={email} onChangeText={v => { setEmail(v); setError(''); }} editable={!busy} maxLength={254} />
-      <Text style={s.label}>PASSWORD</Text><TextInput accessibilityLabel="Password" style={s.input} placeholder={mode === 'register' ? 'At least 12 characters' : 'Password'} placeholderTextColor="#999" secureTextEntry value={password} onChangeText={v => { setPassword(v); setError(''); }} editable={!busy} />
-      <Pressable disabled={busy} style={[s.primary, busy && s.disabled]} onPress={submit}>{busy ? <View style={s.loading}><ActivityIndicator color="#fff" /><Text style={s.primaryText}>{mode === 'login' ? 'SIGNING IN…' : 'CREATING ACCOUNT…'}</Text></View> : <Text style={s.primaryText}>{mode === 'login' ? 'SIGN IN' : 'CREATE ACCOUNT'}</Text>}</Pressable>
-      <Pressable disabled={busy} onPress={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); setPassword(''); }} style={s.switch}><Text style={s.switchText}>{mode === 'login' ? 'NEW TO THE OFF GRID? CREATE ACCOUNT' : 'ALREADY HAVE AN ACCOUNT? SIGN IN'}</Text></Pressable>
-    </ScrollView>
-  );
+  const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [password, setPassword] = useState(''); const [referral, setReferral] = useState('');
+  const [busy, setBusy] = useState(false); const [edit, setEdit] = useState(false); const [profileName, setProfileName] = useState(''); const [profileEmail, setProfileEmail] = useState(''); const [notice, setNotice] = useState(''); const [error, setError] = useState('');
+  useEffect(() => { setProfileName(String(user?.name || '')); setProfileEmail(String(user?.email || '')); }, [user?.name, user?.email]);
+  const saveProfile = async () => { if (busy) return; const cleanName=profileName.trim(),cleanEmail=profileEmail.trim().toLowerCase(); if(cleanName.length<2){setError('Enter a name with at least 2 characters.');return} if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)){setError('Enter a valid email address.');return} setBusy(true);setError('');setNotice('');try{await api.profileUpdate({name:cleanName,email:cleanEmail});await refresh();setEdit(false);setNotice('Your profile has been updated.')}catch(e:any){setError(e?.message||'Could not save your profile. Please try again.')}finally{setBusy(false)}};
+  const submit = async () => { if(busy)return; const cleanEmail=email.trim().toLowerCase(),cleanName=name.trim(),cleanReferral=referral.trim().toUpperCase(); if(mode==='register'&&cleanName.length<2){setError('Enter your full name.');return} if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)){setError('Enter a valid email address.');return} if(!password){setError('Enter your password.');return} if(mode==='register'&&password.length<12){setError('Use a password with at least 12 characters.');return} setBusy(true);setError('');setNotice('');try{if(mode==='login')await login(cleanEmail,password);else await register(cleanName,cleanEmail,password,cleanReferral);setPassword('')}catch(e:any){setError(e?.message||(mode==='login'?'Please check your details and try again.':'Could not create your account. Please try again.'))}finally{setBusy(false)}};
+  const confirmLogout=()=>Alert.alert('Log out?','You can sign back in anytime to access your account, orders and saved items.',[{text:'CANCEL',style:'cancel'},{text:'LOG OUT',style:'destructive',onPress:()=>logout()}]);
+  if(user) return <ScrollView style={s.page} contentContainerStyle={s.content}><Text style={s.eyebrow}>THE OFF GRID</Text><Text style={s.title}>ACCOUNT</Text>{!!notice&&<View style={s.success}><Text style={s.successText}>{notice}</Text></View>}{!!error&&<View style={s.error}><Text style={s.errorText}>{error}</Text><Pressable accessibilityRole="button" accessibilityLabel="Dismiss error" onPress={()=>setError('')}><Text style={s.dismiss}>DISMISS</Text></Pressable></View>}{!edit?<><Text style={s.name}>{user.name||'The Off Grid customer'}</Text><Text style={s.email}>{user.email||''}</Text><Pressable accessibilityRole="button" style={s.editButton} onPress={()=>{setProfileName(String(user.name||''));setProfileEmail(String(user.email||''));setEdit(true);setError('');setNotice('')}}><Text style={s.editButtonText}>EDIT PROFILE</Text></Pressable></>:<><Text style={s.label}>FULL NAME</Text><TextInput accessibilityLabel="Profile full name" style={s.input} value={profileName} onChangeText={setProfileName} maxLength={100} editable={!busy} placeholder="Full name" placeholderTextColor="#999"/><Text style={s.label}>EMAIL ADDRESS</Text><TextInput accessibilityLabel="Profile email address" style={s.input} value={profileEmail} onChangeText={setProfileEmail} maxLength={254} autoCapitalize="none" keyboardType="email-address" editable={!busy} placeholder="Email address" placeholderTextColor="#999"/><Pressable accessibilityRole="button" style={[s.primary,busy&&s.disabled]} disabled={busy} onPress={saveProfile}>{busy?<ActivityIndicator color="#fff"/>:<Text style={s.primaryText}>SAVE PROFILE</Text>}</Pressable><Pressable accessibilityRole="button" style={s.cancelEdit} disabled={busy} onPress={()=>{setEdit(false);setError('');setProfileName(String(user.name||''));setProfileEmail(String(user.email||''))}}><Text style={s.cancelText}>CANCEL</Text></Pressable></>}
+  <Text style={s.section}>YOUR ACCOUNT</Text>{[['MY ORDERS','/orders'],['ADDRESSES','/addresses'],['NOTIFICATIONS','/notifications'],['OFF GRID CLUB','/rewards'],['REFER & EARN','/referrals'],['RETURNS & REFUNDS','/returns'],['CHECK DELIVERY','/delivery'],['HELP & SUPPORT','/support'],['GIFT CARDS','/gift-cards']].map(([label,path])=><Pressable accessibilityRole="button" accessibilityLabel={String(label)} key={path} style={s.item} onPress={()=>r.push(path as any)}><Text style={s.itemText}>{label}</Text><Text style={s.arrow}>→</Text></Pressable>)}<Pressable accessibilityRole="button" accessibilityLabel="Log out" style={s.logout} onPress={confirmLogout}><Text style={s.logoutText}>LOG OUT</Text></Pressable></ScrollView>;
+  return <ScrollView style={s.page} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled"><Text style={s.eyebrow}>THE OFF GRID</Text><Text style={s.title}>{mode==='login'?'SIGN IN':'CREATE ACCOUNT'}</Text><Text style={s.sub}>{mode==='login'?'Access your orders, wishlist and saved addresses.':'Create an account to keep your orders, wishlist and addresses together.'}</Text>{!!error&&<View style={s.error}><Text style={s.errorText}>{error}</Text></View>}{mode==='register'&&<><Text style={s.label}>FULL NAME</Text><TextInput style={s.input} placeholder="Full name" placeholderTextColor="#999" value={name} onChangeText={v=>{setName(v);setError('')}} maxLength={100} editable={!busy}/><Text style={s.label}>REFERRAL CODE (OPTIONAL)</Text><TextInput style={s.input} placeholder="Referral code" placeholderTextColor="#999" value={referral} onChangeText={setReferral} autoCapitalize="characters" maxLength={40} editable={!busy}/></>}<Text style={s.label}>EMAIL ADDRESS</Text><TextInput accessibilityLabel="Email address" style={s.input} placeholder="Email" placeholderTextColor="#999" autoCapitalize="none" keyboardType="email-address" value={email} onChangeText={v=>{setEmail(v);setError('')}} editable={!busy} maxLength={254}/><Text style={s.label}>PASSWORD</Text><TextInput accessibilityLabel="Password" style={s.input} placeholder={mode==='register'?'At least 12 characters':'Password'} placeholderTextColor="#999" secureTextEntry value={password} onChangeText={v=>{setPassword(v);setError('')}} editable={!busy}/><Pressable accessibilityRole="button" disabled={busy} style={[s.primary,busy&&s.disabled]} onPress={submit}>{busy?<View style={s.loading}><ActivityIndicator color="#fff"/><Text style={s.primaryText}>{mode==='login'?'SIGNING IN…':'CREATING ACCOUNT…'}</Text></View>:<Text style={s.primaryText}>{mode==='login'?'SIGN IN':'CREATE ACCOUNT'}</Text>}</Pressable><Pressable accessibilityRole="button" disabled={busy} onPress={()=>{setMode(mode==='login'?'register':'login');setError('');setPassword('')}} style={s.switch}><Text style={s.switchText}>{mode==='login'?'NEW TO THE OFF GRID? CREATE ACCOUNT':'ALREADY HAVE AN ACCOUNT? SIGN IN'}</Text></Pressable></ScrollView>;
 }
-const s = StyleSheet.create({
-  page:{flex:1,backgroundColor:'#fff'},content:{padding:24,paddingTop:55,paddingBottom:45},eyebrow:{fontSize:9,letterSpacing:1.5,color:'#777'},title:{fontSize:40,fontWeight:'900',letterSpacing:-2,marginTop:5,color:'#111'},sub:{color:'#777',marginTop:8,marginBottom:25,lineHeight:19,fontSize:12},
-  name:{fontSize:22,fontWeight:'800',marginTop:25,color:'#111'},email:{color:'#777',marginTop:5,fontSize:12},label:{fontSize:9,fontWeight:'900',letterSpacing:1.2,color:'#333',marginTop:17},input:{borderBottomWidth:1,borderBottomColor:'#111',paddingVertical:13,marginBottom:10,fontSize:15,color:'#111'},
-  primary:{backgroundColor:'#111',padding:16,minHeight:50,alignItems:'center',justifyContent:'center',marginTop:18},disabled:{opacity:.65},primaryText:{color:'#fff',fontWeight:'900',letterSpacing:1,fontSize:10},loading:{flexDirection:'row',alignItems:'center',gap:10},
-  switch:{paddingVertical:22,alignItems:'center'},switchText:{fontSize:9,fontWeight:'800',letterSpacing:.8,color:'#111'},item:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:19,borderBottomWidth:1,borderBottomColor:'#eee'},itemText:{fontSize:11,fontWeight:'700',letterSpacing:.5,color:'#222'},arrow:{fontSize:16,color:'#555'},section:{fontSize:10,fontWeight:'900',letterSpacing:1.4,color:'#111',marginTop:32,marginBottom:5},
-  editButton:{alignSelf:'flex-start',borderWidth:1,borderColor:'#111',paddingHorizontal:16,paddingVertical:11,marginTop:17},editButtonText:{fontSize:9,fontWeight:'900',letterSpacing:1,color:'#111'},cancelEdit:{alignSelf:'center',padding:15},cancelText:{fontSize:10,fontWeight:'900',letterSpacing:1,color:'#555'},logout:{marginTop:30,borderWidth:1,borderColor:'#111',padding:15,alignItems:'center'},logoutText:{fontWeight:'800',fontSize:10,letterSpacing:1},
-  error:{borderWidth:1,borderColor:'#e4c0c0',backgroundColor:'#fff8f8',padding:12,marginTop:12},errorText:{fontSize:12,color:'#8a2525',lineHeight:18},dismiss:{fontSize:9,fontWeight:'900',letterSpacing:1,color:'#111',marginTop:8},success:{borderWidth:1,borderColor:'#b8d9c1',backgroundColor:'#f6fbf7',padding:12,marginTop:15},successText:{fontSize:12,color:'#245b36',lineHeight:18}
-});
+const s=StyleSheet.create({page:{flex:1,backgroundColor:'#fff'},content:{padding:24,paddingTop:55,paddingBottom:45},eyebrow:{fontSize:9,letterSpacing:1.5,color:'#777'},title:{fontSize:40,fontWeight:'900',letterSpacing:-2,marginTop:5,color:'#111'},sub:{color:'#777',marginTop:8,marginBottom:25,lineHeight:19,fontSize:12},name:{fontSize:22,fontWeight:'800',marginTop:25,color:'#111'},email:{color:'#777',marginTop:5,fontSize:12},label:{fontSize:9,fontWeight:'900',letterSpacing:1.2,color:'#333',marginTop:17},input:{borderBottomWidth:1,borderBottomColor:'#111',paddingVertical:13,marginBottom:10,fontSize:15,color:'#111'},primary:{backgroundColor:'#111',padding:16,minHeight:50,alignItems:'center',justifyContent:'center',marginTop:18},disabled:{opacity:.65},primaryText:{color:'#fff',fontWeight:'900',letterSpacing:1,fontSize:10},loading:{flexDirection:'row',alignItems:'center',gap:10},switch:{paddingVertical:22,alignItems:'center'},switchText:{fontSize:9,fontWeight:'800',letterSpacing:.8,color:'#111'},item:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:19,borderBottomWidth:1,borderBottomColor:'#eee'},itemText:{fontSize:11,fontWeight:'700',letterSpacing:.5,color:'#222'},arrow:{fontSize:16,color:'#555'},section:{fontSize:10,fontWeight:'900',letterSpacing:1.4,color:'#111',marginTop:32,marginBottom:5},editButton:{alignSelf:'flex-start',borderWidth:1,borderColor:'#111',paddingHorizontal:16,paddingVertical:11,marginTop:17},editButtonText:{fontSize:9,fontWeight:'900',letterSpacing:1,color:'#111'},cancelEdit:{alignSelf:'center',padding:15},cancelText:{fontSize:10,fontWeight:'900',letterSpacing:1,color:'#555'},logout:{marginTop:30,borderWidth:1,borderColor:'#111',padding:15,alignItems:'center'},logoutText:{fontWeight:'800',fontSize:10,letterSpacing:1},error:{borderWidth:1,borderColor:'#e4c0c0',backgroundColor:'#fff8f8',padding:12,marginTop:12},errorText:{fontSize:12,color:'#8a2525',lineHeight:18},dismiss:{fontSize:9,fontWeight:'900',letterSpacing:1,color:'#111',marginTop:8},success:{borderWidth:1,borderColor:'#b8d9c1',backgroundColor:'#f6fbf7',padding:12,marginTop:15},successText:{fontSize:12,color:'#245b36',lineHeight:18}});
