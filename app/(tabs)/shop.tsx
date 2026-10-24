@@ -7,7 +7,7 @@ import ProductCard from '../../src/components/ProductCard';
 import {api,listFrom} from '../../src/lib/api';
 
 const label=(v:any)=>String(v??'').trim();
-const productSizes=(p:any):string[]=>Array.isArray(p.sizes)?p.sizes.map(label).filter(Boolean):Array.isArray(p.variants)?p.variants.map((v:any)=>label(v?.size)).filter(Boolean):p.size?[label(p.size)]:[];
+const productSizes=(p:any):string[]=>{const raw=Array.isArray(p.sizes)&&p.sizes.length?p.sizes:Array.isArray(p.variants)&&p.variants.length?p.variants.map((v:any)=>v?.size):p.size?[p.size]:[];return Array.from(new Set(raw.flatMap((value:any)=>String(value??'').split(/[,|\n]/).map(label).filter(Boolean))))};
 const stock=(p:any):boolean|null=>{const n=p.stock_quantity??p.inventory??p.stockCount??p.stock;if(typeof n==='number'&&Number.isFinite(n))return n>0;if(typeof n==='string'&&n.trim()!==''&&Number.isFinite(Number(n)))return Number(n)>0;for(const k of ['in_stock','is_available','available','stock'])if(typeof p[k]==='boolean')return p[k];return null};
 const priceValue=(p:any):number|null=>{if(p?.price===null||p?.price===undefined||String(p.price).trim()==='')return null;const value=Number(p.price);return Number.isFinite(value)&&value>=0?value:null};
 const discount=(p:any)=>{const price=priceValue(p),rawOld=p?.old_price??p?.compare_at_price,old=rawOld===null||rawOld===undefined||String(rawOld).trim()===''?null:Number(rawOld);return price!==null&&old!==null&&Number.isFinite(old)&&old>price&&price>0?Math.min(100,Math.round((old-price)/old*100)):0};
