@@ -20,6 +20,7 @@ export default function Returns() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const requestId = useRef(0);
+  const submissionLock = useRef(false);
 
   const load = useCallback(async (refresh = false) => {
     const id = ++requestId.current;
@@ -57,7 +58,8 @@ export default function Returns() {
     const cleanReason = reason === 'Other' ? customReason.trim() : reason;
     if (cleanReason.length < 3) { setNotice('Please describe your return reason.'); return; }
     if (type === 'exchange' && !exchangeSize.trim()) { setNotice('Enter the size you want to exchange for.'); return; }
-    if (busyId !== null) return;
+    if (busyId !== null || submissionLock.current) return;
+    submissionLock.current = true;
     setBusyId(order.id);
     setNotice('');
     setError('');
@@ -69,6 +71,7 @@ export default function Returns() {
     } catch (e: any) {
       setError(e?.message || 'Could not submit your request. Please try again.');
     } finally {
+      submissionLock.current = false;
       setBusyId(null);
     }
   };
