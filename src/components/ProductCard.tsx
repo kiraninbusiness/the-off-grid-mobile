@@ -7,10 +7,13 @@ import {useStore} from '../store/store';
 const money = (v: any) => `₹${Number(v || 0).toLocaleString('en-IN')}`;
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80';
 
-function stockState(p: any) {
-  const quantity = p.stock_quantity ?? p.inventory ?? p.stockCount;
-  if (typeof quantity === 'number') return quantity > 0;
-  if (typeof p.stock === 'number') return p.stock > 0;
+function stockState(p: any): boolean | null {
+  // API deployments may serialize database quantities as numeric strings.
+  const quantity = p.stock_quantity ?? p.inventory ?? p.stockCount ?? p.stock;
+  if (typeof quantity === 'number' && Number.isFinite(quantity)) return quantity > 0;
+  if (typeof quantity === 'string' && quantity.trim() !== '' && Number.isFinite(Number(quantity))) {
+    return Number(quantity) > 0;
+  }
   for (const key of ['in_stock', 'is_available', 'available', 'stock']) {
     if (typeof p[key] === 'boolean') return p[key];
   }
