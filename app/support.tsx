@@ -21,7 +21,7 @@ export default function Support() {
     if (clean.length > MAX_MESSAGE) { setError('Keep your message within 1,500 characters.'); return; }
     setBusy(true); setError(''); setSent(false);
     try {
-      await api.submitSupport({ name: user?.name?.trim() || 'The Off Grid customer', email: user?.email?.trim() || 'support@theoffgrid.in', topic, message: clean });
+      await api.submitSupport({ name: user?.name?.trim() || 'The Off Grid customer', email: user?.email?.trim() || '', topic, message: clean });
       setMessage(''); setSent(true);
     } catch (e: any) {
       setError(e?.message || 'Your request could not be sent. Please try again.');
@@ -33,7 +33,7 @@ export default function Support() {
       <Text style={s.eyebrow}>THE OFF GRID / HELP</Text>
       <Text style={s.title}>SUPPORT</Text>
       <Text style={s.copy}>Need help with an order, payment, sizing, return or exchange? Send a request and our team will get back to you.</Text>
-      {sent && <View style={s.success} accessibilityLiveRegion="polite" accessible><Text style={s.successTitle}>REQUEST SENT</Text><Text style={s.successText}>Your message has been submitted successfully. Keep an eye on your registered email for any follow-up.</Text><Pressable onPress={() => setSent(false)} style={s.dismiss}><Text style={s.dismissText}>SEND ANOTHER REQUEST</Text></Pressable></View>}
+      {sent && <View style={s.success} accessibilityLiveRegion="polite" accessible><Text style={s.successTitle}>REQUEST SENT</Text><Text style={s.successText}>Your message has been submitted successfully.{user?.email?.trim() ? ' Keep an eye on your registered email for any follow-up.' : ' If you did not provide an email with your account, include your preferred contact details in a follow-up request.'}</Text><Pressable onPress={() => setSent(false)} style={s.dismiss}><Text style={s.dismissText}>SEND ANOTHER REQUEST</Text></Pressable></View>}
       <Text style={s.label}>WHAT DO YOU NEED HELP WITH?</Text>
       <View style={s.chips}>{topics.map(([value, label]) => <Pressable key={value} disabled={busy} accessibilityRole="button" accessibilityHint="Select this topic for your support request" accessibilityState={{ selected: topic === value, disabled: busy }} style={[s.chip, topic === value && s.active, busy && s.muted]} onPress={() => { setTopic(value); setError(''); }}><Text style={topic === value ? s.activeText : s.chipText}>{label}</Text></Pressable>)}</View>
       <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}><Text style={s.label}>MESSAGE</Text>{!!message&&!busy&&<Pressable accessibilityRole="button" accessibilityLabel="Clear support message" onPress={()=>{setMessage('');setError('');setSent(false);}} hitSlop={8}><Text style={s.dismissText}>CLEAR</Text></Pressable>}</View>
