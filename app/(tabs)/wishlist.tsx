@@ -1,4 +1,4 @@
-import React,{useCallback,useState} from 'react';
+import React,{useCallback,useRef,useState} from 'react';
 import {View,Text,ScrollView,StyleSheet,ActivityIndicator,Pressable} from 'react-native';
 import {useFocusEffect} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
@@ -13,7 +13,8 @@ export default function Wishlist(){
  const [loading,setLoading]=useState(true);
  const [error,setError]=useState('');
  const router=useRouter();
- const load=useCallback(()=>{let active=true;setLoading(true);api.products().then(x=>{if(active){setProducts(listFrom(x));setError('')}}).catch((e:any)=>{if(active)setError(e?.message||'Unable to load saved pieces.')}).finally(()=>{if(active)setLoading(false)});return()=>{active=false}},[]);
+ const requestId=useRef(0);
+ const load=useCallback(()=>{const id=++requestId.current;setLoading(true);setError('');api.products().then(x=>{if(id===requestId.current)setProducts(listFrom(x))}).catch((e:any)=>{if(id===requestId.current)setError(e?.message||'Unable to load saved pieces.')}).finally(()=>{if(id===requestId.current)setLoading(false)});return()=>{if(requestId.current===id)requestId.current++}},[]);
  useFocusEffect(useCallback(()=>load(),[load]));
  const saved=new Set(wishlist.map((id:any)=>String(typeof id==='object'?(id.id??id.product_id):id)));
  const items=products.filter(p=>saved.has(String(p.id)));
