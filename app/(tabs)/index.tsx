@@ -1,4 +1,4 @@
-import React,{useCallback,useState} from 'react';
+import React,{useCallback,useRef,useState} from 'react';
 import {View,Text,ScrollView,StyleSheet,Image,Pressable,ActivityIndicator,TextInput} from 'react-native';
 import {useRouter, useFocusEffect} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
@@ -11,8 +11,9 @@ const QUICK_CATS=['T-SHIRTS','SHIRTS','HOODIES','JACKETS','BOTTOMS','FOOTWEAR','
 const fallback='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=85';
 export default function Home(){
  const [products,setProducts]=useState<any[]>([]); const [loading,setLoading]=useState(true); const [apiError,setApiError]=useState(''); const [q,setQ]=useState(''); const r=useRouter();
- const loadProducts=useCallback(()=>{setLoading(true);api.products('?limit=10&page=1').then(x=>{setApiError('');setProducts(listFrom(x))}).catch((e:any)=>{setApiError(e?.message||'Unable to load products');setProducts([])}).finally(()=>setLoading(false))},[]);
- useFocusEffect(useCallback(()=>{loadProducts();},[loadProducts]));
+ const requestId=useRef(0);
+ const loadProducts=useCallback(()=>{const id=++requestId.current;setLoading(true);api.products('?limit=10&page=1').then(x=>{if(id!==requestId.current)return;setApiError('');setProducts(listFrom(x))}).catch((e:any)=>{if(id!==requestId.current)return;setApiError(e?.message||'Unable to load products');setProducts([])}).finally(()=>{if(id===requestId.current)setLoading(false)});},[]);
+ useFocusEffect(useCallback(()=>{loadProducts();return()=>{requestId.current++;};},[loadProducts]));
  const go=(path:string)=>r.push(path as any);
  return <ScrollView style={s.page} showsVerticalScrollIndicator={false}>
   <View style={s.header}><View><Text style={s.logo}>THE OFF GRID</Text><Text style={s.tag}>DESIGNED OUTSIDE THE ORDINARY.</Text></View><View style={{flexDirection:'row',gap:15}}><Pressable onPress={()=>go('/notifications')}><Ionicons name="notifications-outline" size={23} color="#111"/></Pressable><Pressable onPress={()=>go('/(tabs)/cart')}><Ionicons name="bag-outline" size={23} color="#111"/></Pressable></View></View>
