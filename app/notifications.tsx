@@ -58,6 +58,28 @@ export default function Notifications() {
       setActionError(e?.message || 'Could not mark this notification as read. Please try again.');
     } finally { setActionBusy(false); }
   };
+  const openNotification = async (item: any) => {
+    if (actionBusy) return;
+    const payload = item.data && typeof item.data === 'object' ? item.data : item.metadata && typeof item.metadata === 'object' ? item.metadata : {};
+    const orderId = item.order_id ?? item.orderId ?? payload.order_id ?? payload.orderId;
+    const productId = item.product_id ?? item.productId ?? payload.product_id ?? payload.productId;
+    if (!isRead(item)) {
+      const id = Number(item.id);
+      if (Number.isFinite(id) && id > 0) {
+        setActionBusy(true); setActionError('');
+        try {
+          await api.readNotification(id);
+          setItems(current => current.map(n => String(n.id) === String(item.id) ? { ...n, read_at: new Date().toISOString(), read: true, is_read: true } : n));
+        } catch (e: any) {
+          setActionError(e?.message || 'Could not mark this notification as read. Please try again.');
+          return;
+        } finally { setActionBusy(false); }
+      }
+    }
+    if (orderId != null && String(orderId).trim()) r.push(('/orders?orderId=' + encodeURIComponent(String(orderId))) as any);
+    else if (productId != null && String(productId).trim()) r.push(('/product/' + encodeURIComponent(String(productId))) as any);
+  };
+
   const markAll = async () => {
     if (!unread.length || actionBusy) return;
     setActionBusy(true); setActionError('');
@@ -85,7 +107,7 @@ export default function Notifications() {
         <Pressable onPress={() => load(true)} disabled={refreshing} style={s.refreshTop} accessibilityRole="button" accessibilityLabel="Refresh notifications"><Text style={s.retryText}>{refreshing ? 'REFRESHING…' : 'REFRESH ↻'}</Text></Pressable>
         {items.map((item, index) => {
           const read = isRead(item);
-          return <Pressable key={String(item.id ?? item.created_at ?? index)} onPress={() => mark(item)} disabled={read || actionBusy} accessibilityRole="button" accessibilityLabel={`${item.title || item.type || 'The Off Grid notification'}${read ? ', read' : ', unread. Tap to mark as read'}`} accessibilityHint={read ? "Already marked as read" : "Double tap to mark this notification as read"} accessibilityState={{ selected: !read, disabled: read || actionBusy, busy: actionBusy }} style={[s.item, !read && s.unread]}>
+          return <Pressable key={String(item.id ?? item.created_at ?? index)} onPress={() => openNotification(item)} disabled={actionBusy} accessibilityRole="button" accessibilityLabel={`${item.title || item.type || 'The Off Grid notification'}${read ? ', read' : ', unread'}${item.order_id || item.orderId || item.product_id || item.productId || item.data || item.metadata ? '. Tap to open related content' : '. Tap to mark as read'}`} accessibilityHint="Open related order or product when available; unread notifications are marked as read" accessibilityState={{ selected: !read, disabled: actionBusy, busy: actionBusy }} style={[s.item, !read && s.unread]}>
             <View style={[s.dot, read && s.readDot]} />
             <View style={s.itemContent}>
               <View style={s.itemHead}><Text style={s.itemTitle}>{item.title || item.type || 'THE OFF GRID'}</Text>{!read && <Text style={s.new}>NEW</Text>}</View>
