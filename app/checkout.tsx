@@ -22,7 +22,7 @@ export default function Checkout(){
  useEffect(()=>{if(coupon&&Number(coupon.applied_subtotal)!==subtotal){setCoupon(null);setCouponMsg('Your bag total changed. Apply the coupon again to refresh your discount.')}},[subtotal,coupon]);
  useEffect(()=>{if(user){api.addresses().then(x=>setSavedAddresses(Array.isArray(x)?x:(x?.items||x?.addresses||[]))).catch(()=>{})}},[user]);
  const subtotal=useMemo(()=>cart.reduce((a,x)=>a+Number(x.price||0)*x.quantity,0),[cart]);
- const discount=coupon&&Number(coupon.applied_subtotal)===subtotal?Number(coupon.discount||0):0; const shipping=subtotal>=1499?0:99; const total=Math.max(0,subtotal+shipping-discount);
+ const discount=coupon&&Number(coupon.applied_subtotal)===subtotal?Number(coupon.discount||0):0; const shipping=subtotal>=1499?0:79; const total=Math.max(0,subtotal+shipping-discount);
  const applyCoupon=async()=>{if(couponBusy||couponLock.current)return;if(!couponCode.trim()){setCoupon(null);setCouponMsg('Enter a coupon code first.');return}couponLock.current=true;setCouponBusy(true);setChecking(true);setCouponMsg('');try{const x=await api.validateCoupon(couponCode.trim().toUpperCase(),subtotal);const amount=Number(x?.discount);if(!Number.isFinite(amount)||amount<0||amount>subtotal)throw new Error('The server returned an invalid discount. Please try another code.');setCoupon({...x,discount:amount,code:x?.code||couponCode.trim().toUpperCase(),applied_subtotal:subtotal});setCouponMsg(`Applied · You save ₹${amount.toLocaleString('en-IN')}`)}catch(e:any){setCoupon(null);setCouponMsg(e.message||'Invalid coupon')}finally{couponLock.current=false;setChecking(false);setCouponBusy(false)}};
  const place=async()=>{
   if(checkoutInFlight.current)return;
