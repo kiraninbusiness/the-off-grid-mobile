@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { api, listFrom } from '../src/lib/api';
@@ -17,23 +17,32 @@ export default function Returns() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const requestId = useRef(0);
 
   const load = useCallback(async (refresh = false) => {
+    const id = ++requestId.current;
     refresh ? setRefreshing(true) : setLoading(true);
     setError('');
     try {
       const [orderData, returnData] = await Promise.all([api.orders(), api.returns()]);
-      setOrders(listFrom(orderData, ['orders', 'items', 'data', 'results']));
-      setReturns(listFrom(returnData, ['returns', 'items', 'data', 'results']));
+      if (id === requestId.current) {
+        setOrders(listFrom(orderData, ['orders', 'items', 'data', 'results']));
+        setReturns(listFrom(returnData, ['returns', 'items', 'data', 'results']));
+      }
     } catch (e: any) {
-      setError(e?.message || 'Could not load your orders and return requests.');
+      if (id === requestId.current) setError(e?.message || 'Could not load your orders and return requests.');
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (id === requestId.current) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
   }, []);
 
-  useFocusEffect(useCallback(() => { load(); }, [load]));
+  useFocusEffect(useCallback(() => {
+    load();
+    return () => { requestId.current++; };
+  }, [load]));
 
   const eligible = orders.filter(o => String(o.status || '').toLowerCase() === 'delivered' && !returns.some(r => String(r.order_id ?? r.order?.id) === String(o.id) && !terminal.has(String(r.status || 'pending').toLowerCase())));
 
