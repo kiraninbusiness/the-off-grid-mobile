@@ -28,18 +28,22 @@ export default function Delivery() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const requestId = useRef(0);
+  const activeCheck = useRef<number | null>(null);
 
   const check = async () => {
+    if (activeCheck.current !== null) return;
     const normalized = pin.replace(/\D/g, '').slice(0, 6);
     setPin(normalized);
     if (!/^[1-9][0-9]{5}$/.test(normalized)) {
       requestId.current += 1;
+      activeCheck.current = null;
       setBusy(false);
       setResult(null);
       setError('Enter a valid 6-digit Indian pincode.');
       return;
     }
     const id = ++requestId.current;
+    activeCheck.current = id;
     setBusy(true);
     setResult(null);
     setError('');
@@ -63,12 +67,14 @@ export default function Delivery() {
     } catch (e: any) {
       if (id === requestId.current) setError(e?.message || 'Could not check this pincode. Please try again.');
     } finally {
+      if (activeCheck.current === id) activeCheck.current = null;
       if (id === requestId.current) setBusy(false);
     }
   };
 
   const onPinChange = (value: string) => {
     requestId.current += 1;
+    activeCheck.current = null;
     setPin(value.replace(/\D/g, '').slice(0, 6));
     setResult(null);
     setError('');
