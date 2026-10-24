@@ -16,13 +16,13 @@ export default function Checkout(){
  const [savedAddresses,setSavedAddresses]=useState<any[]>([]); const [couponCode,setCouponCode]=useState(''),[coupon,setCoupon]=useState<any>(null),[couponMsg,setCouponMsg]=useState('');
  const [payment,setPayment]=useState<'cod'|'online'>('cod'),[busy,setBusy]=useState(false),[checking,setChecking]=useState(false),[couponBusy,setCouponBusy]=useState(false);
  const [deliveryCheckBusy,setDeliveryCheckBusy]=useState(false),[deliveryStatus,setDeliveryStatus]=useState('');
- const checkoutInFlight=useRef(false);
+ const checkoutInFlight=useRef(false),couponLock=useRef(false);
  const razorpayConfigured=Boolean(process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID);
  useEffect(()=>{if(!razorpayConfigured && payment==='online')setPayment('cod')},[razorpayConfigured,payment]);
  useEffect(()=>{if(user){api.addresses().then(x=>setSavedAddresses(Array.isArray(x)?x:(x?.items||x?.addresses||[]))).catch(()=>{})}},[user]);
  const subtotal=useMemo(()=>cart.reduce((a,x)=>a+Number(x.price||0)*x.quantity,0),[cart]);
  const discount=Number(coupon?.discount||0); const shipping=subtotal>=1499?0:99; const total=Math.max(0,subtotal+shipping-discount);
- const applyCoupon=async()=>{if(couponBusy)return;if(!couponCode.trim()){setCoupon(null);setCouponMsg('Enter a coupon code first.');return}setCouponBusy(true);setChecking(true);setCouponMsg('');try{const x=await api.validateCoupon(couponCode.trim().toUpperCase(),subtotal);const amount=Number(x?.discount);if(!Number.isFinite(amount)||amount<0||amount>subtotal)throw new Error('The server returned an invalid discount. Please try another code.');setCoupon({...x,discount:amount,code:x?.code||couponCode.trim().toUpperCase()});setCouponMsg(`Applied · You save ₹${amount.toLocaleString('en-IN')}`)}catch(e:any){setCoupon(null);setCouponMsg(e.message||'Invalid coupon')}finally{setChecking(false);setCouponBusy(false)}};
+ const applyCoupon=async()=>{if(couponBusy||couponLock.current)return;if(!couponCode.trim()){setCoupon(null);setCouponMsg('Enter a coupon code first.');return}couponLock.current=true;setCouponBusy(true);setChecking(true);setCouponMsg('');try{const x=await api.validateCoupon(couponCode.trim().toUpperCase(),subtotal);const amount=Number(x?.discount);if(!Number.isFinite(amount)||amount<0||amount>subtotal)throw new Error('The server returned an invalid discount. Please try another code.');setCoupon({...x,discount:amount,code:x?.code||couponCode.trim().toUpperCase()});setCouponMsg(`Applied · You save ₹${amount.toLocaleString('en-IN')}`)}catch(e:any){setCoupon(null);setCouponMsg(e.message||'Invalid coupon')}finally{couponLock.current=false;setChecking(false);setCouponBusy(false)}};
  const place=async()=>{
   if(checkoutInFlight.current)return;
   if(!cart.length)return Alert.alert('Your bag is empty','Add a piece before checking out.');
