@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,22 +13,29 @@ export default function Notifications() {
   const [actionBusy, setActionBusy] = useState(false);
   const [actionError, setActionError] = useState('');
   const r = useRouter();
+  const requestId = useRef(0);
 
   const load = useCallback(async (refresh = false) => {
+    const id = ++requestId.current;
     refresh ? setRefreshing(true) : setBusy(true);
     setError('');
     try {
       const data = await api.notifications();
-      setItems(listFrom(data, ['notifications', 'items', 'data', 'results']));
+      if (id === requestId.current) setItems(listFrom(data, ['notifications', 'items', 'data', 'results']));
     } catch (e: any) {
-      setError(e?.message || 'Could not load notifications. Check your connection and try again.');
+      if (id === requestId.current) setError(e?.message || 'Could not load notifications. Check your connection and try again.');
     } finally {
-      setBusy(false);
-      setRefreshing(false);
+      if (id === requestId.current) {
+        setBusy(false);
+        setRefreshing(false);
+      }
     }
   }, []);
 
-  useFocusEffect(useCallback(() => { load(); }, [load]));
+  useFocusEffect(useCallback(() => {
+    load();
+    return () => { requestId.current++; };
+  }, [load]));
   const unread = items.filter(item => !isRead(item));
   const mark = async (item: any) => {
     if (isRead(item) || actionBusy) return;
