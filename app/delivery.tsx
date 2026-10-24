@@ -55,7 +55,7 @@ export default function Delivery() {
       <Text style={s.eyebrow}>THE OFF GRID / DELIVERY</Text>
       <Text style={s.title}>CHECK DELIVERY</Text>
       <Text style={s.copy}>Check delivery availability, estimated arrival and cash-on-delivery options for your area.</Text>
-      <Text style={s.label}>INDIAN PINCODE</Text>
+      <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}><Text style={s.label}>INDIAN PINCODE</Text>{!!pin&&<Pressable accessibilityRole="button" accessibilityLabel="Clear pincode" hitSlop={8} onPress={()=>onPinChange('')}><Text style={s.retryText}>CLEAR</Text></Pressable>}</View>
       <TextInput
         value={pin}
         onChangeText={onPinChange}
@@ -74,7 +74,7 @@ export default function Delivery() {
       </Pressable>
       {!!error && <View style={s.errorBox} accessibilityLiveRegion="polite"><Text style={s.errorTitle}>UNABLE TO CHECK</Text><Text style={s.errorText}>{error}</Text>{!busy && pin.length === 6 && <Pressable onPress={check} style={s.retry}><Text style={s.retryText}>TRY AGAIN</Text></Pressable>}</View>}
       {result && !error && (
-        <View style={s.result} accessibilityLiveRegion="polite" accessible>
+        <View style={s.result} accessibilityLiveRegion="polite" accessible accessibilityLabel={result.serviceable?'Delivery available for this pincode':'Delivery unavailable for this pincode'}>
           <Text style={s.status}>{result.serviceable ? 'DELIVERY AVAILABLE' : 'NOT SERVICEABLE'}</Text>
           <Text style={s.main}>{result.serviceable ? (result.estimated_days ? `Estimated ${result.estimated_days} day${Number(result.estimated_days) === 1 ? '' : 's'}` : 'We deliver to your area') : (result.message || 'Delivery is not available for this pincode right now.')}</Text>
           {result.serviceable && <>
