@@ -1,8 +1,9 @@
 import React,{useCallback,useState} from 'react';
 import {ScrollView,View,Text,StyleSheet,ActivityIndicator,RefreshControl,Pressable} from 'react-native';
-import {useFocusEffect} from 'expo-router';
+import {useFocusEffect,useRouter} from 'expo-router';
 import {api} from '../src/lib/api';
 export default function Rewards(){
+ const router=useRouter();
  const [data,setData]=useState<any>(null),[busy,setBusy]=useState(true);
  const load=useCallback(()=>{setBusy(true);api.customerLoyalty().then(setData).catch(()=>setData(null)).finally(()=>setBusy(false))},[]);
  useFocusEffect(useCallback(()=>{load()},[load]));
@@ -13,6 +14,6 @@ export default function Rewards(){
  <View style={s.card}><Text style={s.label}>TIER PROGRESS</Text><Text style={s.spend}>₹{spend.toLocaleString('en-IN')} delivered spend</Text><View style={s.bar}><View style={[s.fill,{width:`${progress*100}%`}]}/></View><Text style={s.small}>{next?`₹${Math.max(0,next-spend).toLocaleString('en-IN')} to ${tier==='SILVER'?'GOLD':'PLATINUM'}`:'Top tier unlocked'}</Text></View>
  <View style={s.card}><Text style={s.label}>YOUR PERKS</Text><Text style={s.perk}>• Member-only drops and offers</Text><Text style={s.perk}>• Loyalty points on qualifying purchases</Text><Text style={s.perk}>• Referral rewards when friends complete a qualifying purchase</Text></View>
  <Text style={s.section}>POINT ACTIVITY</Text>{(data?.transactions||[]).length?(data.transactions.map((x:any)=><View key={x.id} style={s.row}><View><Text style={s.order}>ORDER #{x.id}</Text><Text style={s.small}>{x.created_at?new Date(x.created_at).toLocaleDateString('en-IN'):''}</Text></View><Text style={s.earned}>+{Number(x.points_earned||0)} / -{Number(x.points_redeemed||0)}</Text></View>)):<Text style={s.empty}>Your qualifying purchase activity will appear here.</Text>}
- <Pressable style={s.ref} onPress={()=>{}}><Text style={s.refText}>INVITE FRIENDS • REFERRAL CODE {data?.referral_code||'—'}</Text></Pressable>
+ <Pressable accessibilityRole="button" accessibilityLabel="Open referral invite details" style={s.ref} onPress={()=>router.push('/referrals')}><Text style={s.refText}>INVITE FRIENDS • REFERRAL CODE {data?.referral_code||'—'}</Text></Pressable>
  </ScrollView>}
 const s=StyleSheet.create({page:{flex:1,backgroundColor:'#fff',padding:22,paddingTop:58},center:{flex:1,alignItems:'center',justifyContent:'center'},eyebrow:{fontSize:9,color:'#777',letterSpacing:1.5},title:{fontSize:38,fontWeight:'900',letterSpacing:-2,marginTop:4},hero:{backgroundColor:'#111',padding:24,marginTop:22},tier:{color:'#aaa',fontSize:10,fontWeight:'900',letterSpacing:2},points:{color:'#fff',fontSize:46,fontWeight:'900',marginTop:12},caption:{color:'#aaa',fontSize:9,letterSpacing:1.5},rule:{color:'#bbb',fontSize:11,lineHeight:17,marginTop:18},card:{borderWidth:1,borderColor:'#ddd',padding:20,marginTop:14},label:{fontSize:9,fontWeight:'900',letterSpacing:1.4},spend:{fontSize:18,fontWeight:'900',marginTop:8},bar:{height:8,backgroundColor:'#eee',marginTop:14},fill:{height:8,backgroundColor:'#111'},small:{fontSize:10,color:'#777',marginTop:8},perk:{fontSize:12,color:'#555',lineHeight:22,marginTop:7},section:{fontSize:10,fontWeight:'900',letterSpacing:1.4,marginTop:28,marginBottom:8},row:{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,borderTopColor:'#eee',paddingVertical:15},order:{fontSize:10,fontWeight:'900'},earned:{fontWeight:'900'},empty:{color:'#777'},ref:{backgroundColor:'#111',padding:16,alignItems:'center',marginTop:20},refText:{color:'#fff',fontSize:9,fontWeight:'900',letterSpacing:1}});
