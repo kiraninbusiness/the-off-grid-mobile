@@ -43,21 +43,6 @@ export default function Notifications() {
     return () => { requestId.current++; };
   }, [load]));
   const unread = items.filter(item => !isRead(item));
-  const mark = async (item: any) => {
-    if (isRead(item) || actionBusy) return;
-    const id = Number(item.id);
-    if (!Number.isFinite(id) || id <= 0) {
-      setActionError('This notification cannot be marked as read right now. Refresh and try again.');
-      return;
-    }
-    setActionBusy(true); setActionError('');
-    try {
-      await api.readNotification(id);
-      setItems(current => current.map(n => String(n.id) === String(item.id) ? { ...n, read_at: new Date().toISOString(), read: true, is_read: true } : n));
-    } catch (e: any) {
-      setActionError(e?.message || 'Could not mark this notification as read. Please try again.');
-    } finally { setActionBusy(false); }
-  };
   const openNotification = async (item: any) => {
     if (actionBusy) return;
     const payload = item.data && typeof item.data === 'object' ? item.data : item.metadata && typeof item.metadata === 'object' ? item.metadata : {};
