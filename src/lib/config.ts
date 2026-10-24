@@ -5,6 +5,9 @@ export const APP_CONFIG = {
   easProjectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID || '',
 };
 
+// Orders at or above this subtotal ship free (matches the checkout screen).
+export const FREE_SHIPPING_THRESHOLD = 1499;
+
 export function validateProductionConfig() {
   if (!__DEV__) {
     const missing: string[] = [];
