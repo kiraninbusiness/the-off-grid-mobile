@@ -25,6 +25,7 @@ export default function Profile() {
   }, [user?.name, user?.email]);
 
   const saveProfile = async () => {
+    if (busy) return;
     const cleanName = profileName.trim();
     const cleanEmail = profileEmail.trim().toLowerCase();
     if (cleanName.length < 2) { setError('Enter a name with at least 2 characters.'); return; }
@@ -41,6 +42,7 @@ export default function Profile() {
   };
 
   const submit = async () => {
+    if (busy) return;
     if (mode === 'register' && name.trim().length < 2) { setError('Enter your full name.'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setError('Enter a valid email address.'); return; }
     if (!password) { setError('Enter your password.'); return; }
