@@ -1,4 +1,4 @@
-import React,{useCallback,useState} from 'react';
+import React,{useCallback,useRef,useState} from 'react';
 import {ScrollView,View,Text,StyleSheet,ActivityIndicator,RefreshControl,Pressable} from 'react-native';
 import {useFocusEffect,useRouter} from 'expo-router';
 import {api} from '../src/lib/api';
@@ -6,8 +6,9 @@ const formatActivityDate=(value:any)=>{if(!value)return '';const date=new Date(v
 export default function Rewards(){
  const router=useRouter();
  const [data,setData]=useState<any>(null),[busy,setBusy]=useState(true),[error,setError]=useState('');
- const load=useCallback(async()=>{setBusy(true);setError('');try{const result=await api.customerLoyalty();setData(result??null)}catch(e:any){setError(e?.message||'Unable to load your loyalty details. Please try again.')}finally{setBusy(false)}},[]);
- useFocusEffect(useCallback(()=>{load()},[load]));
+ const requestId=useRef(0);
+ const load=useCallback(async()=>{const id=++requestId.current;setBusy(true);setError('');try{const result=await api.customerLoyalty();if(id===requestId.current)setData(result??null)}catch(e:any){if(id===requestId.current)setError(e?.message||'Unable to load your loyalty details. Please try again.')}finally{if(id===requestId.current)setBusy(false)}},[]);
+ useFocusEffect(useCallback(()=>{load();return()=>{requestId.current++}},[load]));
  if(busy&&!data)return <View style={s.center}><ActivityIndicator/></View>;
  if(!busy&&!data&&error)return <View style={s.center}><Text style={s.section}>REWARDS UNAVAILABLE</Text><Text style={s.empty}>{error}</Text><Pressable accessibilityRole="button" onPress={load} style={s.ref}><Text style={s.refText}>TRY AGAIN</Text></Pressable></View>;
  const numeric=(value:any)=>{const n=Number(value);return Number.isFinite(n)&&n>0?n:0}; const points=numeric(data?.points),spend=numeric(data?.delivered_spend),transactions=Array.isArray(data?.transactions)?data.transactions:[],tier=spend>=25000?'PLATINUM':spend>=10000?'GOLD':'SILVER',next=tier==='SILVER'?10000:tier==='GOLD'?25000:0,progress=next?Math.max(0,Math.min(1,spend/next)):1;
