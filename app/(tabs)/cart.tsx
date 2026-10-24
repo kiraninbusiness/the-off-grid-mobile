@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {View,Text,ScrollView,Image,Pressable,StyleSheet,Alert,ActivityIndicator} from 'react-native';
+import {View,Text,ScrollView,Image,Pressable,StyleSheet,Alert,ActivityIndicator,RefreshControl} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {useStore} from '../../src/store/store';
@@ -8,13 +8,13 @@ import FreeShippingBar from '../../src/components/FreeShippingBar';
 const FALLBACK='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=500&q=80';
 const money=(n:number)=>'₹'+Number(n||0).toLocaleString('en-IN');
 export default function Cart(){
- const {cart,remove,clearCart,updateQuantity}=useStore();const r=useRouter();const [busy,setBusy]=useState<string[]>([]);const [failedImages,setFailedImages]=useState<string[]>([]);
+ const {cart,remove,clearCart,updateQuantity,refresh}=useStore();const r=useRouter();const [busy,setBusy]=useState<string[]>([]);const [failedImages,setFailedImages]=useState<string[]>([]);
  const subtotal=cart.reduce((a,x)=>a+Number(x.price||0)*(Number(x.quantity)||1),0);
  const shipping=subtotal===0||subtotal>=1499?0:99;const total=subtotal+shipping;
  const act=async(key:string,fn:()=>Promise<void>)=>{if(busy.includes(key))return;setBusy(x=>[...x,key]);try{await fn()}catch(e:any){Alert.alert('Bag update failed',e?.message||'Please try again.')}finally{setBusy(x=>x.filter(v=>v!==key))}};
  const itemId=(x:any)=>x.id??x.guest_id??`${x.product_id}|${x.selected_size||''}|${x.selected_color||''}`;
  const clearAll=()=>Alert.alert('Clear your bag?',`Remove all ${cart.length} item${cart.length===1?'':'s'} from your bag?`,[{text:'KEEP',style:'cancel'},{text:'CLEAR BAG',style:'destructive',onPress:()=>act('clear-cart',clearCart)}]);
- return <ScrollView style={s.page} contentContainerStyle={{paddingBottom:35}}><Text style={s.eyebrow}>THE OFF GRID / YOUR SELECTION</Text><View style={s.titleRow}><Text style={s.title}>YOUR BAG <Text style={s.itemCount}>({cart.length})</Text></Text>{!!cart.length&&<Pressable accessibilityRole="button" accessibilityLabel="Clear all items from bag" disabled={busy.includes('clear-cart')} onPress={clearAll} style={s.clearBag}><Text style={s.clearBagText}>{busy.includes('clear-cart')?'CLEARING…':'CLEAR BAG'}</Text></Pressable>}</View>
+ return <ScrollView style={s.page} contentContainerStyle={{paddingBottom:35}} refreshControl={<RefreshControl refreshing={busy.includes('refresh-cart')} onRefresh={()=>act('refresh-cart',refresh)} tintColor="#111" colors={["#111"]}/>}><Text style={s.eyebrow}>THE OFF GRID / YOUR SELECTION</Text><View style={s.titleRow}><Text style={s.title}>YOUR BAG <Text style={s.itemCount}>({cart.length})</Text></Text>{!!cart.length&&<Pressable accessibilityRole="button" accessibilityLabel="Clear all items from bag" disabled={busy.includes('clear-cart')} onPress={clearAll} style={s.clearBag}><Text style={s.clearBagText}>{busy.includes('clear-cart')?'CLEARING…':'CLEAR BAG'}</Text></Pressable>}</View>
  {!cart.length?<View style={s.empty}><Ionicons name="bag-handle-outline" size={36} color="#777"/><Text style={s.emptyTitle}>Nothing in your bag. Yet.</Text><Text style={s.emptyCopy}>Find the pieces that feel like you.</Text><Pressable accessibilityRole="button" accessibilityLabel="Explore the collection" style={s.btn} onPress={()=>r.push('/(tabs)/shop')}><Text style={s.btnText}>EXPLORE THE COLLECTION</Text></Pressable></View>:<>
  <FreeShippingBar subtotal={subtotal}/><Text style={s.shippingNote}>{subtotal>=1499?'You unlocked free shipping.':`Add ${money(1499-subtotal)} more for free shipping.`}</Text>
  {cart.map((x,i)=>{const key=String(itemId(x)),line=Number(x.price||0)*(Number(x.quantity)||1),working=busy.includes(key);return <View style={s.item} key={key+'-'+i}>
