@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, RefreshControl } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { api, listFrom } from '../src/lib/api';
@@ -71,7 +71,7 @@ export default function Notifications() {
   };
 
   return (
-    <ScrollView style={s.page} contentContainerStyle={s.content}>
+    <ScrollView style={s.page} contentContainerStyle={s.content} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor="#111" colors={["#111"]} />}>
       <View style={s.head}>
         <View style={s.heading}><Text style={s.eyebrow}>THE OFF GRID / UPDATES</Text><Text style={s.title}>NOTIFICATIONS</Text><Text style={s.subtitle}>{unread.length ? `${unread.length} unread update${unread.length === 1 ? '' : 's'}` : 'You are up to date'}</Text></View>
         <Pressable onPress={() => r.back()} accessibilityRole="button" accessibilityLabel="Close notifications" style={s.close}><Ionicons name="close" size={23} color="#111" /></Pressable>
