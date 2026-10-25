@@ -1,7 +1,7 @@
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import {Platform} from 'react-native';
-import {API_URL, getToken} from './api';
+import {api} from './api';
 
 export async function registerForPushNotifications() {
   if (!Device.isDevice || Constants.executionEnvironment === 'storeClient') return null;
@@ -14,8 +14,9 @@ export async function registerForPushNotifications() {
   }
   if(status!=='granted') return null;
   if(Platform.OS==='android') await Notifications.setNotificationChannelAsync('drops',{name:'Drops & Orders',importance:Notifications.AndroidImportance.HIGH,sound:'default'});
-  const token=(await Notifications.getExpoPushTokenAsync({projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID})).data;
-  const auth=await getToken();
-  if(auth) fetch(`${API_URL}/notifications/push-token`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${auth}`},body:JSON.stringify({token,platform:Platform.OS})}).catch(()=>{});
+  const projectId=process.env.EXPO_PUBLIC_EAS_PROJECT_ID || Constants.easConfig?.projectId || Constants.expoConfig?.extra?.eas?.projectId;
+  if(!projectId) throw new Error('EAS project ID is not configured for push notifications.');
+  const token=(await Notifications.getExpoPushTokenAsync({projectId})).data;
+  await api.registerPushToken(token,Platform.OS);
   return token;
 }
