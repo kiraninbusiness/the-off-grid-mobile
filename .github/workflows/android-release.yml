@@ -1,0 +1,48 @@
+name: Android release build
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Build profile
+        required: true
+        type: choice
+        options:
+          - preview
+          - production
+        default: preview
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: TypeScript type check
+        run: npm run typecheck
+      - name: Validate release configuration
+        run: npm run release:check
+      - name: Expo diagnostics
+        run: npx expo-doctor
+      - name: Require Expo access token
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::Add EXPO_TOKEN in repository Settings > Secrets and variables > Actions before starting an Android build."
+            exit 1
+          fi
+      - name: Build Android app with EAS
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: npx eas-cli build --platform android --profile "${{ inputs.profile }}" --non-interactive
