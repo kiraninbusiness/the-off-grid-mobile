@@ -4,7 +4,6 @@ import { StoreProvider } from '../src/store/store';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
-import { registerForPushNotifications } from '../src/lib/notifications';
 import { track } from '../src/lib/analytics';
 import { validateProductionConfig } from '../src/lib/config';
 
@@ -55,7 +54,6 @@ function Gate() {
             });
             const last = await Notifications.getLastNotificationResponseAsync();
             if (last) handleNotification(last.notification.request.content.data as Record<string, unknown>);
-            registerForPushNotifications().catch(() => {});
           } catch {
             // Expo Go does not support Android remote notifications.
           }
