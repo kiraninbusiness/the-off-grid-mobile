@@ -10,6 +10,7 @@ export default function Support() {
   const { user } = useStore();
   const [topic, setTopic] = useState('general');
   const [message, setMessage] = useState('');
+  const [contactEmail, setContactEmail] = useState(String(user?.email || ''));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [sent, setSent] = useState(false);
@@ -18,12 +19,14 @@ export default function Support() {
   const send = async () => {
     if (sending.current || busy) return;
     const clean = message.trim();
+    const email = contactEmail.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Enter a valid email address so our team can reply.'); return; }
     if (clean.length < 10) { setError('Please describe your issue in at least 10 characters.'); return; }
     if (clean.length > MAX_MESSAGE) { setError('Keep your message within 1,500 characters.'); return; }
     sending.current = true;
     setBusy(true); setError(''); setSent(false);
     try {
-      await api.submitSupport({ name: user?.name?.trim() || 'The Off Grid customer', email: user?.email?.trim() || '', topic, message: clean });
+      await api.submitSupport({ name: user?.name?.trim() || 'The Off Grid customer', email, topic, message: clean });
       setMessage(''); setSent(true);
     } catch (e: any) {
       setError(e?.message || 'Your request could not be sent. Please try again.');
@@ -35,7 +38,9 @@ export default function Support() {
       <Text style={s.eyebrow}>THE OFF GRID / HELP</Text>
       <Text style={s.title}>SUPPORT</Text>
       <Text style={s.copy}>Need help with an order, payment, sizing, return or exchange? Send a request and our team will get back to you.</Text>
-      {sent && <View style={s.success} accessibilityLiveRegion="polite" accessible><Text style={s.successTitle}>REQUEST SENT</Text><Text style={s.successText}>Your message has been submitted successfully.{user?.email?.trim() ? ' Keep an eye on your registered email for any follow-up.' : ' If you did not provide an email with your account, include your preferred contact details in a follow-up request.'}</Text><Pressable onPress={() => setSent(false)} style={s.dismiss}><Text style={s.dismissText}>SEND ANOTHER REQUEST</Text></Pressable></View>}
+      {sent && <View style={s.success} accessibilityLiveRegion="polite" accessible><Text style={s.successTitle}>REQUEST SENT</Text><Text style={s.successText}>Your message has been submitted successfully.{contactEmail.trim() ? ' We will use the email address you provided for any follow-up.' : ''}</Text><Pressable onPress={() => setSent(false)} style={s.dismiss}><Text style={s.dismissText}>SEND ANOTHER REQUEST</Text></Pressable></View>}
+      <Text style={s.label}>EMAIL FOR OUR REPLY</Text>
+      <TextInput value={contactEmail} onChangeText={value => { setContactEmail(value.slice(0, 254)); setError(''); setSent(false); }} placeholder="you@example.com" placeholderTextColor="#999" style={s.emailInput} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} editable={!busy} accessibilityLabel="Contact email" />
       <Text style={s.label}>WHAT DO YOU NEED HELP WITH?</Text>
       <View style={s.chips}>{topics.map(([value, label]) => <Pressable key={value} disabled={busy} accessibilityRole="button" accessibilityHint="Select this topic for your support request" accessibilityState={{ selected: topic === value, disabled: busy }} style={[s.chip, topic === value && s.active, busy && s.muted]} onPress={() => { setTopic(value); setError(''); }}><Text style={topic === value ? s.activeText : s.chipText}>{label}</Text></Pressable>)}</View>
       <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}><Text style={s.label}>MESSAGE</Text>{!!message&&!busy&&<Pressable accessibilityRole="button" accessibilityLabel="Clear support message" onPress={()=>{setMessage('');setError('');setSent(false);}} hitSlop={8}><Text style={s.dismissText}>CLEAR</Text></Pressable>}</View>
@@ -53,7 +58,7 @@ const s = StyleSheet.create({
   copy:{fontSize:12,color:'#666',lineHeight:19,marginTop:9,marginBottom:22}, label:{fontSize:9,fontWeight:'900',letterSpacing:1.3,marginTop:12,color:'#222'},
   chips:{flexDirection:'row',flexWrap:'wrap',gap:8,marginTop:10,marginBottom:18}, chip:{borderWidth:1,borderColor:'#ddd',paddingHorizontal:12,paddingVertical:11,minHeight:40,justifyContent:'center'},
   active:{backgroundColor:'#111',borderColor:'#111'}, muted:{opacity:0.6}, chipText:{color:'#222',fontSize:11}, activeText:{color:'#fff',fontSize:11,fontWeight:'700'},
-  input:{borderWidth:1,borderColor:'#ddd',minHeight:145,padding:14,marginTop:10,fontSize:13,lineHeight:19,color:'#111'}, counter:{fontSize:10,color:'#888',textAlign:'right',marginTop:7}, counterWarn:{color:'#8a4a14},
+  emailInput:{borderWidth:1,borderColor:'#ddd',minHeight:48,paddingHorizontal:14,marginTop:10,fontSize:13,color:'#111'}, input:{borderWidth:1,borderColor:'#ddd',minHeight:145,padding:14,marginTop:10,fontSize:13,lineHeight:19,color:'#111'}, counter:{fontSize:10,color:'#888',textAlign:'right',marginTop:7}, counterWarn:{color:'#8a4a14},
   btn:{backgroundColor:'#111',minHeight:50,padding:16,alignItems:'center',justifyContent:'center',marginTop:14}, btnDisabled:{opacity:0.65}, btnText:{color:'#fff',fontWeight:'900',fontSize:9,letterSpacing:1},
   sending:{flexDirection:'row',alignItems:'center',gap:10}, error:{backgroundColor:'#fff8f8',borderWidth:1,borderColor:'#e4c0c0',padding:12,marginTop:12}, errorText:{color:'#8a2525',fontSize:12,lineHeight:18},
   retry:{alignSelf:'flex-start',paddingTop:10,paddingRight:12}, retryText:{fontSize:10,fontWeight:'900',color:'#111',letterSpacing:1},
