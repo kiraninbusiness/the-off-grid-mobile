@@ -81,6 +81,8 @@ export default function Delivery() {
     setBusy(false);
   };
 
+  const freeShippingThreshold = typeof result?.free_shipping_threshold === 'number' && Number.isFinite(result.free_shipping_threshold) && result.free_shipping_threshold >= 0 ? result.free_shipping_threshold : 1499;
+
   return (
     <View style={s.page}>
       <Text style={s.eyebrow}>THE OFF GRID / DELIVERY</Text>
@@ -113,7 +115,7 @@ export default function Delivery() {
             <Text style={s.line}>CASH ON DELIVERY</Text>
             <Text style={s.value}>{result.cod ? 'Available' : 'Not available'}</Text>
             <Text style={s.line}>FREE SHIPPING</Text>
-            <Text style={s.value}>Orders above ₹{(Number.isFinite(result.free_shipping_threshold) && result.free_shipping_threshold! >= 0 ? result.free_shipping_threshold : 1499).toLocaleString('en-IN')}</Text>
+            <Text style={s.value}>Orders above ₹{freeShippingThreshold.toLocaleString('en-IN')}</Text>
           </>}
         </View>
       )}
