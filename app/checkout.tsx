@@ -32,18 +32,25 @@ export default function Checkout(){
  const place=async()=>{
   if(checkoutInFlight.current)return;
   if(!cart.length)return Alert.alert('Your bag is empty','Add a piece before checking out.');
-  if(!Number.isFinite(subtotal)||subtotal<=0||cart.some(x=>!Number.isFinite(Number(x.product_id))||Number(x.product_id)<=0||!Number.isInteger(Number(x.quantity))||Number(x.quantity)<1||Number(x.quantity)>99||!Number.isFinite(Number(x.price))||Number(x.price)<=0))return Alert.alert('Check your bag','One or more items have invalid product, price or quantity details. Return to your bag and try again.');
+  if(!Number.isFinite(subtotal)||subtotal<=0||cart.some(x=>!Number.isFinite(Number(x.product_id))||Number(x.product_id)<=0||!Number.isInteger(Number(x.quantity))||Number(x.quantity)<1||Number(x.quantity)>10||!Number.isFinite(Number(x.price))||Number(x.price)<=0))return Alert.alert('Check your bag','One or more items have invalid product, price or quantity details. Return to your bag and try again.');
   if(!f.name.trim()||!/^[6-9][0-9]{9}$/.test(f.phone.replace(/\D/g,''))||!f.address.trim()||!f.city.trim()||!f.state.trim()||!/^[1-9][0-9]{5}$/.test(f.pincode))return Alert.alert('Complete your delivery details','Enter your name, address, city and state, a valid 10-digit Indian mobile number and a 6-digit PIN code.');
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim()))return Alert.alert('Check your email','Enter a valid email address. It is required for order confirmation.');
   checkoutInFlight.current=true;
   setBusy(true);
-  let orderCreationStarted=false;
+  let orderStatusUncertain=false;
   try{
    const catalogueResults=await Promise.all(cart.map(async(item:any)=>{try{const response:any=await api.product(String(item.product_id));const product=response?.product??response?.data?.product??response?.data??response;if(!product||String(product.id??product.product_id)!==String(item.product_id))return `Could not confirm ${item.name||'an item'} in the catalogue. Return to your bag and try again.`;const livePrice=Number(product.price);if(!Number.isFinite(livePrice)||livePrice<=0)return `The current price for ${item.name||'an item'} is unavailable. Return to your bag and try again.`;if(Math.abs(livePrice-Number(item.price))>0.009)return `The price for ${item.name||'an item'} has changed to ₹${livePrice.toLocaleString('en-IN')}. Return to your bag to review it before ordering.`;const stockRaw=product.stock_quantity??product.inventory??product.stockCount??product.stock;const stock=typeof stockRaw==='number'?stockRaw:typeof stockRaw==='string'&&stockRaw.trim()!==''&&Number.isFinite(Number(stockRaw))?Number(stockRaw):null;if((stock!==null&&stock<=0)||product.in_stock===false||product.is_available===false)return `${item.name||'An item'} is currently unavailable. Remove it from your bag.`;const variants=Array.isArray(product.variants)?product.variants:[];if(variants.length&&(item.selected_size||item.selected_color)){const variant=variants.find((v:any)=>String(v.size??'').trim().toLowerCase()===String(item.selected_size||'').trim().toLowerCase()&&String(v.color??v.colour??'').trim().toLowerCase()===String(item.selected_color||'').trim().toLowerCase());if(!variant)return `The selected size/colour for ${item.name||'an item'} is no longer available. Return to your bag and choose another.`;const raw=variant.stock_quantity??variant.stock??variant.inventory;const qty=typeof raw==='number'?raw:typeof raw==='string'&&raw.trim()!==''&&Number.isFinite(Number(raw))?Number(raw):null;if(qty!==null&&qty<Number(item.quantity))return qty<=0?`${item.name||'This variant'} is sold out. Remove it or choose another.`:`Only ${qty} of ${item.name||'this variant'} remain. Reduce the quantity in your bag.`;}return null}catch{return 'We could not verify the latest catalogue price and availability. Check your connection and try again.'}}));const catalogueIssue=catalogueResults.find(Boolean);if(catalogueIssue)throw new Error(catalogueIssue);const orderItems=cart.map(x=>({productId:Number(x.product_id),quantity:Number(x.quantity),selectedSize:x.selected_size?.trim()||null,selectedColor:x.selected_color?.trim()||null}));const shippingDetails={name:f.name.trim(),phone:f.phone.replace(/\D/g,''),email:f.email.trim().toLowerCase(),address:f.address.trim(),city:f.city.trim(),state:f.state.trim(),pincode:f.pincode.trim()};
-   orderCreationStarted=true;
-   const response=await api.createOrder({items:orderItems,shipping:shippingDetails,payment_method:payment,coupon_code:coupon?.code||'',redeem_points:pointsToRedeem});
+   let response:any;
+   try {
+    response=await api.createOrder({items:orderItems,shipping:shippingDetails,payment_method:payment,coupon_code:coupon?.code||'',redeem_points:pointsToRedeem});
+   } catch(createError:any) {
+    // A received 4xx is a definite rejection; network failures and 5xx responses
+    // may occur after the server has committed the order, so those are uncertain.
+    orderStatusUncertain=!createError?.status||Number(createError.status)>=500;
+    throw createError;
+   }
    const order=response?.order||response?.data?.order||response;
-   if(!order?.id)throw new Error('The server did not return a valid order. Please try again.');
+   if(!order?.id){orderStatusUncertain=true;throw new Error('The server did not return a valid order. Please check My Orders before trying again.');}
    if(payment==='cod'){try{await refresh()}catch{}r.replace({pathname:'/order-success',params:{orderId:String(order.id),payment:'cod'}});return;}
    let Razorpay:any;
    try{Razorpay=require('react-native-razorpay').default||require('react-native-razorpay');}catch{await api.cancelPayment(order.id);throw new Error('Online payments require a development/production build with Razorpay enabled. Use COD in Expo Go.');}
@@ -58,7 +65,7 @@ export default function Checkout(){
    catch{r.replace({pathname:'/order-success',params:{orderId:String(order.id),payment:'pending'}});return;}
    try{await refresh()}catch{}r.replace({pathname:'/order-success',params:{orderId:String(verified?.id||order.id),payment:'online'}});
   }catch(e:any){
-   if(orderCreationStarted){
+   if(orderStatusUncertain){
     Alert.alert('ORDER STATUS UNCERTAIN','We could not confirm the result of your order request. The order may already have been created. Check My Orders before trying again.',[{text:'CHECK MY ORDERS',onPress:()=>r.replace('/orders')},{text:'STAY HERE',style:'cancel'}]);
    }else Alert.alert('Checkout failed',e.message||'Please try again.');
   }finally{checkoutInFlight.current=false;setBusy(false)}
