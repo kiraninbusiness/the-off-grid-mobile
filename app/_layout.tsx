@@ -12,8 +12,10 @@ function handleNotification(data: Record<string, unknown> | undefined) {
   if (!data) return;
   const orderId = data.orderId;
   const productId = data.productId;
+  const link = data.link;
   if (orderId != null) router.push(`/orders?orderId=${encodeURIComponent(String(orderId))}`);
   else if (productId != null) router.push(`/product/${encodeURIComponent(String(productId))}`);
+  else if (typeof link === 'string' && link.startsWith('/') && !link.startsWith('//')) router.push(link as any);
 }
 
 function Gate() {
