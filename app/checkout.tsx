@@ -20,10 +20,10 @@ export default function Checkout(){
  const checkoutInFlight=useRef(false),couponLock=useRef(false);
  const razorpayConfigured=Boolean(process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID);
  useEffect(()=>{if(!razorpayConfigured && payment==='online')setPayment('cod')},[razorpayConfigured,payment]);
- useEffect(()=>{if(coupon&&(Number(coupon.applied_subtotal)!==subtotal||coupon.applied_cart_signature!==cartSignature)){setCoupon(null);setCouponMsg('Your bag items or total changed. Apply the coupon again to refresh your discount.')}},[subtotal,cartSignature,coupon]);
  useEffect(()=>{if(user){api.addresses().then(x=>setSavedAddresses(Array.isArray(x)?x:(x?.items||x?.addresses||[]))).catch(()=>{});api.customerLoyalty().then((x:any)=>{const n=Number(x?.points);setLoyaltyPoints(Number.isFinite(n)&&n>0?Math.floor(n):0)}).catch(()=>setLoyaltyPoints(0))}else{setLoyaltyPoints(0);setRedeemInput('0')}},[user]);
  const subtotal=useMemo(()=>cart.reduce((a,x)=>a+Number(x.price||0)*x.quantity,0),[cart]);
  const cartSignature=useMemo(()=>JSON.stringify(cart.map(x=>({product_id:x.product_id,price:x.price,quantity:x.quantity,size:x.selected_size||'',color:x.selected_color||''}))),[cart]);
+ useEffect(()=>{if(coupon&&(Number(coupon.applied_subtotal)!==subtotal||coupon.applied_cart_signature!==cartSignature)){setCoupon(null);setCouponMsg('Your bag items or total changed. Apply the coupon again to refresh your discount.')}},[subtotal,cartSignature,coupon]);
  const discount=coupon&&Number(coupon.applied_subtotal)===subtotal&&coupon.applied_cart_signature===cartSignature?Number(coupon.discount||0):0; const shipping=subtotal>=1499?0:79;
  const redeemRequested=Math.max(0,Math.floor(Number(redeemInput)||0));
  const pointsToRedeem=Math.min(redeemRequested,loyaltyPoints,Math.max(0,Math.floor(subtotal-discount)));
