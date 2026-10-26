@@ -4,6 +4,7 @@ import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {useStore} from '../../src/store/store';
 import FreeShippingBar from '../../src/components/FreeShippingBar';
+import {track} from '../../src/lib/analytics';
 import {api} from '../../src/lib/api';
 
 const FALLBACK='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=500&q=80';
@@ -31,7 +32,7 @@ export default function Cart(){
   </View>
  </View>})}
  <View style={s.summary}><Text style={s.summaryTitle}>ORDER SUMMARY</Text><View style={s.row}><Text style={s.muted}>Subtotal</Text><Text>{money(subtotal)}</Text></View><View style={s.row}><Text style={s.muted}>Shipping</Text><Text>{shipping===0?'FREE':money(shipping)}</Text></View><View style={[s.row,s.totalRow]}><Text style={s.totalLabel}>ESTIMATED TOTAL</Text><Text style={s.total}>{money(total)}</Text></View><Text style={s.disclaimer}>Final availability and order total are confirmed at checkout.</Text></View>
- <Pressable accessibilityRole="button" accessibilityLabel={hasInvalidItems||catalogIssues.length?'Checkout unavailable because a bag item needs attention':`Continue to checkout for ${money(total)}`} disabled={busy.length>0||hasInvalidItems||catalogIssues.length>0} style={[s.btn,(busy.length>0||hasInvalidItems||catalogIssues.length>0)&&s.btnDisabled]} onPress={()=>r.push('/checkout')}>{busy.length>0?<><ActivityIndicator color="#fff"/><Text style={s.btnText}>UPDATING YOUR BAG…</Text></>:hasInvalidItems||catalogIssues.length>0?<Text style={s.btnText}>FIX BAG ITEMS TO CHECK OUT</Text>:<><Text style={s.btnText}>CONTINUE TO CHECKOUT · {money(total)}</Text><Ionicons name="arrow-forward" color="#fff" size={16}/></>}</Pressable><Pressable accessibilityRole="button" accessibilityLabel="Continue shopping" style={s.continue} onPress={()=>r.push('/(tabs)/shop')}><Text style={s.continueText}>CONTINUE SHOPPING</Text></Pressable>
+ <Pressable accessibilityRole="button" accessibilityLabel={hasInvalidItems||catalogIssues.length?'Checkout unavailable because a bag item needs attention':`Continue to checkout for ${money(total)}`} disabled={busy.length>0||hasInvalidItems||catalogIssues.length>0} style={[s.btn,(busy.length>0||hasInvalidItems||catalogIssues.length>0)&&s.btnDisabled]} onPress={()=>{track('checkout_started');r.push('/checkout')}}>{busy.length>0?<><ActivityIndicator color="#fff"/><Text style={s.btnText}>UPDATING YOUR BAG…</Text></>:hasInvalidItems||catalogIssues.length>0?<Text style={s.btnText}>FIX BAG ITEMS TO CHECK OUT</Text>:<><Text style={s.btnText}>CONTINUE TO CHECKOUT · {money(total)}</Text><Ionicons name="arrow-forward" color="#fff" size={16}/></>}</Pressable><Pressable accessibilityRole="button" accessibilityLabel="Continue shopping" style={s.continue} onPress={()=>r.push('/(tabs)/shop')}><Text style={s.continueText}>CONTINUE SHOPPING</Text></Pressable>
  </>}
  </ScrollView>
 }
