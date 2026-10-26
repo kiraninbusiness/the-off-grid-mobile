@@ -6,6 +6,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { track } from '../src/lib/analytics';
 import { validateProductionConfig } from '../src/lib/config';
+import { reportError, installGlobalErrorHandlers } from '../src/lib/errorReporting';
+import ErrorScreen from './error';
+
+installGlobalErrorHandlers();
+
+// expo-router renders this when a screen throws while rendering.
+export function ErrorBoundary({ error, retry }: { error: Error; retry: () => void }) {
+  useEffect(() => { reportError(error, { source: 'render', fatal: true }); }, [error]);
+  return <ErrorScreen error={error} retry={retry} />;
+}
 
 function handleNotification(data: Record<string, unknown> | undefined) {
   if (!data) return;
