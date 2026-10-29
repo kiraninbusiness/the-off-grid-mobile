@@ -1,11 +1,13 @@
-import React,{memo,useCallback,useEffect,useState} from 'react';
-import {View,Text,Image,Pressable,StyleSheet,Alert,ActivityIndicator} from 'react-native';
+import React,{memo,useCallback,useEffect,useRef,useState} from 'react';
+import {View,Text,Image,Pressable,StyleSheet,Alert,ActivityIndicator,Animated} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter} from 'expo-router';
 import {useStore} from '../store/store';
 import {theme} from '../theme';
 
 const money=(v:any)=>`₹${Number(v||0).toLocaleString('en-IN')}`;
+const NEW_DAYS=21;
+const isNew=(p:any)=>{const t=new Date(p?.created_at).getTime();return Number.isFinite(t)&&Date.now()-t<NEW_DAYS*86400000&&Date.now()>=t};
 const FALLBACK_IMAGE='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80';
 
 function stockState(p:any):boolean|null{
@@ -22,6 +24,8 @@ function ProductCard({p}:{p:any}){
  const [imageFailed,setImageFailed]=useState(false);
  const [imageLoading,setImageLoading]=useState(true);
  const [wishBusy,setWishBusy]=useState(false);
+ const scale=useRef(new Animated.Value(1)).current;
+ const pressTo=(v:number)=>Animated.spring(scale,{toValue:v,useNativeDriver:true,speed:40,bounciness:0}).start();
  useEffect(()=>{setImageFailed(false);setImageLoading(true)},[imageUri]);
  const {wishlist,toggleWish,add}=useStore();
  const liked=wishlist.some((value:any)=>String(typeof value==='object'?(value?.id??value?.product_id):value)===String(p.id));
@@ -35,18 +39,18 @@ function ProductCard({p}:{p:any}){
  const quickAdd=useCallback(async()=>{if(sizes.length||hasColourVariants||available===null){openProduct();return;}if(!available)return;try{await add(p);}catch{openProduct();}},[sizes.length,hasColourVariants,available,openProduct,add,p]);
  const toggleWishlist=useCallback(async(event:any)=>{event?.stopPropagation?.();if(wishBusy||p.id==null)return;setWishBusy(true);try{await toggleWish(Number(p.id));}catch(error:any){Alert.alert('Wishlist not updated',error?.message||'Please check your connection and try again.');}finally{setWishBusy(false);}},[wishBusy,p.id,toggleWish]);
  return <View style={s.card}>
-  <Pressable accessibilityRole="button" accessibilityLabel={`View ${p.name||'product'}`} onPress={openProduct} style={({pressed})=>[s.productPress,pressed&&s.pressed]}>
+  <Animated.View style={{transform:[{scale}]}}><Pressable accessibilityRole="button" accessibilityLabel={`View ${p.name||'product'}`} onPress={openProduct} onPressIn={()=>pressTo(0.97)} onPressOut={()=>pressTo(1)} style={s.productPress}>
    <View style={s.media}>
     {imageLoading&&!imageFailed&&<View style={s.imageLoader}><ActivityIndicator size="small" color={theme.colors.muted}/></View>}
     <Image source={{uri:imageFailed?FALLBACK_IMAGE:imageUri}} onLoadStart={()=>setImageLoading(true)} onLoad={()=>setImageLoading(false)} onError={()=>{setImageFailed(true);setImageLoading(false)}} fadeDuration={180} style={s.img} resizeMode="cover"/>
-    <View style={s.badge}><Text style={s.badgeText}>{discount>0?`-${discount}%`:'NEW'}</Text></View>
+    {(discount>0||isNew(p))&&<View style={s.badge}><Text style={s.badgeText}>{discount>0?`-${discount}%`:'NEW'}</Text></View>}
     <Pressable accessibilityRole="button" accessibilityLabel={wishBusy?'Updating wishlist':liked?'Remove from wishlist':'Add to wishlist'} accessibilityState={{disabled:wishBusy,busy:wishBusy,selected:liked}} disabled={wishBusy} hitSlop={8} style={({pressed})=>[s.heart,pressed&&s.heartPressed]} onPress={toggleWishlist}><Ionicons name={liked?'heart':'heart-outline'} size={18} color={theme.colors.ink}/></Pressable>
     {available===false&&<View style={s.sold}><Text style={s.soldText}>SOLD OUT</Text></View>}
    </View>
    <Text style={s.cat} numberOfLines={1}>{p.category||'THE OFF GRID'}</Text>
    <Text style={s.name} numberOfLines={2}>{p.name||'Untitled product'}</Text>
    <View style={s.priceRow}><Text style={s.price}>{money(price)}</Text>{discount>0&&<Text style={s.oldPrice}>{money(oldPrice)}</Text>}{discount>0&&<Text style={s.off}>{discount}% OFF</Text>}</View>
-  </Pressable>
+  </Pressable></Animated.View>
   <Pressable accessibilityRole="button" accessibilityLabel={`${available===false?'Sold out':sizes.length||hasColourVariants?'Choose product options for':available===null?'View details for':'Quick add'} ${p.name||'product'}`} style={({pressed})=>[s.add,available===false&&s.disabled,pressed&&available!==false&&s.addPressed]} onPress={quickAdd} disabled={available===false}><Ionicons name={available===false?'close-circle-outline':sizes.length||hasColourVariants?'options-outline':'add-outline'} size={15} color={available===false?theme.colors.subtle:theme.colors.ink}/><Text style={[s.addText,available===false&&s.disabledText]}>{available===false?'SOLD OUT':sizes.length||hasColourVariants?'CHOOSE OPTIONS':available===null?'VIEW DETAILS':'QUICK ADD'}</Text></Pressable>
  </View>;
 }
@@ -55,7 +59,7 @@ const sameProductCardProps=(prev:{p:any},next:{p:any})=>{
  const a=prev.p,b=next.p;
  if(a===b)return true;
  if(!a||!b)return false;
- const keys=['id','name','category','price','old_price','compare_at_price','image','stock_quantity','inventory','stockCount','stock','in_stock','is_available','available'];
+ const keys=['id','created_at','name','category','price','old_price','compare_at_price','image','stock_quantity','inventory','stockCount','stock','in_stock','is_available','available'];
  return keys.every(key=>a[key]===b[key])&&
   JSON.stringify(a.images||[])===JSON.stringify(b.images||[])&&
   JSON.stringify(a.sizes||[])===JSON.stringify(b.sizes||[])&&
