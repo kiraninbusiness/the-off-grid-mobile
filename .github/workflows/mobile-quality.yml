@@ -23,7 +23,25 @@ jobs:
       - name: Report dependency audit findings
         run: |
           npm audit --json > /tmp/npm-audit.json || true
-          node -e "const a=require('/tmp/npm-audit.json'); const v=a.metadata?.vulnerabilities||{}; console.log('Dependency audit:', JSON.stringify(v)); for (const [name,item] of Object.entries(a.vulnerabilities||{})) console.log(name + ' | severity=' + item.severity + ' | direct=' + item.isDirect + ' | fix=' + JSON.stringify(item.fixAvailable));"
+          node <<'NODE'
+          const audit = require('/tmp/npm-audit.json');
+          const counts = audit.metadata?.vulnerabilities || {};
+          console.log('Dependency audit summary:', JSON.stringify(counts));
+          for (const [name, item] of Object.entries(audit.vulnerabilities || {})) {
+            const advisories = (item.via || []).filter(v => typeof v === 'object').map(v => ({
+              title: v.title, range: v.range, url: v.url
+            }));
+            console.log(JSON.stringify({
+              package: name,
+              severity: item.severity,
+              direct: item.isDirect,
+              affectedRange: item.range,
+              fixAvailable: item.fixAvailable,
+              advisories,
+              dependencyPaths: item.effects
+            }));
+          }
+          NODE
       - name: TypeScript type check
         run: npm run typecheck
       - name: Validate release configuration
