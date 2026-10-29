@@ -71,16 +71,71 @@ export default function Checkout(){
   }finally{checkoutInFlight.current=false;setBusy(false)}
  };
  if(!user)return <View style={s.center}><Text style={s.title}>CHECKOUT</Text><Text style={s.note}>Sign in before checkout.</Text><Pressable style={s.btn} onPress={()=>r.push('/(tabs)/profile')}><Text style={s.btnText}>SIGN IN</Text></Pressable></View>;
- return <ScrollView style={s.page} contentContainerStyle={{paddingBottom:40}}><Text style={s.eyebrow}>THE OFF GRID / CHECKOUT</Text><Text style={s.title}>CHECKOUT</Text>
+ return <ScrollView style={s.page} contentContainerStyle={{paddingBottom:40}}><Text style={s.eyebrow}>THE OFF GRID / CHECKOUT</Text><Text style={s.title}>CHECKOUT</Text><View style={s.progress}><View style={s.progressStep}><Text style={s.progressNumber}>01</Text><Text style={s.progressLabel}>DELIVERY</Text></View><View style={s.progressLine}/><View style={s.progressStep}><Text style={s.progressNumber}>02</Text><Text style={s.progressLabel}>PAYMENT</Text></View><View style={s.progressLine}/><View style={s.progressStep}><Text style={s.progressNumber}>03</Text><Text style={s.progressLabel}>REVIEW</Text></View></View>
   <Section title="SAVED ADDRESSES">{savedAddresses.length>0?<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:10}}>{savedAddresses.map((a:any,index:number)=><Pressable key={String(a.id??index)} accessibilityRole="button" accessibilityLabel={`Use saved address ${a.label||index+1}`} style={s.saved} onPress={()=>setF(x=>({...x,name:savedField(a,'name')||savedField(a,'full_name')||x.name,phone:savedField(a,'phone')||savedField(a,'mobile')||x.phone,address:savedStreet(a)||x.address,city:savedField(a,'city')||x.city,state:savedField(a,'state')||x.state,pincode:String(savedField(a,'pincode')||savedField(a,'postal_code')||x.pincode)}))}><Text style={s.savedTitle}>{savedField(a,'label')||'ADDRESS'}{savedField(a,'is_default')||savedField(a,'isDefault')?' · DEFAULT':''}</Text><Text style={s.savedText}>{savedStreet(a)}{savedField(a,'city')?', ':''}{savedField(a,'city')||''}</Text><Text style={s.savedText}>{savedField(a,'state')||''}{savedField(a,'pincode')||savedField(a,'postal_code')?' — ':''}{savedField(a,'pincode')||savedField(a,'postal_code')||''}</Text></Pressable>)}</ScrollView>:<Text style={s.emptySaved}>No saved addresses found.</Text>}</Section><Section title="DELIVERY"><Input label="Full name" value={f.name} onChangeText={(v:string)=>set('name',v)}/><Input label="Phone" value={f.phone} onChangeText={(v:string)=>set('phone',v)} keyboardType="phone-pad"/><Input label="Email" value={f.email} onChangeText={(v:string)=>set('email',v)} keyboardType="email-address"/><Input label="Address" value={f.address} onChangeText={(v:string)=>set('address',v)}/><View style={s.two}><Input label="City" value={f.city} onChangeText={(v:string)=>set('city',v)} wide/><Input label="State" value={f.state} onChangeText={(v:string)=>set('state',v)} wide/></View><Input label="PIN code" value={f.pincode} onChangeText={(v:string)=>set('pincode',v.replace(/\D/g,'').slice(0,6))} keyboardType="number-pad"/><Pressable accessibilityRole="button" accessibilityLabel="Check delivery availability" disabled={deliveryCheckBusy} onPress={checkDelivery} style={[s.deliveryCheck,deliveryCheckBusy&&{opacity:.6}]}>{deliveryCheckBusy?<ActivityIndicator color="#111"/>:<Text style={s.deliveryCheckText}>CHECK DELIVERY</Text>}</Pressable>{deliveryStatus?<Text accessibilityLiveRegion="polite" style={[s.deliveryStatus,deliveryStatus.startsWith("Delivery is available")?s.ok:deliveryStatus.startsWith("Sorry")?s.bad:{color:"#666"}]}>{deliveryStatus}</Text>:null}</Section>
   <Section title="YOUR ORDER">{cart.map((item:any,index:number)=><View key={`${item.product_id}|${item.selected_size||""}|${item.selected_color||""}|${index}`} style={s.reviewItem}><View style={s.reviewDetails}><Text style={s.reviewName}>{item.name||"Product"}</Text><Text style={s.reviewVariant}>{item.selected_size?`Size ${item.selected_size}`:"Size not selected"}{item.selected_color?` · ${item.selected_color}`:""} · Qty {item.quantity}</Text><Text style={s.reviewUnit}>₹{Number(item.price||0).toLocaleString("en-IN")} each</Text></View><Text style={s.reviewTotal}>₹{(Number(item.price||0)*Number(item.quantity||0)).toLocaleString("en-IN")}</Text></View>)}<Text style={s.reviewNote}>Check each item, size, colour and quantity before placing your order.</Text></Section>
   <Section title="PROMO"><View style={s.coupon}><TextInput placeholder="COUPON CODE" value={couponCode} onChangeText={(v:string)=>{setCouponCode(v);if(coupon||couponMsg){setCoupon(null);setCouponMsg("");}}} autoCapitalize="characters" style={s.couponInput}/><Pressable disabled={couponBusy} onPress={applyCoupon} style={[s.apply,couponBusy&&{opacity:.6}]}><Text style={s.applyText}>{checking?'…':'APPLY'}</Text></Pressable></View>{couponMsg?<Text style={[s.msg,coupon?s.ok:s.bad]}>{couponMsg}</Text>:null}</Section>
   <Section title="OFF GRID CLUB / REDEEM POINTS"><View style={s.loyaltyCard}><Text style={s.loyaltyBalance}>{loyaltyPoints.toLocaleString('en-IN')} POINTS AVAILABLE</Text><Text style={s.loyaltyHint}>1 point = ₹1 off your order. Points are checked again by the server.</Text></View><View style={s.coupon}><TextInput value={redeemInput} onChangeText={(v:string)=>{setRedeemInput(v.replace(/[^0-9]/g,'').slice(0,8));setLoyaltyMsg('')}} keyboardType="number-pad" placeholder="POINTS TO REDEEM" accessibilityLabel="Loyalty points to redeem" style={s.couponInput}/><Pressable disabled={!loyaltyPoints} onPress={()=>{const n=Math.min(loyaltyPoints,Math.max(0,Math.floor(subtotal-discount)));setRedeemInput(String(n));setLoyaltyMsg(n?'Maximum available points applied.':'There are no points available to redeem on this subtotal.')}} style={[s.apply,!loyaltyPoints&&{opacity:.45}]}><Text style={s.applyText}>USE MAX</Text></Pressable></View>{pointsToRedeem>0&&<Text style={[s.msg,s.ok]}>Applied · You save ₹{pointsToRedeem.toLocaleString('en-IN')}</Text>}{!!loyaltyMsg&&<Text style={s.msg}>{loyaltyMsg}</Text>}</Section>
   <Section title="PAYMENT"><View style={s.paymentRow}>{['cod','online'].map(method=><Pressable key={method} disabled={method==='online'&&!razorpayConfigured} onPress={()=>setPayment(method as 'cod'|'online')} style={[s.payment, payment===method&&s.paymentActive,method==='online'&&!razorpayConfigured&&{opacity:.45}]}><Text style={[s.paymentText,payment===method&&s.paymentTextActive]}>{method==='cod'?'CASH ON DELIVERY':razorpayConfigured?'RAZORPAY / UPI / CARD':'ONLINE PAYMENT (BUILD REQUIRED)'}</Text></Pressable>)}</View></Section>
   <View style={s.summary}><Text style={s.sumLine}>SUBTOTAL <Text>₹{subtotal.toLocaleString('en-IN')}</Text></Text><Text style={s.sumLine}>SHIPPING <Text>{shipping?'₹'+shipping:'FREE'}</Text></Text>{discount>0&&<Text style={s.sumLine}>DISCOUNT <Text>−₹{discount.toLocaleString('en-IN')}</Text></Text>}{pointsToRedeem>0&&<Text style={s.sumLine}>LOYALTY POINTS <Text>−₹{pointsToRedeem.toLocaleString('en-IN')}</Text></Text>}<View style={s.rule}/><Text style={s.total}>TOTAL <Text>₹{total.toLocaleString('en-IN')}</Text></Text></View>
-  <Pressable accessibilityRole="button" disabled={busy||checking} onPress={place} style={[s.place,busy&&{opacity:.6}]}>{busy?<ActivityIndicator color="#fff"/>:<Text style={s.placeText}>PLACE ORDER  →</Text>}</Pressable>
+  <Pressable accessibilityRole="button" disabled={busy||checking} onPress={place} style={[s.place,busy&&{opacity:.6}]}>{busy?<ActivityIndicator color="#fff"/>:<Text style={s.placeText}>PLACE ORDER  →</Text>}</Pressable><Text style={s.trust}>SECURE CHECKOUT  ·  VERIFIED PAYMENTS  ·  EASY ONLINE SUPPORT</Text>
  </ScrollView>;
 }
 function Section({title,children}:{title:string;children:any}){return <View style={s.section}><Text style={s.sectionTitle}>{title}</Text>{children}</View>}
 function Input({label,value,onChangeText,keyboardType,wide}:{label:string;value:string;onChangeText:(v:string)=>void;keyboardType?:any;wide?:boolean}){return <View style={[s.inputWrap,wide&&{flex:1}]}><Text style={s.inputLabel}>{label}</Text><TextInput value={value} onChangeText={onChangeText} keyboardType={keyboardType} style={s.input}/></View>}
-const s=StyleSheet.create({page:{flex:1,backgroundColor:'#fff',padding:22,paddingTop:58},center:{flex:1,justifyContent:'center',alignItems:'center',padding:24},eyebrow:{fontSize:9,color:'#777',letterSpacing:1.5},title:{fontSize:42,fontWeight:'900',letterSpacing:-2,marginTop:4},section:{marginTop:28},sectionTitle:{fontSize:10,fontWeight:'900',letterSpacing:1.3,marginBottom:14},saved:{width:250,borderWidth:1,borderColor:'#ddd',padding:14},savedTitle:{fontSize:9,fontWeight:'900',letterSpacing:.8},savedText:{fontSize:10,color:'#666',marginTop:5},emptySaved:{fontSize:11,color:'#777'},inputWrap:{marginBottom:12},inputLabel:{fontSize:9,color:'#777',marginBottom:5},input:{borderWidth:1,borderColor:'#ddd',padding:12,fontSize:12},two:{flexDirection:'row',gap:10},deliveryCheck:{borderWidth:1,borderColor:'#111',padding:12,alignItems:'center',justifyContent:'center'},deliveryCheckText:{fontSize:9,fontWeight:'900',letterSpacing:.8},deliveryStatus:{fontSize:10,lineHeight:16,marginTop:8},ok:{color:'#18794e'},bad:{color:'#b42318'},reviewItem:{flexDirection:'row',justifyContent:'space-between',gap:15,borderTopWidth:1,borderTopColor:'#eee',paddingVertical:13},reviewDetails:{flex:1},reviewName:{fontSize:12,fontWeight:'800'},reviewVariant:{fontSize:10,color:'#666',marginTop:4},reviewUnit:{fontSize:9,color:'#888',marginTop:4},reviewTotal:{fontSize:12,fontWeight:'900'},reviewNote:{fontSize:10,color:'#777',lineHeight:16,marginTop:4},coupon:{flexDirection:'row',borderWidth:1,borderColor:'#ddd'},couponInput:{flex:1,padding:12,fontSize:11},apply:{backgroundColor:'#111',paddingHorizontal:18,justifyContent:'center'},applyText:{color:'#fff',fontSize:9,fontWeight:'900'},loyaltyCard:{borderWidth:1,borderColor:'#ddd',padding:14,marginBottom:10},loyaltyBalance:{fontSize:11,fontWeight:'900',letterSpacing:.5},loyaltyHint:{fontSize:10,color:'#777',lineHeight:15,marginTop:5},msg:{fontSize:10,marginTop:8},paymentRow:{gap:10},payment:{borderWidth:1,borderColor:'#ddd',padding:14},paymentActive:{borderColor:'#111',backgroundColor:'#f7f7f7'},paymentText:{fontSize:9,fontWeight:'900',letterSpacing:.7},paymentTextActive:{color:'#111'},summary:{borderTopWidth:1,borderTopColor:'#111',marginTop:28,paddingTop:18},sumLine:{fontSize:11,color:'#666',marginBottom:8,flexDirection:'row',justifyContent:'space-between'},rule:{height:1,backgroundColor:'#ddd',marginVertical:10},total:{fontSize:18,fontWeight:'900'},place:{backgroundColor:'#111',padding:18,alignItems:'center',marginTop:22},placeText:{color:'#fff',fontSize:10,fontWeight:'900',letterSpacing:1},btn:{backgroundColor:'#111',padding:16,marginTop:18},btnText:{color:'#fff',fontWeight:'900'},note:{color:'#777',marginTop:8}});
+const s=StyleSheet.create({
+ page:{flex:1,backgroundColor:'#f7f7f5',padding:22,paddingTop:58},
+ center:{flex:1,justifyContent:'center',alignItems:'center',padding:24,backgroundColor:'#f7f7f5'},
+ eyebrow:{fontSize:9,color:'#777',letterSpacing:2,fontWeight:'800'},
+ title:{fontSize:42,fontWeight:'900',letterSpacing:-2,marginTop:5,color:'#111'},
+ progress:{flexDirection:'row',alignItems:'center',marginTop:22,marginBottom:2},
+ progressStep:{alignItems:'center',gap:5},
+ progressNumber:{fontSize:10,fontWeight:'900',color:'#111',borderWidth:1,borderColor:'#111',borderRadius:20,width:25,height:25,textAlign:'center',textAlignVertical:'center'},
+ progressLabel:{fontSize:8,fontWeight:'900',letterSpacing:.8,color:'#555'},
+ progressLine:{height:1,backgroundColor:'#ccc',flex:1,marginHorizontal:9,marginBottom:13},
+ section:{marginTop:24,backgroundColor:'#fff',padding:16,borderRadius:4,borderWidth:1,borderColor:'#ececea'},
+ sectionTitle:{fontSize:10,fontWeight:'900',letterSpacing:1.4,marginBottom:15,color:'#111'},
+ saved:{width:250,borderWidth:1,borderColor:'#ddd',padding:14,borderRadius:3,backgroundColor:'#fafafa'},
+ savedTitle:{fontSize:9,fontWeight:'900',letterSpacing:.8,color:'#111'},
+ savedText:{fontSize:10,color:'#666',marginTop:5,lineHeight:15},
+ emptySaved:{fontSize:11,color:'#777'},
+ inputWrap:{marginBottom:12},
+ inputLabel:{fontSize:9,color:'#666',marginBottom:6,fontWeight:'700',letterSpacing:.3},
+ input:{borderWidth:1,borderColor:'#e1e1df',backgroundColor:'#fafaf9',padding:13,fontSize:12,color:'#111',borderRadius:3},
+ two:{flexDirection:'row',gap:10},
+ deliveryCheck:{borderWidth:1,borderColor:'#111',padding:13,alignItems:'center',justifyContent:'center',borderRadius:3,marginTop:2},
+ deliveryCheckText:{fontSize:9,fontWeight:'900',letterSpacing:1,color:'#111'},
+ deliveryStatus:{fontSize:10,lineHeight:16,marginTop:9},
+ ok:{color:'#18794e'},
+ bad:{color:'#b42318'},
+ reviewItem:{flexDirection:'row',justifyContent:'space-between',gap:15,borderTopWidth:1,borderTopColor:'#eee',paddingVertical:14},
+ reviewDetails:{flex:1},
+ reviewName:{fontSize:12,fontWeight:'800',color:'#111'},
+ reviewVariant:{fontSize:10,color:'#666',marginTop:4},
+ reviewUnit:{fontSize:9,color:'#888',marginTop:4},
+ reviewTotal:{fontSize:12,fontWeight:'900',color:'#111'},
+ reviewNote:{fontSize:10,color:'#777',lineHeight:16,marginTop:7},
+ coupon:{flexDirection:'row',borderWidth:1,borderColor:'#ddd',borderRadius:3,overflow:'hidden'},
+ couponInput:{flex:1,padding:13,fontSize:11,color:'#111',backgroundColor:'#fafaf9'},
+ apply:{backgroundColor:'#111',paddingHorizontal:19,justifyContent:'center'},
+ applyText:{color:'#fff',fontSize:9,fontWeight:'900',letterSpacing:.6},
+ loyaltyCard:{borderWidth:1,borderColor:'#e5e5e3',padding:14,marginBottom:11,backgroundColor:'#fafaf9',borderRadius:3},
+ loyaltyBalance:{fontSize:11,fontWeight:'900',letterSpacing:.7,color:'#111'},
+ loyaltyHint:{fontSize:10,color:'#777',lineHeight:15,marginTop:6},
+ msg:{fontSize:10,marginTop:9},
+ paymentRow:{gap:10},
+ payment:{borderWidth:1,borderColor:'#ddd',padding:15,borderRadius:3,backgroundColor:'#fafaf9'},
+ paymentActive:{borderColor:'#111',backgroundColor:'#f0f0ed'},
+ paymentText:{fontSize:9,fontWeight:'900',letterSpacing:.7,color:'#666'},
+ paymentTextActive:{color:'#111'},
+ summary:{borderWidth:1,borderColor:'#e5e5e3',backgroundColor:'#fff',marginTop:20,padding:18,borderRadius:3},
+ sumLine:{fontSize:11,color:'#666',marginBottom:9,flexDirection:'row',justifyContent:'space-between'},
+ rule:{height:1,backgroundColor:'#ddd',marginVertical:11},
+ total:{fontSize:18,fontWeight:'900',color:'#111'},
+ place:{backgroundColor:'#111',padding:19,alignItems:'center',marginTop:15,borderRadius:3,minHeight:54,justifyContent:'center'},
+ placeText:{color:'#fff',fontSize:10,fontWeight:'900',letterSpacing:1.2},
+ trust:{fontSize:8,color:'#777',letterSpacing:.7,textAlign:'center',marginTop:14,marginBottom:18},
+ btn:{backgroundColor:'#111',padding:16,marginTop:18,borderRadius:3},
+ btnText:{color:'#fff',fontWeight:'900'},
+ note:{color:'#777',marginTop:8}
+});
