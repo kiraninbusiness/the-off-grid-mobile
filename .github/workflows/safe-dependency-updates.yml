@@ -1,0 +1,46 @@
+name: Safe dependency updates
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/run-safe-dependency-update"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Apply non-breaking npm security fixes only
+        run: npm audit fix --package-lock-only
+      - name: Verify dependency tree
+        run: |
+          npm ci
+          npm run typecheck
+          npm run release:check
+          npx expo-doctor
+      - name: Commit updated lockfile
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "No compatible lockfile updates were available."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "Apply compatible dependency security updates"
+          git push
