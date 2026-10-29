@@ -18,7 +18,7 @@ function stockState(p:any):boolean|null{
  return null;
 }
 
-function ProductCard({p}:{p:any}){
+function ProductCard({p,width}:{p:any,width?:number}){
  const r=useRouter();
  const imageUri=p.image||p.images?.[0]||FALLBACK_IMAGE;
  const [imageFailed,setImageFailed]=useState(false);
@@ -38,7 +38,7 @@ function ProductCard({p}:{p:any}){
  const openProduct=useCallback(()=>r.push(`/product/${p.id}` as any),[p.id,r]);
  const quickAdd=useCallback(async()=>{if(sizes.length||hasColourVariants||available===null){openProduct();return;}if(!available)return;try{await add(p);}catch{openProduct();}},[sizes.length,hasColourVariants,available,openProduct,add,p]);
  const toggleWishlist=useCallback(async(event:any)=>{event?.stopPropagation?.();if(wishBusy||p.id==null)return;setWishBusy(true);try{await toggleWish(Number(p.id));}catch(error:any){Alert.alert('Wishlist not updated',error?.message||'Please check your connection and try again.');}finally{setWishBusy(false);}},[wishBusy,p.id,toggleWish]);
- return <View style={s.card}>
+ return <View style={[s.card,width!==undefined&&{width}]}>
   <Animated.View style={{transform:[{scale}]}}><Pressable accessibilityRole="button" accessibilityLabel={`View ${p.name||'product'}`} onPress={openProduct} onPressIn={()=>pressTo(0.97)} onPressOut={()=>pressTo(1)} style={s.productPress}>
    <View style={s.media}>
     {imageLoading&&!imageFailed&&<View style={s.imageLoader}><ActivityIndicator size="small" color={theme.colors.muted}/></View>}
@@ -55,7 +55,8 @@ function ProductCard({p}:{p:any}){
  </View>;
 }
 
-const sameProductCardProps=(prev:{p:any},next:{p:any})=>{
+const sameProductCardProps=(prev:{p:any,width?:number},next:{p:any,width?:number})=>{
+ if(prev.width!==next.width)return false;
  const a=prev.p,b=next.p;
  if(a===b)return true;
  if(!a||!b)return false;
