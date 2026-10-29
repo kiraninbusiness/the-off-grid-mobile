@@ -3,6 +3,7 @@ import {View,Text,Image,Pressable,StyleSheet,Alert,ActivityIndicator} from 'reac
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter} from 'expo-router';
 import {useStore} from '../store/store';
+import {theme} from '../theme';
 
 const money=(v:any)=>`₹${Number(v||0).toLocaleString('en-IN')}`;
 const FALLBACK_IMAGE='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80';
@@ -34,17 +35,17 @@ function ProductCard({p}:{p:any}){
  return <View style={s.card}>
   <Pressable accessibilityRole="button" accessibilityLabel={`View ${p.name||'product'}`} onPress={openProduct} style={({pressed})=>[s.productPress,pressed&&s.pressed]}>
    <View style={s.media}>
-    {imageLoading&&!imageFailed&&<View style={s.imageLoader}><ActivityIndicator size="small" color="#777"/></View>}
+    {imageLoading&&!imageFailed&&<View style={s.imageLoader}><ActivityIndicator size="small" color={theme.colors.muted}/></View>}
     <Image source={{uri:imageFailed?FALLBACK_IMAGE:p.image||p.images?.[0]||FALLBACK_IMAGE}} onLoadStart={()=>setImageLoading(true)} onLoad={()=>setImageLoading(false)} onError={()=>{setImageFailed(true);setImageLoading(false)}} fadeDuration={180} style={s.img} resizeMode="cover"/>
     <View style={s.badge}><Text style={s.badgeText}>{discount>0?`-${discount}%`:'NEW'}</Text></View>
-    <Pressable accessibilityRole="button" accessibilityLabel={wishBusy?'Updating wishlist':liked?'Remove from wishlist':'Add to wishlist'} accessibilityState={{disabled:wishBusy,busy:wishBusy,selected:liked}} disabled={wishBusy} hitSlop={8} style={({pressed})=>[s.heart,pressed&&s.heartPressed]} onPress={toggleWishlist}><Ionicons name={liked?'heart':'heart-outline'} size={18} color={liked?'#111':'#111'}/></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel={wishBusy?'Updating wishlist':liked?'Remove from wishlist':'Add to wishlist'} accessibilityState={{disabled:wishBusy,busy:wishBusy,selected:liked}} disabled={wishBusy} hitSlop={8} style={({pressed})=>[s.heart,pressed&&s.heartPressed]} onPress={toggleWishlist}><Ionicons name={liked?'heart':'heart-outline'} size={18} color={theme.colors.ink}/></Pressable>
     {available===false&&<View style={s.sold}><Text style={s.soldText}>SOLD OUT</Text></View>}
    </View>
    <Text style={s.cat} numberOfLines={1}>{p.category||'THE OFF GRID'}</Text>
    <Text style={s.name} numberOfLines={2}>{p.name||'Untitled product'}</Text>
    <View style={s.priceRow}><Text style={s.price}>{money(price)}</Text>{discount>0&&<Text style={s.oldPrice}>{money(oldPrice)}</Text>}{discount>0&&<Text style={s.off}>{discount}% OFF</Text>}</View>
   </Pressable>
-  <Pressable accessibilityRole="button" accessibilityLabel={`${available===false?'Sold out':sizes.length||hasColourVariants?'Choose product options for':available===null?'View details for':'Quick add'} ${p.name||'product'}`} style={({pressed})=>[s.add,available===false&&s.disabled,pressed&&available!==false&&s.addPressed]} onPress={quickAdd} disabled={available===false}><Ionicons name={available===false?'close-circle-outline':sizes.length||hasColourVariants?'options-outline':'add-outline'} size={15} color={available===false?'#999':'#111'}/><Text style={[s.addText,available===false&&s.disabledText]}>{available===false?'SOLD OUT':sizes.length||hasColourVariants?'CHOOSE OPTIONS':available===null?'VIEW DETAILS':'QUICK ADD'}</Text></Pressable>
+  <Pressable accessibilityRole="button" accessibilityLabel={`${available===false?'Sold out':sizes.length||hasColourVariants?'Choose product options for':available===null?'View details for':'Quick add'} ${p.name||'product'}`} style={({pressed})=>[s.add,available===false&&s.disabled,pressed&&available!==false&&s.addPressed]} onPress={quickAdd} disabled={available===false}><Ionicons name={available===false?'close-circle-outline':sizes.length||hasColourVariants?'options-outline':'add-outline'} size={15} color={available===false?theme.colors.subtle:theme.colors.ink}/><Text style={[s.addText,available===false&&s.disabledText]}>{available===false?'SOLD OUT':sizes.length||hasColourVariants?'CHOOSE OPTIONS':available===null?'VIEW DETAILS':'QUICK ADD'}</Text></Pressable>
  </View>;
 }
 
@@ -52,11 +53,11 @@ export default memo(ProductCard,(prev,next)=>prev.p===next.p||prev.p?.id===next.
 
 const s=StyleSheet.create({
  card:{width:'48%',marginBottom:30},productPress:{opacity:1},pressed:{opacity:.92},
- media:{position:'relative',backgroundColor:'#f2f2ef',borderRadius:2,overflow:'hidden',aspectRatio:.78},img:{width:'100%',height:'100%',backgroundColor:'#f2f2ef'},imageLoader:{...StyleSheet.absoluteFillObject,alignItems:'center',justifyContent:'center',zIndex:0},
- heart:{position:'absolute',right:10,top:10,width:38,height:38,borderRadius:19,backgroundColor:'rgba(255,255,255,.96)',alignItems:'center',justifyContent:'center'},heartPressed:{transform:[{scale:.92}],backgroundColor:'#eee'},
- badge:{position:'absolute',left:10,top:10,backgroundColor:'#111',paddingHorizontal:8,paddingVertical:6},badgeText:{color:'#fff',fontSize:8,fontWeight:'900',letterSpacing:1.1},
- sold:{position:'absolute',bottom:0,left:0,right:0,paddingVertical:9,backgroundColor:'rgba(17,17,17,.94)'},soldText:{color:'#fff',fontSize:9,fontWeight:'900',textAlign:'center',letterSpacing:1.2},
- cat:{fontSize:8,letterSpacing:1.2,color:'#888',marginTop:10,textTransform:'uppercase'},name:{fontSize:13,fontWeight:'700',lineHeight:18,marginTop:4,minHeight:36,color:'#111'},
- priceRow:{flexDirection:'row',alignItems:'baseline',flexWrap:'wrap',gap:6,marginTop:5},price:{fontSize:13,fontWeight:'900',color:'#111'},oldPrice:{fontSize:11,color:'#999',textDecorationLine:'line-through'},off:{fontSize:9,fontWeight:'800',color:'#16803b',letterSpacing:.4},
- add:{borderWidth:1,borderColor:'#111',paddingVertical:11,marginTop:11,alignItems:'center',justifyContent:'center',minHeight:42,flexDirection:'row',gap:5,borderRadius:1},addPressed:{backgroundColor:'#111'},disabled:{borderColor:'#ddd',backgroundColor:'#f6f6f6'},addText:{fontSize:9,fontWeight:'900',letterSpacing:1},disabledText:{color:'#999'},
+ media:{position:'relative',backgroundColor:theme.colors.surfaceStrong,borderRadius:theme.radius.sm,overflow:'hidden',aspectRatio:.78},img:{width:'100%',height:'100%',backgroundColor:theme.colors.surfaceStrong},imageLoader:{...StyleSheet.absoluteFillObject,alignItems:'center',justifyContent:'center',zIndex:0},
+ heart:{position:'absolute',right:10,top:10,width:38,height:38,borderRadius:theme.radius.pill,backgroundColor:'rgba(255,255,255,.96)',alignItems:'center',justifyContent:'center'},heartPressed:{transform:[{scale:.92}],backgroundColor:'#eee'},
+ badge:{position:'absolute',left:10,top:10,backgroundColor:theme.colors.ink,paddingHorizontal:8,paddingVertical:6},badgeText:{color:theme.colors.inverse,fontSize:8,fontWeight:'900',letterSpacing:1.1},
+ sold:{position:'absolute',bottom:0,left:0,right:0,paddingVertical:9,backgroundColor:'rgba(17,17,17,.94)'},soldText:{color:theme.colors.inverse,fontSize:9,fontWeight:'900',textAlign:'center',letterSpacing:1.2},
+ cat:{fontSize:8,letterSpacing:1.2,color:theme.colors.muted,marginTop:10,textTransform:'uppercase'},name:{fontSize:13,fontWeight:'700',lineHeight:18,marginTop:4,minHeight:36,color:theme.colors.ink},
+ priceRow:{flexDirection:'row',alignItems:'baseline',flexWrap:'wrap',gap:6,marginTop:5},price:{fontSize:13,fontWeight:'900',color:theme.colors.ink},oldPrice:{fontSize:11,color:theme.colors.subtle,textDecorationLine:'line-through'},off:{fontSize:9,fontWeight:'800',color:theme.colors.success,letterSpacing:.4},
+ add:{borderWidth:1,borderColor:theme.colors.ink,paddingVertical:11,marginTop:11,alignItems:'center',justifyContent:'center',minHeight:42,flexDirection:'row',gap:5,borderRadius:theme.radius.sm},addPressed:{backgroundColor:theme.colors.ink},disabled:{borderColor:theme.colors.line,backgroundColor:theme.colors.surface},addText:{fontSize:9,fontWeight:'900',letterSpacing:1},disabledText:{color:theme.colors.subtle},
 });
