@@ -26,7 +26,9 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
       - name: Apply non-breaking npm security fixes only
-        run: npm audit fix --package-lock-only
+        # npm exits non-zero when some advisories have no non-breaking fix; that is expected here.
+        # The next step reinstalls and runs every check, so a bad lockfile still fails the job.
+        run: npm audit fix --package-lock-only || echo "npm audit fix reported issues it could not fix without breaking changes."
       - name: Verify dependency tree
         run: |
           npm ci
