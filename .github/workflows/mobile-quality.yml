@@ -20,6 +20,10 @@ jobs:
           cache: npm
       - name: Install locked dependencies
         run: npm ci
+      - name: Report dependency audit findings
+        run: |
+          npm audit --json > /tmp/npm-audit.json || true
+          node -e "const a=require('/tmp/npm-audit.json'); const v=a.metadata?.vulnerabilities||{}; console.log('Dependency audit:', JSON.stringify(v)); for (const [name,item] of Object.entries(a.vulnerabilities||{})) console.log(name + ' | severity=' + item.severity + ' | direct=' + item.isDirect + ' | fix=' + JSON.stringify(item.fixAvailable));"
       - name: TypeScript type check
         run: npm run typecheck
       - name: Validate release configuration
