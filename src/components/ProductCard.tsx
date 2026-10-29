@@ -66,7 +66,7 @@ export default memo(ProductCard,sameProductCardProps);
 
 const s=StyleSheet.create({
  card:{width:'48%',marginBottom:30},productPress:{opacity:1},pressed:{opacity:.92},
- media:{position:'relative',backgroundColor:theme.colors.surfaceStrong,borderRadius:theme.radius.sm,overflow:'hidden',aspectRatio:.78},img:{width:'100%',height:'100%',backgroundColor:theme.colors.surfaceStrong},imageLoader:{...StyleSheet.absoluteFillObject,alignItems:'center',justifyContent:'center',zIndex:0},
+ media:{position:'relative',backgroundColor:theme.colors.surfaceStrong,borderRadius:theme.radius.sm,overflow:'hidden',aspectRatio:.78},img:{width:'100%',height:'100%',backgroundColor:theme.colors.surfaceStrong},imageLoader:{...StyleSheet.absoluteFill,alignItems:'center',justifyContent:'center',zIndex:0},
  heart:{position:'absolute',right:10,top:10,width:38,height:38,borderRadius:theme.radius.pill,backgroundColor:'rgba(255,255,255,.96)',alignItems:'center',justifyContent:'center'},heartPressed:{transform:[{scale:.92}],backgroundColor:'#eee'},
  badge:{position:'absolute',left:10,top:10,backgroundColor:theme.colors.ink,paddingHorizontal:8,paddingVertical:6},badgeText:{color:theme.colors.inverse,fontSize:8,fontWeight:'900',letterSpacing:1.1},
  sold:{position:'absolute',bottom:0,left:0,right:0,paddingVertical:9,backgroundColor:'rgba(17,17,17,.94)'},soldText:{color:theme.colors.inverse,fontSize:9,fontWeight:'900',textAlign:'center',letterSpacing:1.2},
