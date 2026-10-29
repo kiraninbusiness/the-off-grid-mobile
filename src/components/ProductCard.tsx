@@ -1,4 +1,4 @@
-import React,{memo,useCallback,useState} from 'react';
+import React,{memo,useCallback,useEffect,useState} from 'react';
 import {View,Text,Image,Pressable,StyleSheet,Alert,ActivityIndicator} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter} from 'expo-router';
@@ -18,9 +18,11 @@ function stockState(p:any):boolean|null{
 
 function ProductCard({p}:{p:any}){
  const r=useRouter();
+ const imageUri=p.image||p.images?.[0]||FALLBACK_IMAGE;
  const [imageFailed,setImageFailed]=useState(false);
  const [imageLoading,setImageLoading]=useState(true);
  const [wishBusy,setWishBusy]=useState(false);
+ useEffect(()=>{setImageFailed(false);setImageLoading(true)},[imageUri]);
  const {wishlist,toggleWish,add}=useStore();
  const liked=wishlist.some((value:any)=>String(typeof value==='object'?(value?.id??value?.product_id):value)===String(p.id));
  const rawPrice=Number(p.price);const price=Number.isFinite(rawPrice)&&rawPrice>=0?rawPrice:0;
@@ -36,7 +38,7 @@ function ProductCard({p}:{p:any}){
   <Pressable accessibilityRole="button" accessibilityLabel={`View ${p.name||'product'}`} onPress={openProduct} style={({pressed})=>[s.productPress,pressed&&s.pressed]}>
    <View style={s.media}>
     {imageLoading&&!imageFailed&&<View style={s.imageLoader}><ActivityIndicator size="small" color={theme.colors.muted}/></View>}
-    <Image source={{uri:imageFailed?FALLBACK_IMAGE:p.image||p.images?.[0]||FALLBACK_IMAGE}} onLoadStart={()=>setImageLoading(true)} onLoad={()=>setImageLoading(false)} onError={()=>{setImageFailed(true);setImageLoading(false)}} fadeDuration={180} style={s.img} resizeMode="cover"/>
+    <Image source={{uri:imageFailed?FALLBACK_IMAGE:imageUri}} onLoadStart={()=>setImageLoading(true)} onLoad={()=>setImageLoading(false)} onError={()=>{setImageFailed(true);setImageLoading(false)}} fadeDuration={180} style={s.img} resizeMode="cover"/>
     <View style={s.badge}><Text style={s.badgeText}>{discount>0?`-${discount}%`:'NEW'}</Text></View>
     <Pressable accessibilityRole="button" accessibilityLabel={wishBusy?'Updating wishlist':liked?'Remove from wishlist':'Add to wishlist'} accessibilityState={{disabled:wishBusy,busy:wishBusy,selected:liked}} disabled={wishBusy} hitSlop={8} style={({pressed})=>[s.heart,pressed&&s.heartPressed]} onPress={toggleWishlist}><Ionicons name={liked?'heart':'heart-outline'} size={18} color={theme.colors.ink}/></Pressable>
     {available===false&&<View style={s.sold}><Text style={s.soldText}>SOLD OUT</Text></View>}
@@ -49,7 +51,18 @@ function ProductCard({p}:{p:any}){
  </View>;
 }
 
-export default memo(ProductCard,(prev,next)=>prev.p===next.p||prev.p?.id===next.p?.id&&prev.p?.price===next.p?.price&&prev.p?.image===next.p?.image&&prev.p?.stock_quantity===next.p?.stock_quantity);
+const sameProductCardProps=(prev:{p:any},next:{p:any})=>{
+ const a=prev.p,b=next.p;
+ if(a===b)return true;
+ if(!a||!b)return false;
+ const keys=['id','name','category','price','old_price','compare_at_price','image','stock_quantity','inventory','stockCount','stock','in_stock','is_available','available'];
+ return keys.every(key=>a[key]===b[key])&&
+  JSON.stringify(a.images||[])===JSON.stringify(b.images||[])&&
+  JSON.stringify(a.sizes||[])===JSON.stringify(b.sizes||[])&&
+  JSON.stringify(a.colors||[])===JSON.stringify(b.colors||[])&&
+  JSON.stringify(a.variants||[])===JSON.stringify(b.variants||[]);
+};
+export default memo(ProductCard,sameProductCardProps);
 
 const s=StyleSheet.create({
  card:{width:'48%',marginBottom:30},productPress:{opacity:1},pressed:{opacity:.92},
