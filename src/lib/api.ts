@@ -5,6 +5,16 @@ export const API_URL = (__DEV__ && process.env.EXPO_PUBLIC_API_URL ? process.env
 export async function getToken(){ return AsyncStorage.getItem('offgrid_token'); }
 export function listFrom<T=any>(value:any, keys:string[]=['items','products','data','results']) : T[] { if(Array.isArray(value)) return value as T[]; for(const key of keys) if(Array.isArray(value?.[key])) return value[key] as T[]; return []; }
 export async function request<T=any>(path:string, options:RequestInit={}){ const token=await getToken(); const headers:any={Accept:'application/json',...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})}; if(token) headers.Authorization=`Bearer ${token}`; const controller=new AbortController(); const timer=setTimeout(()=>controller.abort(),15000); try{const res=await fetch(`${API_URL}${path}`,{...options,headers,signal:controller.signal}); const raw=await res.text(); let data:any={}; try{data=raw?JSON.parse(raw):{}}catch{data={message:raw.slice(0,180)}} if(!res.ok){const err:any=new Error(data?.message||data?.error||`Request failed (${res.status})`);err.status=res.status;throw err} return data as T;}catch(e:any){if(e?.name==='AbortError')throw new Error('The server took too long to respond. Please try again.');if(e instanceof TypeError&&/fetch|network|failed/i.test(String(e.message)))throw new Error('Unable to reach The Off Grid server. Check your internet connection and try again.');throw e;}finally{clearTimeout(timer)} }
+export async function uploadReviewPhoto(uri:string, mime?:string){
+ const token=await getToken(); const type=mime&&/^image\//.test(mime)?mime:'image/jpeg'; const ext=type.split('/')[1]||'jpg';
+ const form=new FormData(); form.append('file',{uri,name:`review.${ext}`,type} as any);
+ const controller=new AbortController(); const timer=setTimeout(()=>controller.abort(),45000);
+ try{const res=await fetch(`${API_URL}/upload/review-photo`,{method:'POST',headers:{Accept:'application/json',...(token?{Authorization:`Bearer ${token}`}:{})},body:form,signal:controller.signal});
+  const raw=await res.text(); let data:any={}; try{data=raw?JSON.parse(raw):{}}catch{}
+  if(!res.ok) throw new Error(data?.message||`Upload failed (${res.status})`);
+  return String(data.url||'');
+ }catch(e:any){ if(e?.name==='AbortError') throw new Error('Photo upload took too long. Please try again.'); throw e; }
+ finally{clearTimeout(timer)} }
 export const api={
  products:(query='')=>request<any>(`/products${query}`), product:(id:string|number)=>request<any>(`/products/${id}`),
  banners:()=>request<any>('/banners'), publicOffers:()=>request<any>('/coupons/public'), otpRequest:(phone:string)=>request<any>('/auth/otp/request',{method:'POST',body:JSON.stringify({phone})}), otpVerify:(body:{phone:string;code:string;name?:string;email?:string})=>request<any>('/auth/otp/verify',{method:'POST',body:JSON.stringify(body)}), login:(email:string,password:string)=>request<any>('/auth/login',{method:'POST',body:JSON.stringify({email,password})}),
