@@ -7,6 +7,10 @@ import Constants from 'expo-constants';
 import { track } from '../src/lib/analytics';
 import { validateProductionConfig } from '../src/lib/config';
 import { reportError, installGlobalErrorHandlers } from '../src/lib/errorReporting';
+import * as SplashScreen from 'expo-splash-screen';
+
+// Keep the launch screen up until the app has decided where to go, so there is no blank flash.
+SplashScreen.preventAutoHideAsync().catch(() => {});
 import ErrorScreen from './error';
 
 installGlobalErrorHandlers();
@@ -73,6 +77,10 @@ function Gate() {
     })();
     return () => { mounted = false; responseSub?.remove(); };
   }, []);
+
+  useEffect(() => {
+    if (ready) SplashScreen.hideAsync().catch(() => {});
+  }, [ready]);
 
   useEffect(() => {
     if (!ready || configError || onboarded || pathname === '/onboarding') return;
