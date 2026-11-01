@@ -1,5 +1,7 @@
 import React,{memo,useCallback,useEffect,useRef,useState} from 'react';
-import {View,Text,Image,Pressable,StyleSheet,Alert,ActivityIndicator,Animated} from 'react-native';
+import {View,Text,Pressable,StyleSheet,Alert,ActivityIndicator,Animated} from 'react-native';
+import {Image} from 'expo-image';
+import {tapLight,tapSuccess} from '../lib/haptics';
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter} from 'expo-router';
 import {useStore} from '../store/store';
@@ -36,13 +38,13 @@ function ProductCard({p,width}:{p:any,width?:number}){
  const sizes=Array.isArray(p.sizes)?p.sizes:Array.isArray(p.variants)?p.variants.map((v:any)=>v?.size).filter(Boolean):[];
  const hasColourVariants=(Array.isArray(p.colors)&&p.colors.length>0)||(Array.isArray(p.variants)&&p.variants.some((v:any)=>Boolean(v?.color??v?.colour)));
  const openProduct=useCallback(()=>r.push(`/product/${p.id}` as any),[p.id,r]);
- const quickAdd=useCallback(async()=>{if(sizes.length||hasColourVariants||available===null){openProduct();return;}if(!available)return;try{await add(p);}catch{openProduct();}},[sizes.length,hasColourVariants,available,openProduct,add,p]);
- const toggleWishlist=useCallback(async(event:any)=>{event?.stopPropagation?.();if(wishBusy||p.id==null)return;setWishBusy(true);try{await toggleWish(Number(p.id));}catch(error:any){Alert.alert('Wishlist not updated',error?.message||'Please check your connection and try again.');}finally{setWishBusy(false);}},[wishBusy,p.id,toggleWish]);
+ const quickAdd=useCallback(async()=>{if(sizes.length||hasColourVariants||available===null){openProduct();return;}if(!available)return;try{await add(p);tapSuccess();}catch{openProduct();}},[sizes.length,hasColourVariants,available,openProduct,add,p]);
+ const toggleWishlist=useCallback(async(event:any)=>{event?.stopPropagation?.();if(wishBusy||p.id==null)return;setWishBusy(true);try{tapLight();await toggleWish(Number(p.id));}catch(error:any){Alert.alert('Wishlist not updated',error?.message||'Please check your connection and try again.');}finally{setWishBusy(false);}},[wishBusy,p.id,toggleWish]);
  return <View style={[s.card,width!==undefined&&{width}]}>
   <Animated.View style={{transform:[{scale}]}}><Pressable accessibilityRole="button" accessibilityLabel={`View ${p.name||'product'}`} onPress={openProduct} onPressIn={()=>pressTo(0.97)} onPressOut={()=>pressTo(1)} style={s.productPress}>
    <View style={s.media}>
     {imageLoading&&!imageFailed&&<View style={s.imageLoader}><ActivityIndicator size="small" color={theme.colors.muted}/></View>}
-    <Image source={{uri:imageFailed?FALLBACK_IMAGE:imageUri}} onLoadStart={()=>setImageLoading(true)} onLoad={()=>setImageLoading(false)} onError={()=>{setImageFailed(true);setImageLoading(false)}} fadeDuration={180} style={s.img} resizeMode="cover"/>
+    <Image source={{uri:imageFailed?FALLBACK_IMAGE:imageUri}} onLoadStart={()=>setImageLoading(true)} onLoad={()=>setImageLoading(false)} onError={()=>{setImageFailed(true);setImageLoading(false)}} transition={180} cachePolicy="memory-disk" style={s.img} contentFit="cover"/>
     {(discount>0||isNew(p))&&<View style={s.badge}><Text style={s.badgeText}>{discount>0?`-${discount}%`:'NEW'}</Text></View>}
     <Pressable accessibilityRole="button" accessibilityLabel={wishBusy?'Updating wishlist':liked?'Remove from wishlist':'Add to wishlist'} accessibilityState={{disabled:wishBusy,busy:wishBusy,selected:liked}} disabled={wishBusy} hitSlop={8} style={({pressed})=>[s.heart,pressed&&s.heartPressed]} onPress={toggleWishlist}><Ionicons name={liked?'heart':'heart-outline'} size={18} color={theme.colors.ink}/></Pressable>
     {available===false&&<View style={s.sold}><Text style={s.soldText}>SOLD OUT</Text></View>}

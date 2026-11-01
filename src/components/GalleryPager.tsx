@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, Image, ScrollView, Pressable, StyleSheet, useWindowDimensions, NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
+import {View, Text, ScrollView, Pressable, StyleSheet, useWindowDimensions, NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
+import {Image} from 'expo-image';
 
 // Swipeable product photos with page dots. Tapping opens the full-screen view.
 export default function GalleryPager({images, active, onChange, onOpen, height = 520}: {images: string[]; active: string; onChange: (uri: string) => void; onOpen: () => void; height?: number}) {
@@ -28,7 +29,7 @@ export default function GalleryPager({images, active, onChange, onOpen, height =
       <ScrollView ref={ref} horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={onEnd} scrollEventThrottle={16} decelerationRate="fast">
         {images.map((uri, i) => (
           <Pressable key={`${uri}-${i}`} onPress={onOpen} accessibilityRole="button" accessibilityLabel={`Product image ${i + 1} of ${images.length}. Open full screen`}>
-            <Image source={{uri}} style={{width, height}} resizeMode="cover" />
+            <Image source={{uri}} style={{width, height}} contentFit="cover" transition={150} cachePolicy="memory-disk" />
           </Pressable>
         ))}
       </ScrollView>

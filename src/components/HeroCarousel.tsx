@@ -1,5 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, Image, Pressable, ScrollView, StyleSheet, useWindowDimensions, NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
+import {View, Text, Pressable, ScrollView, StyleSheet, useWindowDimensions, NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
+
+import {Image} from 'expo-image';
 
 export type HeroSlide = {key: string; image: string; kicker: string; title: string; copy: string; cta: string; onPress: () => void};
 
@@ -35,7 +37,7 @@ export default function HeroCarousel({slides, height = 570, intervalMs = 5000}: 
       <ScrollView ref={ref} horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScrollBeginDrag={() => { touching.current = true; }} onMomentumScrollEnd={onEnd} decelerationRate="fast">
         {slides.map(sl => (
           <Pressable key={sl.key} accessibilityRole="button" accessibilityLabel={`${sl.title.replace(/\n/g, ' ')}. ${sl.cta}`} onPress={sl.onPress} style={{width, height}}>
-            <Image source={{uri: sl.image}} style={s.img} />
+            <Image source={{uri: sl.image}} style={s.img} contentFit="cover" transition={200} cachePolicy="memory-disk" />
             <View style={s.overlay}>
               <Text style={s.kicker}>{sl.kicker}</Text>
               <Text style={s.title} numberOfLines={3}>{sl.title}</Text>
