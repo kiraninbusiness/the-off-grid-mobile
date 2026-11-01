@@ -13,7 +13,8 @@
     "android": {
       "package": "in.theoffgrid.app",
       "adaptiveIcon": {
-        "backgroundColor": "#0a0a0a"
+        "backgroundColor": "#0B0B0B",
+        "foregroundImage": "./assets/adaptive-icon.png"
       },
       "intentFilters": [
         {
@@ -39,7 +40,11 @@
         "expo-router"
       ],
       [
-        "expo-notifications"
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#0B0B0B"
+        }
       ],
       "expo-image"
     ],
@@ -52,6 +57,10 @@
         "projectId": "0b2cc9c2-a726-460d-b01d-9d246975d160"
       }
     },
-    "owner": "kiranmamadapur"
+    "owner": "kiranmamadapur",
+    "icon": "./assets/icon.png",
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
   }
 }
