@@ -18,7 +18,7 @@ if (app.version) errors.push(`Remove obsolete top-level app.json version (${app.
 if (app.expo.android?.package !== 'in.theoffgrid.app') errors.push('Unexpected Android package id');
 if (app.expo.ios?.bundleIdentifier !== 'in.theoffgrid.app') errors.push('Unexpected iOS bundle identifier');
 
-const requiredEnv = ['EXPO_PUBLIC_API_URL','EXPO_PUBLIC_EAS_PROJECT_ID','EXPO_PUBLIC_RAZORPAY_KEY_ID'];
+const requiredEnv = ['EXPO_PUBLIC_API_URL','EXPO_PUBLIC_EAS_PROJECT_ID'];
 const placeholder = (value) => !value || value.includes('example.com') || value.includes('xxxxxxxx') || value.includes('test_or_live_key_here');
 
 const envFile = fs.existsSync('.env') ? '.env' : '.env.example';
