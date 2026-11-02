@@ -100,7 +100,7 @@ const s = StyleSheet.create({
   copy:{fontSize:12,color:'#666',lineHeight:19,marginTop:12},info:{backgroundColor:'#111',padding:17,marginTop:24,marginBottom:22},
   infoTitle:{fontSize:10,fontWeight:'900',letterSpacing:1.2,color:'#fff'},infoText:{fontSize:11,lineHeight:19,color:'#ddd',marginTop:9},
   label:{fontSize:9,fontWeight:'900',letterSpacing:1.2,color:'#333',marginTop:19,marginBottom:8},
-  pills:{flexDirection:'row',gap:8},pill:{borderWidth:1,borderColor:'#ddd',paddingVertical:12,paddingHorizontal:15},pillActive:{backgroundColor:'#111',borderColor:'#111},
+  pills: { flexDirection: 'row', gap: 8 }, pill: { borderWidth: 1, borderColor: '#ddd', paddingVertical: 12, paddingHorizontal: 15 }, pillActive: { backgroundColor: '#111', borderColor: '#111' },
   pillText:{fontSize:9,fontWeight:'800',color:'#333'},pillTextActive:{color:'#fff'},
   input:{borderBottomWidth:1,borderBottomColor:'#bbb',paddingVertical:12,fontSize:13,color:'#111'},bio:{minHeight:110,borderWidth:1,borderColor:'#bbb',padding:12,marginTop:3},
   button:{backgroundColor:'#111',padding:16,alignItems:'center',justifyContent:'center',minHeight:50,marginTop:24},
