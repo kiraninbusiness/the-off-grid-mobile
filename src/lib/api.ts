@@ -18,7 +18,7 @@ export async function uploadReviewPhoto(uri:string, mime?:string){
 
 export async function visualProductSearch(uri:string, mime?:string){
  const token=await getToken();
- const type=mime&&/^image\\//.test(mime)?mime:'image/jpeg';
+ const type=mime&&/^image\//.test(mime)?mime:'image/jpeg';
  const ext=type.split('/')[1]||'jpg';
  const form=new FormData();
  form.append('file',{uri,name:`visual-search.${ext}`,type} as any);
