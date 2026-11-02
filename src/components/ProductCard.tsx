@@ -6,6 +6,7 @@ import {Ionicons} from '@expo/vector-icons';
 import {useRouter} from 'expo-router';
 import {useStore} from '../store/store';
 import {theme} from '../theme';
+import {useAppTheme} from '../theme/ThemeProvider';
 
 const money=(v:any)=>`₹${Number(v||0).toLocaleString('en-IN')}`;
 const NEW_DAYS=21;
@@ -21,6 +22,7 @@ function stockState(p:any):boolean|null{
 }
 
 function ProductCard({p,width}:{p:any,width?:number}){
+ const {colors}=useAppTheme();
  const r=useRouter();
  const imageUri=p.image||p.images?.[0]||FALLBACK_IMAGE;
  const [imageFailed,setImageFailed]=useState(false);
@@ -42,16 +44,16 @@ function ProductCard({p,width}:{p:any,width?:number}){
  const toggleWishlist=useCallback(async(event:any)=>{event?.stopPropagation?.();if(wishBusy||p.id==null)return;setWishBusy(true);try{tapLight();await toggleWish(Number(p.id));}catch(error:any){Alert.alert('Wishlist not updated',error?.message||'Please check your connection and try again.');}finally{setWishBusy(false);}},[wishBusy,p.id,toggleWish]);
  return <View style={[s.card,width!==undefined&&{width}]}>
   <Animated.View style={{transform:[{scale}]}}><Pressable accessibilityRole="button" accessibilityLabel={`View ${p.name||'product'}`} onPress={openProduct} onPressIn={()=>pressTo(0.97)} onPressOut={()=>pressTo(1)} style={s.productPress}>
-   <View style={s.media}>
+   <View style={[s.media,{backgroundColor:colors.surface}]}>
     {imageLoading&&!imageFailed&&<View style={s.imageLoader}><ActivityIndicator size="small" color={theme.colors.muted}/></View>}
     <Image source={{uri:imageFailed?FALLBACK_IMAGE:imageUri}} onLoadStart={()=>setImageLoading(true)} onLoad={()=>setImageLoading(false)} onError={()=>{setImageFailed(true);setImageLoading(false)}} transition={180} cachePolicy="memory-disk" style={s.img} contentFit="cover"/>
     {(p?.early_access||discount>0||isNew(p))&&<View style={s.badge}><Text style={s.badgeText}>{p?.early_access?(p.early_access_locked?'MEMBERS FIRST':'EARLY ACCESS'):discount>0?`-${discount}%`:'NEW'}</Text></View>}
-    <Pressable accessibilityRole="button" accessibilityLabel={wishBusy?'Updating wishlist':liked?'Remove from wishlist':'Add to wishlist'} accessibilityState={{disabled:wishBusy,busy:wishBusy,selected:liked}} disabled={wishBusy} hitSlop={8} style={({pressed})=>[s.heart,pressed&&s.heartPressed]} onPress={toggleWishlist}><Ionicons name={liked?'heart':'heart-outline'} size={18} color={theme.colors.ink}/></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel={wishBusy?'Updating wishlist':liked?'Remove from wishlist':'Add to wishlist'} accessibilityState={{disabled:wishBusy,busy:wishBusy,selected:liked}} disabled={wishBusy} hitSlop={8} style={({pressed})=>[s.heart,pressed&&s.heartPressed]} onPress={toggleWishlist}><Ionicons name={liked?'heart':'heart-outline'} size={18} color={colors.text}/></Pressable>
     {available===false&&<View style={s.sold}><Text style={s.soldText}>SOLD OUT</Text></View>}
    </View>
-   <Text style={s.cat} numberOfLines={1}>{p.category||'THE OFF GRID'}</Text>
-   <Text style={s.name} numberOfLines={2}>{p.name||'Untitled product'}</Text>
-   <View style={s.priceRow}><Text style={s.price}>{money(price)}</Text>{discount>0&&<Text style={s.oldPrice}>{money(oldPrice)}</Text>}{discount>0&&<Text style={s.off}>{discount}% OFF</Text>}</View>
+   <Text style={[s.cat,{color:colors.muted}]} numberOfLines={1}>{p.category||'THE OFF GRID'}</Text>
+   <Text style={[s.name,{color:colors.text}]} numberOfLines={2}>{p.name||'Untitled product'}</Text>
+   <View style={s.priceRow}><Text style={[s.price,{color:colors.text}]}>{money(price)}</Text>{discount>0&&<Text style={s.oldPrice}>{money(oldPrice)}</Text>}{discount>0&&<Text style={s.off}>{discount}% OFF</Text>}</View>
   </Pressable></Animated.View>
   <Pressable accessibilityRole="button" accessibilityLabel={`${available===false?'Sold out':sizes.length||hasColourVariants?'Choose product options for':available===null?'View details for':'Quick add'} ${p.name||'product'}`} style={({pressed})=>[s.add,available===false&&s.disabled,pressed&&available!==false&&s.addPressed]} onPress={quickAdd} disabled={available===false}><Ionicons name={available===false?'close-circle-outline':sizes.length||hasColourVariants?'options-outline':'add-outline'} size={15} color={available===false?theme.colors.subtle:theme.colors.ink}/><Text style={[s.addText,available===false&&s.disabledText]}>{available===false?'SOLD OUT':sizes.length||hasColourVariants?'CHOOSE OPTIONS':available===null?'VIEW DETAILS':'QUICK ADD'}</Text></Pressable>
  </View>;
