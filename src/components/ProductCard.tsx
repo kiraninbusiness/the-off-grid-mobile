@@ -45,7 +45,7 @@ function ProductCard({p,width}:{p:any,width?:number}){
    <View style={s.media}>
     {imageLoading&&!imageFailed&&<View style={s.imageLoader}><ActivityIndicator size="small" color={theme.colors.muted}/></View>}
     <Image source={{uri:imageFailed?FALLBACK_IMAGE:imageUri}} onLoadStart={()=>setImageLoading(true)} onLoad={()=>setImageLoading(false)} onError={()=>{setImageFailed(true);setImageLoading(false)}} transition={180} cachePolicy="memory-disk" style={s.img} contentFit="cover"/>
-    {(discount>0||isNew(p))&&<View style={s.badge}><Text style={s.badgeText}>{discount>0?`-${discount}%`:'NEW'}</Text></View>}
+    {(p?.early_access||discount>0||isNew(p))&&<View style={s.badge}><Text style={s.badgeText}>{p?.early_access?(p.early_access_locked?'MEMBERS FIRST':'EARLY ACCESS'):discount>0?`-${discount}%`:'NEW'}</Text></View>}
     <Pressable accessibilityRole="button" accessibilityLabel={wishBusy?'Updating wishlist':liked?'Remove from wishlist':'Add to wishlist'} accessibilityState={{disabled:wishBusy,busy:wishBusy,selected:liked}} disabled={wishBusy} hitSlop={8} style={({pressed})=>[s.heart,pressed&&s.heartPressed]} onPress={toggleWishlist}><Ionicons name={liked?'heart':'heart-outline'} size={18} color={theme.colors.ink}/></Pressable>
     {available===false&&<View style={s.sold}><Text style={s.soldText}>SOLD OUT</Text></View>}
    </View>
