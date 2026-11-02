@@ -15,6 +15,23 @@ export async function uploadReviewPhoto(uri:string, mime?:string){
   return String(data.url||'');
  }catch(e:any){ if(e?.name==='AbortError') throw new Error('Photo upload took too long. Please try again.'); throw e; }
  finally{clearTimeout(timer)} }
+
+export async function visualProductSearch(uri:string, mime?:string){
+ const token=await getToken();
+ const type=mime&&/^image\\//.test(mime)?mime:'image/jpeg';
+ const ext=type.split('/')[1]||'jpg';
+ const form=new FormData();
+ form.append('file',{uri,name:`visual-search.${ext}`,type} as any);
+ const controller=new AbortController(); const timer=setTimeout(()=>controller.abort(),35000);
+ try{
+  const res=await fetch(`${API_URL}/visual-search`,{method:'POST',headers:{Accept:'application/json',...(token?{Authorization:`Bearer ${token}`}:{})},body:form,signal:controller.signal});
+  const raw=await res.text();let data:any={};try{data=raw?JSON.parse(raw):{}}catch{}
+  if(!res.ok){const error:any=new Error(data?.message||`Visual search failed (${res.status})`);error.status=res.status;throw error;}
+  return data;
+ }catch(e:any){if(e?.name==='AbortError')throw new Error('Visual search took too long. Please try again.');throw e;}
+ finally{clearTimeout(timer);}
+}
+
 export const api={
  products:(query='')=>request<any>(`/products${query}`), product:(id:string|number)=>request<any>(`/products/${id}`),
  banners:()=>request<any>('/banners'), publicOffers:()=>request<any>('/coupons/public'), otpRequest:(phone:string)=>request<any>('/auth/otp/request',{method:'POST',body:JSON.stringify({phone})}), otpVerify:(body:{phone:string;code:string;name?:string;email?:string})=>request<any>('/auth/otp/verify',{method:'POST',body:JSON.stringify(body)}), login:(email:string,password:string)=>request<any>('/auth/login',{method:'POST',body:JSON.stringify({email,password})}),
