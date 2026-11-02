@@ -7,6 +7,7 @@ import ProductCard from '../../src/components/ProductCard';
 import {ProductGridSkeleton} from '../../src/components/Skeleton';
 import {suggest} from '../../src/lib/searchSuggest';
 import {api,listFrom} from '../../src/lib/api';
+import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition';
 
 const label=(v:any)=>String(v??'').trim();
 const productSizes=(p:any):string[]=>{const raw=Array.isArray(p.sizes)&&p.sizes.length?p.sizes:Array.isArray(p.variants)&&p.variants.length?p.variants.map((v:any)=>v?.size):p.size?[p.size]:[];return Array.from(new Set(raw.flatMap((value:any)=>String(value??'').split(/[,|\n]/).map(label).filter(Boolean))))};
