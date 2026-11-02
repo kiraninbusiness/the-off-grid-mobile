@@ -18,10 +18,29 @@ const discount=(p:any)=>{const price=priceValue(p),rawOld=p?.old_price??p?.compa
 
 export default function Shop(){
  const params=useLocalSearchParams<{cat?:string}>();
- const [products,setProducts]=useState<any[]>([]),[q,setQ]=useState(''),[recentSearches,setRecentSearches]=useState<string[]>([]),[active,setActive]=useState('ALL'),[sort,setSort]=useState('latest'),[price,setPrice]=useState('all'),[size,setSize]=useState('all'),[colour,setColour]=useState('all'),[inStockOnly,setInStockOnly]=useState(false),[saleOnly,setSaleOnly]=useState(false),[minOff,setMinOff]=useState(0),[searchFocused,setSearchFocused]=useState(false),[filterOpen,setFilterOpen]=useState(false),[loading,setLoading]=useState(true),[apiError,setApiError]=useState('');
+ const [products,setProducts]=useState<any[]>([]),[q,setQ]=useState(''),[voiceListening,setVoiceListening]=useState(false),[voiceError,setVoiceError]=useState(''),[recentSearches,setRecentSearches]=useState<string[]>([]),[active,setActive]=useState('ALL'),[sort,setSort]=useState('latest'),[price,setPrice]=useState('all'),[size,setSize]=useState('all'),[colour,setColour]=useState('all'),[inStockOnly,setInStockOnly]=useState(false),[saleOnly,setSaleOnly]=useState(false),[minOff,setMinOff]=useState(0),[searchFocused,setSearchFocused]=useState(false),[filterOpen,setFilterOpen]=useState(false),[loading,setLoading]=useState(true),[apiError,setApiError]=useState('');
  useEffect(()=>{let alive=true;AsyncStorage.getItem('offgrid_recent_searches').then(raw=>{if(!alive||!raw)return;const parsed=JSON.parse(raw);if(Array.isArray(parsed))setRecentSearches(parsed.filter((v:any)=>typeof v==='string').slice(0,6))}).catch(()=>{});return()=>{alive=false}},[]);
  const saveSearch=useCallback((value:string)=>{const term=value.trim().replace(/\s+/g,' ');if(!term)return;setRecentSearches(previous=>{const next=[term,...previous.filter(x=>x.toLowerCase()!==term.toLowerCase())].slice(0,6);AsyncStorage.setItem('offgrid_recent_searches',JSON.stringify(next)).catch(()=>{});return next});setQ(term)},[]);
  const clearRecentSearches=()=>{setRecentSearches([]);AsyncStorage.removeItem('offgrid_recent_searches').catch(()=>{})};
+ useSpeechRecognitionEvent('start',()=>{setVoiceListening(true);setVoiceError('')});
+ useSpeechRecognitionEvent('end',()=>setVoiceListening(false));
+ useSpeechRecognitionEvent('error',(event:any)=>{setVoiceListening(false);setVoiceError(event?.message||'Voice search is unavailable. Try typing instead.')});
+ useSpeechRecognitionEvent('result',(event:any)=>{
+   const transcript=event?.results?.[0]?.transcript;
+   if(event?.isFinal&&typeof transcript==='string'&&transcript.trim()){
+     saveSearch(transcript);setSearchFocused(false);setVoiceListening(false);
+   }
+ });
+ const startVoiceSearch=async()=>{
+   setVoiceError('');
+   try{
+     const permission=await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+     if(!permission.granted){setVoiceError('Microphone permission is required. Enable it in device settings.');return;}
+     ExpoSpeechRecognitionModule.start({lang:'en-IN',interimResults:true,maxAlternatives:1});
+   }catch(e:any){setVoiceListening(false);setVoiceError(e?.message||'Could not start voice search. Please type your search.');}
+ };
+ const stopVoiceSearch=()=>{try{ExpoSpeechRecognitionModule.stop()}catch{}setVoiceListening(false)};
+
  const cats=useMemo(()=>{const found=products.map(p=>label(p.category).toUpperCase()).filter(Boolean);return ['ALL',...Array.from(new Set([...found,...(active!=='ALL'?[active]:[])]))]},[products,active]);
  const colours=useMemo(()=>Array.from(new Set(products.flatMap(p=>[p.color,p.colour,...(Array.isArray(p.colors)?p.colors:[]),...(Array.isArray(p.variants)?p.variants.flatMap((v:any)=>[v?.color,v?.colour]):[])].map(label).map((x:string)=>x.toUpperCase()).filter(Boolean)))).sort(),[products]);
  const sizes=useMemo(()=>Array.from(new Set(products.flatMap(productSizes))).sort(),[products]);
