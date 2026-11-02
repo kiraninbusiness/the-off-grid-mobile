@@ -12,6 +12,7 @@ import * as SplashScreen from 'expo-splash-screen';
 // Keep the launch screen up until the app has decided where to go, so there is no blank flash.
 SplashScreen.preventAutoHideAsync().catch(() => {});
 import ErrorScreen from './error';
+import { ThemeProvider } from '../src/theme/ThemeProvider';
 
 installGlobalErrorHandlers();
 
@@ -88,13 +89,13 @@ function Gate() {
   }, [ready, configError, onboarded, pathname]);
 
   return <View style={{ flex: 1 }}>
-    <Stack screenOptions={{ headerShown: false, animation: 'fade' }} />
+    <Stack screenOptions={{ headerShown: false, animation: 'fade_from_bottom', animationDuration: 240, contentStyle: { backgroundColor: '#090909' } }} />
     {configError ? <View style={styles.root}><Text style={styles.logo}>THE OFF GRID</Text><Text style={styles.title}>SETUP REQUIRED</Text><Text style={styles.body}>{configError}</Text><Text style={styles.hint}>Set the production environment variables and rebuild the app.</Text></View> : null}
   </View>;
 }
 
 export default function Layout() {
-  return <StoreProvider><Gate /></StoreProvider>;
+  return <ThemeProvider><StoreProvider><Gate /></StoreProvider></ThemeProvider>;
 }
 
 const styles = StyleSheet.create({ root:{flex:1,backgroundColor:'#0a0a0a',padding:28,justifyContent:'center'}, logo:{color:'#fff',fontSize:14,fontWeight:'900',letterSpacing:2,marginBottom:42}, title:{color:'#fff',fontSize:30,fontWeight:'900',letterSpacing:-.5}, body:{color:'#ccc',fontSize:15,lineHeight:23,marginTop:18}, hint:{color:'#777',fontSize:13,lineHeight:20,marginTop:14} });

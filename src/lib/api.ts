@@ -15,6 +15,23 @@ export async function uploadReviewPhoto(uri:string, mime?:string){
   return String(data.url||'');
  }catch(e:any){ if(e?.name==='AbortError') throw new Error('Photo upload took too long. Please try again.'); throw e; }
  finally{clearTimeout(timer)} }
+
+export async function visualProductSearch(uri:string, mime?:string){
+ const token=await getToken();
+ const type=mime&&/^image\//.test(mime)?mime:'image/jpeg';
+ const ext=type.split('/')[1]||'jpg';
+ const form=new FormData();
+ form.append('file',{uri,name:`visual-search.${ext}`,type} as any);
+ const controller=new AbortController(); const timer=setTimeout(()=>controller.abort(),35000);
+ try{
+  const res=await fetch(`${API_URL}/visual-search`,{method:'POST',headers:{Accept:'application/json',...(token?{Authorization:`Bearer ${token}`}:{})},body:form,signal:controller.signal});
+  const raw=await res.text();let data:any={};try{data=raw?JSON.parse(raw):{}}catch{}
+  if(!res.ok){const error:any=new Error(data?.message||`Visual search failed (${res.status})`);error.status=res.status;throw error;}
+  return data;
+ }catch(e:any){if(e?.name==='AbortError')throw new Error('Visual search took too long. Please try again.');throw e;}
+ finally{clearTimeout(timer);}
+}
+
 export const api={
  products:(query='')=>request<any>(`/products${query}`), product:(id:string|number)=>request<any>(`/products/${id}`),
  banners:()=>request<any>('/banners'), publicOffers:()=>request<any>('/coupons/public'), otpRequest:(phone:string)=>request<any>('/auth/otp/request',{method:'POST',body:JSON.stringify({phone})}), otpVerify:(body:{phone:string;code:string;name?:string;email?:string})=>request<any>('/auth/otp/verify',{method:'POST',body:JSON.stringify(body)}), login:(email:string,password:string)=>request<any>('/auth/login',{method:'POST',body:JSON.stringify({email,password})}),
@@ -28,5 +45,5 @@ export const api={
  newsletterSubscribe:(email:string)=>request<any>('/newsletter',{method:'POST',body:JSON.stringify({email})}),
  combos:()=>request<any[]>('/combos'), giftCardAmounts:()=>request<number[]>('/gift-cards/amounts'), purchaseGiftCard:(body:any)=>request<any>('/gift-cards/purchase',{method:'POST',body:JSON.stringify(body)}), verifyGiftCard:(body:any)=>request<any>('/gift-cards/verify-payment',{method:'POST',body:JSON.stringify(body)}), giftCards:()=>request<any[]>('/gift-cards/mine'),
  returns:()=>request<any[]>('/returns/mine'), createReturn:(body:any)=>request<any>('/returns',{method:'POST',body:JSON.stringify(body)}),
- customerLoyalty:()=>request<any>('/customer/loyalty'), customerReferrals:()=>request<any>('/customer/referrals'), community:(sort:'new'|'trending'='new')=>request<any[]>(`/community?sort=${sort}`), myCommunity:()=>request<any[]>('/community/mine'), shareOutfit:(image:string,caption:string)=>request<any>('/community',{method:'POST',body:JSON.stringify({image,caption})}), likeOutfit:(id:number)=>request<any>(`/community/${id}/like`,{method:'POST'}), unlikeOutfit:(id:number)=>request<any>(`/community/${id}/like`,{method:'DELETE'}), giftIdeas:(budget:number,who:string)=>request<any[]>(`/customer/gift-ideas?budget=${budget}&for=${who}`), looks:()=>request<any[]>('/looks'), look:(id:string|number)=>request<any>(`/looks/${id}`), customerClub:()=>request<any>('/customer/club'), setBirthday:(birthday:string)=>request<any>('/customer/birthday',{method:'PUT',body:JSON.stringify({birthday})}), recommendations:(productId?:string|number)=>request<any[]>(`/customer/recommendations${productId?`?product_id=${productId}`:''}`), subscribeStockAlert:(body:any)=>request<any>('/customer/stock-alerts',{method:'POST',body:JSON.stringify(body)}), serviceability:(pincode:string)=>request<any>(`/customer/serviceability/${encodeURIComponent(pincode)}`), submitSupport:(body:any)=>request<any>('/contact',{method:'POST',body:JSON.stringify(body)}), profileUpdate:(body:any)=>request<any>('/auth/me',{method:'PATCH',body:JSON.stringify(body)}),
+ creatorApplication:()=>request<any>('/creators/me'), applyCreator:(body:any)=>request<any>('/creators/apply',{method:'POST',body:JSON.stringify(body)}), customerLoyalty:()=>request<any>('/customer/loyalty'), customerReferrals:()=>request<any>('/customer/referrals'), community:(sort:'new'|'trending'='new')=>request<any[]>(`/community?sort=${sort}`), myCommunity:()=>request<any[]>('/community/mine'), shareOutfit:(image:string,caption:string)=>request<any>('/community',{method:'POST',body:JSON.stringify({image,caption})}), likeOutfit:(id:number)=>request<any>(`/community/${id}/like`,{method:'POST'}), unlikeOutfit:(id:number)=>request<any>(`/community/${id}/like`,{method:'DELETE'}), giftIdeas:(budget:number,who:string)=>request<any[]>(`/customer/gift-ideas?budget=${budget}&for=${who}`), looks:()=>request<any[]>('/looks'), look:(id:string|number)=>request<any>(`/looks/${id}`), customerClub:()=>request<any>('/customer/club'), setBirthday:(birthday:string)=>request<any>('/customer/birthday',{method:'PUT',body:JSON.stringify({birthday})}), recommendations:(productId?:string|number)=>request<any[]>(`/customer/recommendations${productId?`?product_id=${productId}`:''}`), subscribeStockAlert:(body:any)=>request<any>('/customer/stock-alerts',{method:'POST',body:JSON.stringify(body)}), serviceability:(pincode:string)=>request<any>(`/customer/serviceability/${encodeURIComponent(pincode)}`), submitSupport:(body:any)=>request<any>('/contact',{method:'POST',body:JSON.stringify(body)}), profileUpdate:(body:any)=>request<any>('/auth/me',{method:'PATCH',body:JSON.stringify(body)}),
 };

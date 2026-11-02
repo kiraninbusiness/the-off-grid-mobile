@@ -5,7 +5,7 @@
     "version": "3.0.0",
     "orientation": "portrait",
     "scheme": "theoffgrid",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "in.theoffgrid.app"
@@ -47,13 +47,29 @@
         }
       ],
       "expo-image",
-      ["expo-image-picker", {"photosPermission": "Allow The Off Grid to access your photos so you can add them to a product review."}],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow The Off Grid to access your photos so you can add them to a product review."
+        }
+      ],
       [
         "expo-splash-screen",
         {
           "backgroundColor": "#0B0B0B",
           "image": "./assets/splash-icon.png",
           "imageWidth": 220
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow The Off Grid to use your microphone for voice product search.",
+          "speechRecognitionPermission": "Allow The Off Grid to convert your spoken product search into text.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox",
+            "com.google.android.tts"
+          ]
         }
       ]
     ],
