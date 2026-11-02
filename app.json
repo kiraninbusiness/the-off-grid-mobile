@@ -5,7 +5,7 @@
     "version": "3.0.0",
     "orientation": "portrait",
     "scheme": "theoffgrid",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "in.theoffgrid.app"
