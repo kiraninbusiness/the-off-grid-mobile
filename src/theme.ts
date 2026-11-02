@@ -3,6 +3,7 @@ export const theme={
  spacing:{xs:4,sm:8,md:12,lg:16,xl:24,xxl:32},
  radius:{sm:2,md:8,lg:14,pill:999},
  typography:{display:38,hero:56,title:20,body:13,caption:9},
+ fonts:{display:'sans-serif-condensed',heading:'sans-serif-condensed',body:'sans-serif',medium:'sans-serif-medium'},
 };
 
 export type OffGridTheme=typeof theme;
