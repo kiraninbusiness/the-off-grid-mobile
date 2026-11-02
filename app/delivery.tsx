@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { api } from '../src/lib/api';
 
-type Result = { serviceable: boolean; message?: string; estimated_days?: string | number; cod?: boolean; free_shipping_threshold?: number };
+type Result = { serviceable: boolean; message?: string; estimated_days?: string | number; arrival?: string; cod?: boolean; free_shipping_threshold?: number };
 const formatEta = (value: any): string => {
   if (value === null || value === undefined || String(value).trim() === '') return '';
   const text = String(value).trim();
@@ -61,6 +61,7 @@ export default function Delivery() {
         serviceable: serviceability,
         message: data?.message || data?.reason || (serviceability ? '' : 'Delivery is not available for this pincode right now.'),
         estimated_days: data?.estimated_days ?? data?.estimatedDays ?? data?.eta,
+        arrival: data?.estimated_delivery?.label,
         cod: codFlag === true,
         free_shipping_threshold: Number.isFinite(threshold) && threshold >= 0 ? threshold : 1499,
       });
@@ -110,6 +111,7 @@ export default function Delivery() {
         <View style={s.result} accessibilityLiveRegion="polite" accessible accessibilityLabel={result.serviceable?'Delivery available for this pincode':'Delivery unavailable for this pincode'}>
           <Text style={s.status}>{result.serviceable ? 'DELIVERY AVAILABLE' : 'NOT SERVICEABLE'}</Text>
           <Text style={s.main}>{result.serviceable ? (formatEta(result.estimated_days) || 'We deliver to your area') : (result.message || 'Delivery is not available for this pincode right now.')}</Text>
+          {result.serviceable && !!result.arrival && <Text style={s.line}>ARRIVES BY {String(result.arrival).toUpperCase()}</Text>}
           {result.serviceable && <>
             <View style={s.divider} />
             <Text style={s.line}>CASH ON DELIVERY</Text>
