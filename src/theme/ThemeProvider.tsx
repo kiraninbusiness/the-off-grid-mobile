@@ -16,7 +16,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => { AsyncStorage.getItem('offgrid_theme_preference').then(v => { if(v === 'light' || v === 'dark' || v === 'system') setPreferenceState(v); }).catch(()=>{}).finally(()=>setLoaded(true)); }, []);
   const mode: 'light'|'dark' = preference === 'system' ? (system === 'dark' ? 'dark' : 'light') : preference;
-  useEffect(() => { Appearance.setColorScheme(preference === 'system' ? null : preference); }, [preference]);
+  useEffect(() => { Appearance.setColorScheme(preference === 'system' ? 'unspecified' : preference); }, [preference]);
   const setPreference = async (value: ThemePreference) => { setPreferenceState(value); try { await AsyncStorage.setItem('offgrid_theme_preference', value); } catch {} };
   const value = useMemo(() => ({ preference, setPreference, mode, colors: palettes[mode] }), [preference, mode]);
   if (!loaded) return null;
