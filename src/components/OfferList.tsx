@@ -40,13 +40,13 @@ export default function OfferList({onPick, subtotal = 0}: {onPick?: (code: strin
 }
 
 const s = StyleSheet.create({
-  wrap: {borderWidth: 1, borderColor: '#e1e1dc', padding: 14, marginBottom: 14, backgroundColor: '#fff'},
-  title: {fontSize: 9, fontWeight: '900', letterSpacing: 1.3, marginBottom: 10},
+  wrap: {borderWidth: 1, borderColor: '#2A2A2A', padding: 14, marginBottom: 14, backgroundColor: '#0A0A0A'},
+  title: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.3, marginBottom: 10},
   row: {flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8},
-  code: {borderWidth: 1, borderStyle: 'dashed', borderColor: '#111', paddingHorizontal: 10, paddingVertical: 6},
-  codeText: {fontSize: 11, fontWeight: '900', letterSpacing: 1},
-  desc: {fontSize: 12, color: '#111', fontWeight: '700'},
-  hint: {fontSize: 10, color: '#8a5a00', marginTop: 2},
-  use: {fontSize: 10, fontWeight: '900', letterSpacing: 1, textDecorationLine: 'underline'},
-  foot: {fontSize: 10, color: '#777', marginTop: 4},
+  code: {borderWidth: 1, borderStyle: 'dashed', borderColor: '#F2F0EA', paddingHorizontal: 10, paddingVertical: 6},
+  codeText: {fontSize: 11, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
+  desc: {fontSize: 12, color: '#F2F0EA', fontFamily:'DMSans-Bold'},
+  hint: {fontSize: 10,fontFamily:'DMSans-Regular', color: '#8a5a00', marginTop: 2},
+  use: {fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1, textDecorationLine: 'underline'},
+  foot: {fontSize: 10,fontFamily:'DMSans-Regular', color: '#9A978F', marginTop: 4},
 });

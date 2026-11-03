@@ -46,17 +46,17 @@ export default function DropCountdown() {
 
 const s = StyleSheet.create({
   wrap: {
-    backgroundColor: '#111',
+    backgroundColor: '#F2F0EA',
     paddingHorizontal: 22,
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  kicker: {color: '#fff', fontSize: 10, fontWeight: '900', letterSpacing: 1.6},
-  sub: {color: '#999', fontSize: 9, marginTop: 4, letterSpacing: 0.4},
+  kicker: {color: '#0A0A0A', fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.6},
+  sub: {color: '#8A877F', fontSize: 9,fontFamily:'DMSans-Regular', marginTop: 4, letterSpacing: 0.4},
   timer: {flexDirection: 'row', alignItems: 'center', gap: 4},
   cell: {alignItems: 'center', minWidth: 34},
-  num: {color: '#fff', fontSize: 20, fontWeight: '900', letterSpacing: -0.5},
-  unit: {color: '#888', fontSize: 7, fontWeight: '800', letterSpacing: 1, marginTop: 2},
-  colon: {color: '#555', fontSize: 16, fontWeight: '900', marginBottom: 10},
+  num: {color: '#0A0A0A', fontSize: 20, fontFamily:'SpaceGrotesk-Bold', letterSpacing: -0.5},
+  unit: {color: '#8F8C85', fontSize: 7, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1, marginTop: 2},
+  colon: {color: '#B5B2AA', fontSize: 16, fontFamily:'SpaceGrotesk-Bold', marginBottom: 10},
 });

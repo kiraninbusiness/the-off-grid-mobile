@@ -96,7 +96,7 @@ export default function Delivery() {
         keyboardType="number-pad"
         maxLength={6}
         placeholder="6-digit pincode"
-        placeholderTextColor="#999"
+        placeholderTextColor="#8A877F"
         style={s.input}
         accessibilityLabel="Six-digit Indian pincode"
         returnKeyType="done"
@@ -104,7 +104,7 @@ export default function Delivery() {
       />
       <Text style={s.helper} accessibilityLiveRegion="polite">{pin.length}/6 digits</Text>
       <Pressable style={[s.btn, busy && s.btnDisabled]} onPress={check} disabled={busy} accessibilityRole="button" accessibilityLabel={busy ? "Checking delivery availability" : "Check delivery for entered pincode"} accessibilityState={{ disabled: busy }}>
-        {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.btnText}>CHECK PINCODE</Text>}
+        {busy ? <ActivityIndicator color="#0A0A0A" /> : <Text style={s.btnText}>CHECK PINCODE</Text>}
       </Pressable>
       {!!error && <View style={s.errorBox} accessibilityLiveRegion="polite"><Text style={s.errorTitle}>UNABLE TO CHECK</Text><Text style={s.errorText}>{error}</Text>{!busy && pin.length === 6 && <Pressable onPress={check} style={s.retry}><Text style={s.retryText}>TRY AGAIN</Text></Pressable>}</View>}
       {result && !error && (
@@ -126,26 +126,26 @@ export default function Delivery() {
   );
 }
 const s = StyleSheet.create({
-  page: { flex: 1, backgroundColor: '#fff', padding: 22, paddingTop: 70 },
-  eyebrow: { fontSize: 9, color: '#777', letterSpacing: 1.5 },
-  title: { fontSize: 38, fontWeight: '900', letterSpacing: -1.8, marginTop: 5, color: '#111' },
-  copy: { fontSize: 12, color: '#666', lineHeight: 19, marginTop: 9 },
-  label: { fontSize: 9, color: '#555', fontWeight: '900', letterSpacing: 1.3, marginTop: 28 },
-  input: { borderBottomWidth: 1, borderBottomColor: '#111', fontSize: 22, color: '#111', paddingVertical: 13, letterSpacing: 3 },
-  helper: { fontSize: 10, color: '#888', textAlign: 'right', marginTop: 6 },
-  btn: { backgroundColor: '#111', minHeight: 52, padding: 17, alignItems: 'center', justifyContent: 'center', marginTop: 17 },
+  page: { flex: 1, backgroundColor: '#0A0A0A', padding: 22, paddingTop: 70 },
+  eyebrow: { fontSize: 9,fontFamily:'DMSans-Regular', color: '#9A978F', letterSpacing: 1.5 },
+  title: { fontSize: 38, fontFamily:'SpaceGrotesk-Bold', letterSpacing: -1.8, marginTop: 5, color: '#F2F0EA' },
+  copy: { fontSize: 12,fontFamily:'DMSans-Regular', color: '#A8A59D', lineHeight: 19, marginTop: 9 },
+  label: { fontSize: 9, color: '#B5B2AA', fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.3, marginTop: 28 },
+  input: { borderBottomWidth: 1, borderBottomColor: '#F2F0EA', fontSize: 22,fontFamily:'DMSans-Regular', color: '#F2F0EA', paddingVertical: 13, letterSpacing: 3 },
+  helper: { fontSize: 10,fontFamily:'DMSans-Regular', color: '#8F8C85', textAlign: 'right', marginTop: 6 },
+  btn: { backgroundColor: '#F2F0EA', minHeight: 52, padding: 17, alignItems: 'center', justifyContent: 'center', marginTop: 17 },
   btnDisabled: { opacity: 0.65 },
-  btnText: { color: '#fff', fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
-  errorBox: { borderWidth: 1, borderColor: '#e2b8b8', backgroundColor: '#fff8f8', padding: 16, marginTop: 22 },
-  errorTitle: { color: '#9b2424', fontSize: 9, fontWeight: '900', letterSpacing: 1.2 },
-  errorText: { color: '#6d3333', fontSize: 12, lineHeight: 18, marginTop: 7 },
+  btnText: { color: '#0A0A0A', fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2 },
+  errorBox: { borderWidth: 1, borderColor: '#e2b8b8', backgroundColor: '#2A1210', padding: 16, marginTop: 22 },
+  errorTitle: { color: '#9b2424', fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2 },
+  errorText: { color: '#6d3333', fontSize: 12,fontFamily:'DMSans-Regular', lineHeight: 18, marginTop: 7 },
   retry: { alignSelf: 'flex-start', paddingVertical: 10, paddingRight: 12, marginTop: 4 },
-  retryText: { fontSize: 10, color: '#111', fontWeight: '900', letterSpacing: 1 },
-  result: { borderWidth: 1, borderColor: '#ddd', padding: 20, marginTop: 25 },
-  status: { fontSize: 9, fontWeight: '900', letterSpacing: 1.4, color: '#111' },
-  main: { fontSize: 21, fontWeight: '900', lineHeight: 28, marginTop: 10, color: '#111' },
-  divider: { height: 1, backgroundColor: '#eee', marginTop: 17, marginBottom: 4 },
-  line: { fontSize: 9, color: '#777', fontWeight: '800', letterSpacing: 1, marginTop: 12 },
-  value: { fontSize: 13, color: '#222', fontWeight: '700', marginTop: 4 },
-  note: { fontSize: 10, color: '#888', lineHeight: 16, marginTop: 22 },
+  retryText: { fontSize: 10, color: '#F2F0EA', fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1 },
+  result: { borderWidth: 1, borderColor: '#2A2A2A', padding: 20, marginTop: 25 },
+  status: { fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.4, color: '#F2F0EA' },
+  main: { fontSize: 21, fontFamily:'SpaceGrotesk-Bold', lineHeight: 28, marginTop: 10, color: '#F2F0EA' },
+  divider: { height: 1, backgroundColor: '#2A2A2A', marginTop: 17, marginBottom: 4 },
+  line: { fontSize: 9, color: '#9A978F', fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1, marginTop: 12 },
+  value: { fontSize: 13, color: '#E6E3DC', fontFamily:'DMSans-Bold', marginTop: 4 },
+  note: { fontSize: 10,fontFamily:'DMSans-Regular', color: '#8F8C85', lineHeight: 16, marginTop: 22 },
 });

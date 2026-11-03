@@ -38,8 +38,8 @@ export default function ProductShelf({title, hint, items, onSeeAll}: {title: str
 const s = StyleSheet.create({
   wrap: {marginBottom: 6},
   head: {flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 22, marginBottom: 14},
-  title: {fontSize: 18, fontWeight: '900', letterSpacing: -0.4},
-  hint: {fontSize: 10, color: '#777', letterSpacing: 1, marginTop: 3},
-  all: {fontSize: 9, fontWeight: '900', letterSpacing: 1.1, textDecorationLine: 'underline'},
+  title: {fontSize: 18, fontFamily:'SpaceGrotesk-Bold', letterSpacing: -0.4},
+  hint: {fontSize: 10,fontFamily:'DMSans-Regular', color: '#9A978F', letterSpacing: 1, marginTop: 3},
+  all: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.1, textDecorationLine: 'underline'},
   list: {paddingHorizontal: 22},
 });

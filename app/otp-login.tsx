@@ -71,7 +71,7 @@ export default function OtpLogin() {
     });
 
   return (
-    <KeyboardAvoidingView style={{flex: 1, backgroundColor: '#fff'}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={{flex: 1, backgroundColor: '#0A0A0A'}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView contentContainerStyle={s.page} keyboardShouldPersistTaps="handled">
         <Text style={s.eyebrow}>THE OFF GRID / ACCOUNT</Text>
         <Text style={s.title}>{step === 'signup' ? 'ONE LAST STEP' : 'SIGN IN WITH OTP'}</Text>
@@ -86,7 +86,7 @@ export default function OtpLogin() {
                 onChangeText={v => setPhone(v.replace(/\D/g, '').slice(0, 10))}
                 keyboardType="number-pad"
                 placeholder="Mobile number"
-                placeholderTextColor="#999"
+                placeholderTextColor="#8A877F"
                 style={s.input}
                 maxLength={10}
                 autoFocus
@@ -95,7 +95,7 @@ export default function OtpLogin() {
               />
             </View>
             <Pressable accessibilityRole="button" disabled={busy} style={[s.btn, busy && s.dim]} onPress={sendCode}>
-              {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.btnText}>SEND CODE</Text>}
+              {busy ? <ActivityIndicator color="#0A0A0A" /> : <Text style={s.btnText}>SEND CODE</Text>}
             </Pressable>
           </>
         )}
@@ -108,8 +108,8 @@ export default function OtpLogin() {
               onChangeText={v => setCode(v.replace(/\D/g, '').slice(0, 6))}
               keyboardType="number-pad"
               placeholder="6-digit code"
-              placeholderTextColor="#999"
-              style={[s.box, {letterSpacing: 6, fontSize: 20}]}
+              placeholderTextColor="#8A877F"
+              style={[s.box, {letterSpacing: 6, fontSize: 20,fontFamily:'DMSans-Regular'}]}
               maxLength={6}
               autoFocus
               textContentType="oneTimeCode"
@@ -118,7 +118,7 @@ export default function OtpLogin() {
               onSubmitEditing={verify}
             />
             <Pressable accessibilityRole="button" disabled={busy} style={[s.btn, busy && s.dim]} onPress={verify}>
-              {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.btnText}>VERIFY</Text>}
+              {busy ? <ActivityIndicator color="#0A0A0A" /> : <Text style={s.btnText}>VERIFY</Text>}
             </Pressable>
             <Pressable accessibilityRole="button" disabled={busy || wait > 0} onPress={sendCode} style={s.link}>
               <Text style={s.linkText}>{wait > 0 ? `RESEND CODE IN ${wait}s` : 'RESEND CODE'}</Text>
@@ -132,10 +132,10 @@ export default function OtpLogin() {
         {step === 'signup' && (
           <>
             <Text style={s.copy}>Your number is verified. Tell us who you are to create your account.</Text>
-            <TextInput value={name} onChangeText={setName} placeholder="Full name" placeholderTextColor="#999" style={s.box} autoCapitalize="words" accessibilityLabel="Full name" />
-            <TextInput value={email} onChangeText={setEmail} placeholder="Email address" placeholderTextColor="#999" style={s.box} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} accessibilityLabel="Email address" />
+            <TextInput value={name} onChangeText={setName} placeholder="Full name" placeholderTextColor="#8A877F" style={s.box} autoCapitalize="words" accessibilityLabel="Full name" />
+            <TextInput value={email} onChangeText={setEmail} placeholder="Email address" placeholderTextColor="#8A877F" style={s.box} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} accessibilityLabel="Email address" />
             <Pressable accessibilityRole="button" disabled={busy} style={[s.btn, busy && s.dim]} onPress={signUp}>
-              {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.btnText}>CREATE ACCOUNT</Text>}
+              {busy ? <ActivityIndicator color="#0A0A0A" /> : <Text style={s.btnText}>CREATE ACCOUNT</Text>}
             </Pressable>
           </>
         )}
@@ -152,17 +152,17 @@ export default function OtpLogin() {
 
 const s = StyleSheet.create({
   page: {padding: 24, paddingTop: 70},
-  eyebrow: {fontSize: 9, color: '#777', letterSpacing: 1.5},
-  title: {fontSize: 34, fontWeight: '900', letterSpacing: -1.2, marginTop: 6},
-  copy: {fontSize: 13, color: '#555', lineHeight: 20, marginTop: 14, marginBottom: 20},
-  phoneRow: {flexDirection: 'row', borderWidth: 1, borderColor: '#ccc', height: 52, marginBottom: 14},
-  prefix: {paddingHorizontal: 14, fontSize: 15, fontWeight: '800', alignSelf: 'center', borderRightWidth: 1, borderRightColor: '#ddd', height: '100%', textAlignVertical: 'center', lineHeight: 52},
-  input: {flex: 1, paddingHorizontal: 14, fontSize: 16, letterSpacing: 1, color: '#111'},
-  box: {borderWidth: 1, borderColor: '#ccc', height: 52, paddingHorizontal: 14, fontSize: 15, marginBottom: 14, color: '#111'},
-  btn: {height: 54, backgroundColor: '#111', alignItems: 'center', justifyContent: 'center'},
-  btnText: {color: '#fff', fontWeight: '900', letterSpacing: 1.2},
+  eyebrow: {fontSize: 9,fontFamily:'DMSans-Regular', color: '#9A978F', letterSpacing: 1.5},
+  title: {fontSize: 34, fontFamily:'SpaceGrotesk-Bold', letterSpacing: -1.2, marginTop: 6},
+  copy: {fontSize: 13,fontFamily:'DMSans-Regular', color: '#B5B2AA', lineHeight: 20, marginTop: 14, marginBottom: 20},
+  phoneRow: {flexDirection: 'row', borderWidth: 1, borderColor: '#3A3A3A', height: 52, marginBottom: 14},
+  prefix: {paddingHorizontal: 14, fontSize: 15, fontFamily:'SpaceGrotesk-Bold', alignSelf: 'center', borderRightWidth: 1, borderRightColor: '#2A2A2A', height: '100%', textAlignVertical: 'center', lineHeight: 52},
+  input: {flex: 1, paddingHorizontal: 14, fontSize: 16,fontFamily:'DMSans-Regular', letterSpacing: 1, color: '#F2F0EA'},
+  box: {borderWidth: 1, borderColor: '#3A3A3A', height: 52, paddingHorizontal: 14, fontSize: 15,fontFamily:'DMSans-Regular', marginBottom: 14, color: '#F2F0EA'},
+  btn: {height: 54, backgroundColor: '#F2F0EA', alignItems: 'center', justifyContent: 'center'},
+  btnText: {color: '#0A0A0A', fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2},
   dim: {opacity: 0.6},
   link: {alignItems: 'center', paddingVertical: 14},
-  linkText: {fontSize: 10, fontWeight: '800', letterSpacing: 1, textDecorationLine: 'underline', color: '#111'},
-  error: {color: '#b42318', fontSize: 12, marginTop: 14, lineHeight: 18},
+  linkText: {fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1, textDecorationLine: 'underline', color: '#F2F0EA'},
+  error: {color: '#FF6B62', fontSize: 12,fontFamily:'DMSans-Regular', marginTop: 14, lineHeight: 18},
 });

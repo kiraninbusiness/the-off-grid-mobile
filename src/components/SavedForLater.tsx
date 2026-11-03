@@ -15,7 +15,7 @@ export default function SavedForLater({items, onMoveToBag, onRemove, busyKey}: {
         const busy = busyKey === key;
         return (
           <View key={key} style={s.row}>
-            {x.image ? <Image source={{uri: x.image}} style={s.img} resizeMode="cover" /> : <View style={[s.img, {backgroundColor: '#eee'}]} />}
+            {x.image ? <Image source={{uri: x.image}} style={s.img} resizeMode="cover" /> : <View style={[s.img, {backgroundColor: '#2A2A2A'}]} />}
             <View style={{flex: 1}}>
               <Text style={s.name} numberOfLines={2}>{x.name || 'Product'}</Text>
               <Text style={s.variant}>{[x.selected_size ? `Size ${x.selected_size}` : '', x.selected_color || ''].filter(Boolean).join('  ·  ') || ' '}</Text>
@@ -37,15 +37,15 @@ export default function SavedForLater({items, onMoveToBag, onRemove, busyKey}: {
 }
 
 const s = StyleSheet.create({
-  wrap: {marginTop: 26, paddingTop: 20, borderTopWidth: 1, borderTopColor: '#e1e1dc'},
-  title: {fontSize: 10, fontWeight: '900', letterSpacing: 1.4, marginBottom: 14},
+  wrap: {marginTop: 26, paddingTop: 20, borderTopWidth: 1, borderTopColor: '#2A2A2A'},
+  title: {fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.4, marginBottom: 14},
   row: {flexDirection: 'row', gap: 12, marginBottom: 16},
   img: {width: 72, height: 92},
-  name: {fontSize: 12, fontWeight: '800'},
-  variant: {fontSize: 10, color: '#777', marginTop: 3},
-  price: {fontSize: 12, fontWeight: '800', marginTop: 4},
+  name: {fontSize: 12, fontFamily:'SpaceGrotesk-Bold'},
+  variant: {fontSize: 10,fontFamily:'DMSans-Regular', color: '#9A978F', marginTop: 3},
+  price: {fontSize: 12, fontFamily:'SpaceGrotesk-Bold', marginTop: 4},
   actions: {flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 8},
-  move: {borderWidth: 1, borderColor: '#111', paddingHorizontal: 12, paddingVertical: 8},
-  moveText: {fontSize: 9, fontWeight: '900', letterSpacing: 1},
-  remove: {fontSize: 9, fontWeight: '800', letterSpacing: 1, color: '#777', textDecorationLine: 'underline'},
+  move: {borderWidth: 1, borderColor: '#F2F0EA', paddingHorizontal: 12, paddingVertical: 8},
+  moveText: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
+  remove: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1, color: '#9A978F', textDecorationLine: 'underline'},
 });

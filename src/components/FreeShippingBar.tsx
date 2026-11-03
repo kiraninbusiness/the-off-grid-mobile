@@ -22,8 +22,8 @@ export default function FreeShippingBar({subtotal}: {subtotal: number}) {
 }
 
 const s = StyleSheet.create({
-  wrap: {borderWidth: 1, borderColor: '#ddd', padding: 14, marginBottom: 6},
-  text: {fontSize: 9, fontWeight: '900', letterSpacing: 1.1},
-  track: {height: 4, backgroundColor: '#eee', marginTop: 10},
-  fill: {height: 4, backgroundColor: '#111'},
+  wrap: {borderWidth: 1, borderColor: '#2A2A2A', padding: 14, marginBottom: 6},
+  text: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.1},
+  track: {height: 4, backgroundColor: '#2A2A2A', marginTop: 10},
+  fill: {height: 4, backgroundColor: '#F2F0EA'},
 });

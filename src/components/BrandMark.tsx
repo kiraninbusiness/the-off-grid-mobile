@@ -3,8 +3,8 @@ import {Platform,StyleSheet,Text,View} from 'react-native';
 
 // The Off Grid wordmark as on the website: a small spaced "THE" over a heavy condensed
 // "OFF" (in the text colour) and "GRID" (brand red).
-export const BRAND_RED='#FF3B2F';
-const CONDENSED=Platform.select({ios:'AvenirNextCondensed-Heavy',android:'sans-serif-condensed',default:'System'});
+export const BRAND_RED='#FF3B30';
+const CONDENSED='SpaceGrotesk-Bold';
 
 export default function BrandMark({size=30,color='#111'}:{size?:number,color?:string}){
  return <View accessible accessibilityRole="header" accessibilityLabel="The Off Grid" style={s.wrap}>
@@ -15,5 +15,5 @@ export default function BrandMark({size=30,color='#111'}:{size?:number,color?:st
 const s=StyleSheet.create({
  wrap:{alignSelf:'flex-start'},
  the:{fontWeight:'500',includeFontPadding:false},
- word:{fontFamily:CONDENSED,fontWeight:'900',includeFontPadding:false,marginTop:-2},
+ word:{fontFamily:CONDENSED,includeFontPadding:false,marginTop:-2},
 });
