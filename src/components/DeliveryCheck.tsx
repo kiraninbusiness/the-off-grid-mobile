@@ -58,7 +58,7 @@ export default function DeliveryCheck() {
   return (
     <View style={s.wrap}>
       <View style={s.titleRow}>
-        <Ionicons name="location-outline" size={15} color="#111" />
+        <Ionicons name="location-outline" size={15} color="#F2F0EA" />
         <Text style={s.title}>CHECK DELIVERY & COD</Text>
       </View>
       <View style={s.row}>
@@ -69,7 +69,7 @@ export default function DeliveryCheck() {
           keyboardType="number-pad"
           maxLength={6}
           placeholder="Enter pincode"
-          placeholderTextColor="#999"
+          placeholderTextColor="#8A877F"
           style={s.input}
           returnKeyType="done"
           accessibilityLabel="Delivery pincode"
@@ -81,7 +81,7 @@ export default function DeliveryCheck() {
           onPress={check}
           disabled={busy}
           style={[s.btn, busy && {opacity: 0.6}]}>
-          {busy ? <ActivityIndicator color="#fff" size="small" /> : <Text style={s.btnText}>CHECK</Text>}
+          {busy ? <ActivityIndicator color="#0A0A0A" size="small" /> : <Text style={s.btnText}>CHECK</Text>}
         </Pressable>
       </View>
 
@@ -93,7 +93,7 @@ export default function DeliveryCheck() {
 
       {result && (
         <View accessibilityLiveRegion="polite" style={s.result}>
-          <Text style={[s.line, {color: result.serviceable ? '#176b37' : '#b42318'}]}>
+          <Text style={[s.line, {color: result.serviceable ? '#5FD38A' : '#FF6B62'}]}>
             {result.serviceable ? '✓ Delivery available' : '✕ Not deliverable to this pincode'}
           </Text>
           {result.serviceable && !!result.eta && <Text style={s.sub}>{result.eta}</Text>}
@@ -106,15 +106,15 @@ export default function DeliveryCheck() {
 }
 
 const s = StyleSheet.create({
-  wrap: {borderWidth: 1, borderColor: '#ddd', padding: 14, marginTop: 14},
+  wrap: {borderWidth: 1, borderColor: '#2A2A2A', padding: 14, marginTop: 14},
   titleRow: {flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 10},
-  title: {fontSize: 9, fontWeight: '900', letterSpacing: 1.3},
-  row: {flexDirection: 'row', borderWidth: 1, borderColor: '#ccc', minHeight: 46},
-  input: {flex: 1, paddingHorizontal: 12, fontSize: 14, letterSpacing: 1, color: '#111'},
-  btn: {backgroundColor: '#111', paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center', minWidth: 76},
-  btnText: {color: '#fff', fontSize: 10, fontWeight: '900', letterSpacing: 1},
-  error: {color: '#b42318', fontSize: 11, marginTop: 9},
-  result: {marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#eee', gap: 4},
-  line: {fontSize: 12, fontWeight: '800'},
-  sub: {fontSize: 11, color: '#555', lineHeight: 16},
+  title: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.3},
+  row: {flexDirection: 'row', borderWidth: 1, borderColor: '#3A3A3A', minHeight: 46},
+  input: {flex: 1, paddingHorizontal: 12, fontSize: 14,fontFamily:'DMSans-Regular', letterSpacing: 1, color: '#F2F0EA'},
+  btn: {backgroundColor: '#F2F0EA', paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center', minWidth: 76},
+  btnText: {color: '#0A0A0A', fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
+  error: {color: '#FF6B62', fontSize: 11,fontFamily:'DMSans-Regular', marginTop: 9},
+  result: {marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#2A2A2A', gap: 4},
+  line: {fontSize: 12, fontFamily:'SpaceGrotesk-Bold'},
+  sub: {fontSize: 11,fontFamily:'DMSans-Regular', color: '#B5B2AA', lineHeight: 16},
 });

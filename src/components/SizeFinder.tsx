@@ -47,11 +47,11 @@ export default function SizeFinder({
           <View style={s.row}>
             <View style={{flex: 1}}>
               <Text style={s.label}>HEIGHT (CM)</Text>
-              <TextInput style={s.input} value={height} onChangeText={v => {setHeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="175" placeholderTextColor="#aaa" />
+              <TextInput style={s.input} value={height} onChangeText={v => {setHeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="175" placeholderTextColor="#77746E" />
             </View>
             <View style={{flex: 1}}>
               <Text style={s.label}>WEIGHT (KG)</Text>
-              <TextInput style={s.input} value={weight} onChangeText={v => {setWeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="70" placeholderTextColor="#aaa" />
+              <TextInput style={s.input} value={weight} onChangeText={v => {setWeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="70" placeholderTextColor="#77746E" />
             </View>
           </View>
 
@@ -59,7 +59,7 @@ export default function SizeFinder({
           <View style={s.fits}>
             {FITS.map(f => (
               <Pressable key={f.key} style={[s.fit, fit === f.key && s.fitOn]} onPress={() => {setFit(f.key); setResult(undefined);}}>
-                <Text style={[s.fitText, fit === f.key && {color: '#fff'}]}>{f.label}</Text>
+                <Text style={[s.fitText, fit === f.key && {color: '#0A0A0A'}]}>{f.label}</Text>
               </Pressable>
             ))}
           </View>
@@ -89,21 +89,21 @@ export default function SizeFinder({
 
 const s = StyleSheet.create({
   backdrop: {flex: 1, backgroundColor: 'rgba(0,0,0,.35)', justifyContent: 'flex-end'},
-  sheet: {backgroundColor: '#fff', padding: 24, paddingBottom: 36},
+  sheet: {backgroundColor: '#0A0A0A', padding: 24, paddingBottom: 36},
   head: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'},
-  title: {fontSize: 20, fontWeight: '900'},
-  note: {fontSize: 11, color: '#666', lineHeight: 17, marginVertical: 14},
+  title: {fontSize: 20, fontFamily:'SpaceGrotesk-Bold'},
+  note: {fontSize: 11,fontFamily:'DMSans-Regular', color: '#A8A59D', lineHeight: 17, marginVertical: 14},
   row: {flexDirection: 'row', gap: 14},
-  label: {fontSize: 9, fontWeight: '900', letterSpacing: 1.2, marginBottom: 6, marginTop: 6},
-  input: {borderBottomWidth: 1, borderBottomColor: '#111', paddingVertical: 10, fontSize: 16, marginBottom: 12},
+  label: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2, marginBottom: 6, marginTop: 6},
+  input: {borderBottomWidth: 1, borderBottomColor: '#F2F0EA', paddingVertical: 10, fontSize: 16,fontFamily:'DMSans-Regular', marginBottom: 12},
   fits: {flexDirection: 'row', gap: 8, marginTop: 4, marginBottom: 20},
-  fit: {borderWidth: 1, borderColor: '#ccc', paddingHorizontal: 12, paddingVertical: 10},
-  fitOn: {backgroundColor: '#111', borderColor: '#111'},
-  fitText: {fontSize: 9, fontWeight: '800', letterSpacing: 0.8},
-  btn: {backgroundColor: '#111', padding: 16, alignItems: 'center', marginTop: 4},
-  btnText: {color: '#fff', fontSize: 10, fontWeight: '900', letterSpacing: 1},
-  none: {fontSize: 12, color: '#777', lineHeight: 18, marginTop: 4},
+  fit: {borderWidth: 1, borderColor: '#3A3A3A', paddingHorizontal: 12, paddingVertical: 10},
+  fitOn: {backgroundColor: '#F2F0EA', borderColor: '#F2F0EA'},
+  fitText: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 0.8},
+  btn: {backgroundColor: '#F2F0EA', padding: 16, alignItems: 'center', marginTop: 4},
+  btnText: {color: '#0A0A0A', fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
+  none: {fontSize: 12,fontFamily:'DMSans-Regular', color: '#9A978F', lineHeight: 18, marginTop: 4},
   result: {alignItems: 'center', marginTop: 4},
-  resultLabel: {fontSize: 9, letterSpacing: 1.4, color: '#777'},
-  resultSize: {fontSize: 54, fontWeight: '900', letterSpacing: -2, marginVertical: 6},
+  resultLabel: {fontSize: 9,fontFamily:'DMSans-Regular', letterSpacing: 1.4, color: '#9A978F'},
+  resultSize: {fontSize: 54, fontFamily:'SpaceGrotesk-Bold', letterSpacing: -2, marginVertical: 6},
 });

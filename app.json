@@ -5,7 +5,7 @@
     "version": "3.0.0",
     "orientation": "portrait",
     "scheme": "theoffgrid",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "in.theoffgrid.app"
@@ -13,7 +13,7 @@
     "android": {
       "package": "in.theoffgrid.app",
       "adaptiveIcon": {
-        "backgroundColor": "#0B0B0B",
+        "backgroundColor": "#0A0A0A",
         "foregroundImage": "./assets/adaptive-icon.png"
       },
       "intentFilters": [
@@ -43,7 +43,7 @@
         "expo-notifications",
         {
           "icon": "./assets/notification-icon.png",
-          "color": "#0B0B0B"
+          "color": "#0A0A0A"
         }
       ],
       "expo-image",
@@ -56,7 +56,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#0B0B0B",
+          "backgroundColor": "#0A0A0A",
           "image": "./assets/splash-icon.png",
           "imageWidth": 220
         }

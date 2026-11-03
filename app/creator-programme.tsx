@@ -66,7 +66,7 @@ export default function CreatorProgramme() {
     <View style={s.info}><Text style={s.infoTitle}>HOW IT WORKS</Text><Text style={s.infoText}>1. Submit your public creator profile.{ '\n' }2. Our team reviews your application.{ '\n' }3. If approved, we contact you with the next steps.</Text></View>
     {!!error && <Text style={s.error}>{error}</Text>}
     {!!notice && <Text style={s.notice}>{notice}</Text>}
-    {loading ? <ActivityIndicator style={{marginTop:30}} color="#111"/> : application ? <View style={s.card}>
+    {loading ? <ActivityIndicator style={{marginTop:30}} color="#F2F0EA"/> : application ? <View style={s.card}>
       <Text style={s.label}>APPLICATION STATUS</Text>
       <Text style={s.status}>{String(application.status || 'pending').toUpperCase()}</Text>
       <Text style={s.copy}>{statusCopy[application.status] || 'Your application has been received.'}</Text>
@@ -78,34 +78,34 @@ export default function CreatorProgramme() {
       <Text style={s.label}>MAIN PLATFORM</Text>
       <View style={s.pills}>{platforms.map(p => <Pressable key={p} onPress={() => setPlatform(p)} style={[s.pill, platform === p && s.pillActive]}><Text style={[s.pillText, platform === p && s.pillTextActive]}>{p.toUpperCase()}</Text></Pressable>)}</View>
       <Text style={s.label}>PUBLIC HANDLE</Text>
-      <TextInput style={s.input} value={handle} onChangeText={setHandle} autoCapitalize="none" placeholder="@yourhandle" placeholderTextColor="#999" maxLength={80}/>
+      <TextInput style={s.input} value={handle} onChangeText={setHandle} autoCapitalize="none" placeholder="@yourhandle" placeholderTextColor="#8A877F" maxLength={80}/>
       <Text style={s.label}>SECONDARY HANDLE (OPTIONAL)</Text>
-      <TextInput style={s.input} value={secondary} onChangeText={setSecondary} autoCapitalize="none" placeholder="@anotherprofile" placeholderTextColor="#999" maxLength={80}/>
+      <TextInput style={s.input} value={secondary} onChangeText={setSecondary} autoCapitalize="none" placeholder="@anotherprofile" placeholderTextColor="#8A877F" maxLength={80}/>
       <Text style={s.label}>FOLLOWER COUNT</Text>
-      <TextInput style={s.input} value={followers} onChangeText={setFollowers} keyboardType="number-pad" placeholder="e.g. 12500" placeholderTextColor="#999" maxLength={10}/>
+      <TextInput style={s.input} value={followers} onChangeText={setFollowers} keyboardType="number-pad" placeholder="e.g. 12500" placeholderTextColor="#8A877F" maxLength={10}/>
       <Text style={s.label}>WHO IS YOUR AUDIENCE?</Text>
-      <TextInput style={s.input} value={audience} onChangeText={setAudience} placeholder="e.g. Indian streetwear and menswear enthusiasts" placeholderTextColor="#999" maxLength={80}/>
+      <TextInput style={s.input} value={audience} onChangeText={setAudience} placeholder="e.g. Indian streetwear and menswear enthusiasts" placeholderTextColor="#8A877F" maxLength={80}/>
       <Text style={s.label}>TELL US ABOUT YOUR CONTENT</Text>
-      <TextInput style={[s.input,s.bio]} value={bio} onChangeText={setBio} multiline textAlignVertical="top" placeholder="Your content style, audience engagement and why you want to collaborate (20–600 characters)" placeholderTextColor="#999" maxLength={600}/>
-      <Pressable disabled={busy} style={[s.button,busy&&{opacity:.6}]} onPress={submit}>{busy?<ActivityIndicator color="#fff"/>:<Text style={s.buttonText}>SUBMIT APPLICATION</Text>}</Pressable>
+      <TextInput style={[s.input,s.bio]} value={bio} onChangeText={setBio} multiline textAlignVertical="top" placeholder="Your content style, audience engagement and why you want to collaborate (20–600 characters)" placeholderTextColor="#8A877F" maxLength={600}/>
+      <Pressable disabled={busy} style={[s.button,busy&&{opacity:.6}]} onPress={submit}>{busy?<ActivityIndicator color="#0A0A0A"/>:<Text style={s.buttonText}>SUBMIT APPLICATION</Text>}</Pressable>
       <Text style={s.fine}>Submitting an application does not guarantee approval, paid collaborations or commission. We do not collect bank or payout details in this application.</Text>
     </>}
   </ScrollView>;
 }
 
 const s = StyleSheet.create({
-  page:{flex:1,backgroundColor:'#fff'},content:{padding:24,paddingTop:48,paddingBottom:50},
-  center:{flex:1,justifyContent:'center',padding:28,backgroundColor:'#fff'},eyebrow:{fontSize:9,letterSpacing:1.5,color:'#777'},
-  title:{fontSize:40,fontWeight:'900',letterSpacing:-2,lineHeight:41,color:'#111',marginTop:8},
-  copy:{fontSize:12,color:'#666',lineHeight:19,marginTop:12},info:{backgroundColor:'#111',padding:17,marginTop:24,marginBottom:22},
-  infoTitle:{fontSize:10,fontWeight:'900',letterSpacing:1.2,color:'#fff'},infoText:{fontSize:11,lineHeight:19,color:'#ddd',marginTop:9},
-  label:{fontSize:9,fontWeight:'900',letterSpacing:1.2,color:'#333',marginTop:19,marginBottom:8},
-  pills: { flexDirection: 'row', gap: 8 }, pill: { borderWidth: 1, borderColor: '#ddd', paddingVertical: 12, paddingHorizontal: 15 }, pillActive: { backgroundColor: '#111', borderColor: '#111' },
-  pillText:{fontSize:9,fontWeight:'800',color:'#333'},pillTextActive:{color:'#fff'},
-  input:{borderBottomWidth:1,borderBottomColor:'#bbb',paddingVertical:12,fontSize:13,color:'#111'},bio:{minHeight:110,borderWidth:1,borderColor:'#bbb',padding:12,marginTop:3},
-  button:{backgroundColor:'#111',padding:16,alignItems:'center',justifyContent:'center',minHeight:50,marginTop:24},
-  buttonText:{fontSize:10,fontWeight:'900',letterSpacing:1,color:'#fff'},fine:{fontSize:10,color:'#888',lineHeight:16,marginTop:14},
-  error:{color:'#9f2525',backgroundColor:'#fff5f5',padding:12,marginTop:14,fontSize:11},notice:{color:'#245b36',backgroundColor:'#f2faf4',padding:12,marginTop:14,fontSize:11},
-  card:{borderWidth:1,borderColor:'#ddd',padding:18,marginTop:25},status:{fontSize:25,fontWeight:'900',color:'#111',marginTop:4},
-  detail:{fontSize:11,color:'#333',marginTop:9,fontWeight:'700'}
+  page:{flex:1,backgroundColor:'#0A0A0A'},content:{padding:24,paddingTop:48,paddingBottom:50},
+  center:{flex:1,justifyContent:'center',padding:28,backgroundColor:'#0A0A0A'},eyebrow:{fontSize:9,fontFamily:'DMSans-Regular',letterSpacing:1.5,color:'#9A978F'},
+  title:{fontSize:40,fontFamily:'SpaceGrotesk-Bold',letterSpacing:-2,lineHeight:41,color:'#F2F0EA',marginTop:8},
+  copy:{fontSize:12,fontFamily:'DMSans-Regular',color:'#A8A59D',lineHeight:19,marginTop:12},info:{backgroundColor:'#F2F0EA',padding:17,marginTop:24,marginBottom:22},
+  infoTitle:{fontSize:10,fontFamily:'SpaceGrotesk-Bold',letterSpacing:1.2,color:'#0A0A0A'},infoText:{fontSize:11,fontFamily:'DMSans-Regular',lineHeight:19,color:'#44413D',marginTop:9},
+  label:{fontSize:9,fontFamily:'SpaceGrotesk-Bold',letterSpacing:1.2,color:'#D6D3CB',marginTop:19,marginBottom:8},
+  pills: { flexDirection: 'row', gap: 8 }, pill: { borderWidth: 1, borderColor: '#2A2A2A', paddingVertical: 12, paddingHorizontal: 15 }, pillActive: { backgroundColor: '#F2F0EA', borderColor: '#F2F0EA' },
+  pillText:{fontSize:9,fontFamily:'SpaceGrotesk-Bold',color:'#D6D3CB'},pillTextActive:{color:'#0A0A0A'},
+  input:{borderBottomWidth:1,borderBottomColor:'#444',paddingVertical:12,fontSize:13,fontFamily:'DMSans-Regular',color:'#F2F0EA'},bio:{minHeight:110,borderWidth:1,borderColor:'#444',padding:12,marginTop:3},
+  button:{backgroundColor:'#F2F0EA',padding:16,alignItems:'center',justifyContent:'center',minHeight:50,marginTop:24},
+  buttonText:{fontSize:10,fontFamily:'SpaceGrotesk-Bold',letterSpacing:1,color:'#0A0A0A'},fine:{fontSize:10,fontFamily:'DMSans-Regular',color:'#8F8C85',lineHeight:16,marginTop:14},
+  error:{color:'#9f2525',backgroundColor:'#fff5f5',padding:12,marginTop:14,fontSize:11,fontFamily:'DMSans-Regular'},notice:{color:'#5FD38A',backgroundColor:'#f2faf4',padding:12,marginTop:14,fontSize:11,fontFamily:'DMSans-Regular'},
+  card:{borderWidth:1,borderColor:'#2A2A2A',padding:18,marginTop:25},status:{fontSize:25,fontFamily:'SpaceGrotesk-Bold',color:'#F2F0EA',marginTop:4},
+  detail:{fontSize:11,color:'#D6D3CB',marginTop:9,fontFamily:'DMSans-Bold'}
 });

@@ -54,7 +54,7 @@ export default function Invoice() {
   if (loading) {
     return (
       <View style={s.center}>
-        <ActivityIndicator color="#111" size="large" />
+        <ActivityIndicator color="#F2F0EA" size="large" />
       </View>
     );
   }
@@ -64,7 +64,7 @@ export default function Invoice() {
       <ScrollView style={s.page} contentContainerStyle={s.content}>
         {header}
         <View style={s.state}>
-          <Ionicons name="document-text-outline" size={30} color="#777" />
+          <Ionicons name="document-text-outline" size={30} color="#9A978F" />
           <Text style={s.stateTitle}>INVOICE UNAVAILABLE</Text>
           <Text style={s.stateCopy}>{error || 'We could not find this order.'}</Text>
           <Pressable accessibilityRole="button" style={s.button} onPress={load}>
@@ -193,7 +193,7 @@ export default function Invoice() {
       <Text style={s.foot}>This is a computer-generated invoice from THE OFF GRID. Prices shown are inclusive of applicable taxes.</Text>
 
       <Pressable accessibilityRole="button" accessibilityLabel="Share invoice" style={s.share} onPress={share}>
-        <Ionicons name="share-social-outline" size={17} color="#fff" />
+        <Ionicons name="share-social-outline" size={17} color="#0A0A0A" />
         <Text style={s.shareText}>SHARE INVOICE</Text>
       </Pressable>
     </ScrollView>
@@ -201,36 +201,36 @@ export default function Invoice() {
 }
 
 const s = StyleSheet.create({
-  page: {flex: 1, backgroundColor: '#fff'},
-  center: {flex: 1, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'},
+  page: {flex: 1, backgroundColor: '#0A0A0A'},
+  center: {flex: 1, backgroundColor: '#0A0A0A', alignItems: 'center', justifyContent: 'center'},
   content: {padding: 24, paddingTop: 58, paddingBottom: 45},
   back: {flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 26},
-  backText: {fontSize: 9, fontWeight: '800', letterSpacing: 1},
-  eyebrow: {fontSize: 9, letterSpacing: 1.5, color: '#777'},
-  title: {fontSize: 34, fontWeight: '900', letterSpacing: -1.5, marginTop: 5, color: '#111'},
-  metaRow: {flexDirection: 'row', justifyContent: 'space-between', marginTop: 22, paddingBottom: 18, borderBottomWidth: 1, borderBottomColor: '#e5e5e5'},
-  metaLabel: {fontSize: 8, letterSpacing: 1.2, color: '#777', fontWeight: '800'},
-  metaValue: {fontSize: 14, fontWeight: '800', marginTop: 4, color: '#111'},
+  backText: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
+  eyebrow: {fontSize: 9,fontFamily:'DMSans-Regular', letterSpacing: 1.5, color: '#9A978F'},
+  title: {fontSize: 34, fontFamily:'SpaceGrotesk-Bold', letterSpacing: -1.5, marginTop: 5, color: '#F2F0EA'},
+  metaRow: {flexDirection: 'row', justifyContent: 'space-between', marginTop: 22, paddingBottom: 18, borderBottomWidth: 1, borderBottomColor: '#2A2A2A'},
+  metaLabel: {fontSize: 8, letterSpacing: 1.2, color: '#9A978F', fontFamily:'SpaceGrotesk-Bold'},
+  metaValue: {fontSize: 14, fontFamily:'SpaceGrotesk-Bold', marginTop: 4, color: '#F2F0EA'},
   block: {marginTop: 20},
-  blockLabel: {fontSize: 9, fontWeight: '900', letterSpacing: 1.3, color: '#111', marginBottom: 7},
-  blockText: {fontSize: 12, color: '#555', lineHeight: 19},
-  item: {flexDirection: 'row', gap: 12, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#eee'},
-  itemName: {fontSize: 13, fontWeight: '800', color: '#111'},
-  itemMeta: {fontSize: 11, color: '#777', marginTop: 4},
-  itemTotal: {fontSize: 13, fontWeight: '800', color: '#111'},
+  blockLabel: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.3, color: '#F2F0EA', marginBottom: 7},
+  blockText: {fontSize: 12,fontFamily:'DMSans-Regular', color: '#B5B2AA', lineHeight: 19},
+  item: {flexDirection: 'row', gap: 12, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#2A2A2A'},
+  itemName: {fontSize: 13, fontFamily:'SpaceGrotesk-Bold', color: '#F2F0EA'},
+  itemMeta: {fontSize: 11,fontFamily:'DMSans-Regular', color: '#9A978F', marginTop: 4},
+  itemTotal: {fontSize: 13, fontFamily:'SpaceGrotesk-Bold', color: '#F2F0EA'},
   totals: {marginTop: 18, gap: 10},
   line: {flexDirection: 'row', justifyContent: 'space-between'},
-  lineLabel: {fontSize: 12, color: '#555'},
-  lineValue: {fontSize: 12, fontWeight: '700', color: '#111'},
-  grand: {borderTopWidth: 1, borderTopColor: '#111', paddingTop: 14, marginTop: 4},
-  grandLabel: {fontSize: 13, fontWeight: '900', color: '#111'},
-  grandValue: {fontSize: 18, fontWeight: '900', color: '#111'},
-  foot: {fontSize: 10, color: '#888', lineHeight: 16, marginTop: 22},
-  share: {flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, backgroundColor: '#111', padding: 16, marginTop: 24},
-  shareText: {color: '#fff', fontSize: 10, fontWeight: '900', letterSpacing: 1},
+  lineLabel: {fontSize: 12,fontFamily:'DMSans-Regular', color: '#B5B2AA'},
+  lineValue: {fontSize: 12, fontFamily:'DMSans-Bold', color: '#F2F0EA'},
+  grand: {borderTopWidth: 1, borderTopColor: '#F2F0EA', paddingTop: 14, marginTop: 4},
+  grandLabel: {fontSize: 13, fontFamily:'SpaceGrotesk-Bold', color: '#F2F0EA'},
+  grandValue: {fontSize: 18, fontFamily:'SpaceGrotesk-Bold', color: '#F2F0EA'},
+  foot: {fontSize: 10,fontFamily:'DMSans-Regular', color: '#8F8C85', lineHeight: 16, marginTop: 22},
+  share: {flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, backgroundColor: '#F2F0EA', padding: 16, marginTop: 24},
+  shareText: {color: '#0A0A0A', fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
   state: {alignItems: 'center', paddingVertical: 40, gap: 10},
-  stateTitle: {fontSize: 12, fontWeight: '900', letterSpacing: 1},
-  stateCopy: {fontSize: 12, color: '#777', textAlign: 'center', lineHeight: 18},
-  button: {backgroundColor: '#111', paddingVertical: 13, paddingHorizontal: 24, marginTop: 10},
-  buttonText: {color: '#fff', fontSize: 10, fontWeight: '900', letterSpacing: 1},
+  stateTitle: {fontSize: 12, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
+  stateCopy: {fontSize: 12,fontFamily:'DMSans-Regular', color: '#9A978F', textAlign: 'center', lineHeight: 18},
+  button: {backgroundColor: '#F2F0EA', paddingVertical: 13, paddingHorizontal: 24, marginTop: 10},
+  buttonText: {color: '#0A0A0A', fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
 });

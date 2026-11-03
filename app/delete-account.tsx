@@ -63,7 +63,7 @@ export default function DeleteAccount() {
       ) : (
         <>
           <View style={s.warning}>
-            <Ionicons name="warning-outline" size={20} color="#8a2525" />
+            <Ionicons name="warning-outline" size={20} color="#FF6B62" />
             <View style={{flex: 1}}>
               <Text style={s.warningTitle}>THIS PERMANENTLY DELETES YOUR ACCOUNT</Text>
               <Text style={s.warningCopy}>
@@ -94,13 +94,13 @@ export default function DeleteAccount() {
             autoCapitalize="none"
             autoCorrect={false}
             placeholder="Password"
-            placeholderTextColor="#999"
+            placeholderTextColor="#8A877F"
             maxLength={128}
             editable={!busy}
           />
 
           <Pressable accessibilityRole="button" disabled={busy} style={[s.danger, busy && {opacity: 0.65}]} onPress={confirm}>
-            {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.dangerText}>DELETE MY ACCOUNT</Text>}
+            {busy ? <ActivityIndicator color="#0A0A0A" /> : <Text style={s.dangerText}>DELETE MY ACCOUNT</Text>}
           </Pressable>
           <Pressable accessibilityRole="button" disabled={busy} style={s.secondary} onPress={() => router.back()}>
             <Text style={s.secondaryText}>CANCEL</Text>
@@ -112,23 +112,23 @@ export default function DeleteAccount() {
 }
 
 const s = StyleSheet.create({
-  page: {flex: 1, backgroundColor: '#fff'},
+  page: {flex: 1, backgroundColor: '#0A0A0A'},
   content: {padding: 24, paddingTop: 58, paddingBottom: 45},
   back: {flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 26},
-  backText: {fontSize: 9, fontWeight: '800', letterSpacing: 1},
-  eyebrow: {fontSize: 9, letterSpacing: 1.5, color: '#777'},
-  title: {fontSize: 36, fontWeight: '900', letterSpacing: -2, marginTop: 5, color: '#111', marginBottom: 20},
-  warning: {flexDirection: 'row', gap: 12, backgroundColor: '#fdeceb', borderWidth: 1, borderColor: '#f3c8c4', padding: 16},
-  warningTitle: {fontSize: 10, fontWeight: '900', letterSpacing: 1, color: '#8a2525'},
-  warningCopy: {fontSize: 12, lineHeight: 18, color: '#6f2323', marginTop: 8},
-  label: {fontSize: 9, fontWeight: '900', letterSpacing: 1.2, color: '#333', marginTop: 24},
-  input: {borderBottomWidth: 1, borderBottomColor: '#111', paddingVertical: 13, marginBottom: 10, fontSize: 15, color: '#111'},
-  error: {backgroundColor: '#fdeceb', borderWidth: 1, borderColor: '#f3c8c4', padding: 12, marginTop: 16},
-  errorText: {color: '#a3231a', fontSize: 12, lineHeight: 17},
+  backText: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
+  eyebrow: {fontSize: 9,fontFamily:'DMSans-Regular', letterSpacing: 1.5, color: '#9A978F'},
+  title: {fontSize: 36, fontFamily:'SpaceGrotesk-Bold', letterSpacing: -2, marginTop: 5, color: '#F2F0EA', marginBottom: 20},
+  warning: {flexDirection: 'row', gap: 12, backgroundColor: '#2A1210', borderWidth: 1, borderColor: '#5A2420', padding: 16},
+  warningTitle: {fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1, color: '#FF6B62'},
+  warningCopy: {fontSize: 12,fontFamily:'DMSans-Regular', lineHeight: 18, color: '#6f2323', marginTop: 8},
+  label: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2, color: '#D6D3CB', marginTop: 24},
+  input: {borderBottomWidth: 1, borderBottomColor: '#F2F0EA', paddingVertical: 13, marginBottom: 10, fontSize: 15,fontFamily:'DMSans-Regular', color: '#F2F0EA'},
+  error: {backgroundColor: '#2A1210', borderWidth: 1, borderColor: '#5A2420', padding: 12, marginTop: 16},
+  errorText: {color: '#FF6B62', fontSize: 12,fontFamily:'DMSans-Regular', lineHeight: 17},
   danger: {backgroundColor: '#b42318', padding: 16, minHeight: 50, alignItems: 'center', justifyContent: 'center', marginTop: 18},
-  dangerText: {color: '#fff', fontWeight: '900', letterSpacing: 1, fontSize: 10},
-  secondary: {borderWidth: 1, borderColor: '#111', padding: 15, alignItems: 'center', marginTop: 12},
-  secondaryText: {fontSize: 10, fontWeight: '900', letterSpacing: 1},
+  dangerText: {color: '#0A0A0A', fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1, fontSize: 10},
+  secondary: {borderWidth: 1, borderColor: '#F2F0EA', padding: 15, alignItems: 'center', marginTop: 12},
+  secondaryText: {fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
   notice: {paddingVertical: 20},
-  copy: {fontSize: 13, color: '#666', lineHeight: 20},
+  copy: {fontSize: 13,fontFamily:'DMSans-Regular', color: '#A8A59D', lineHeight: 20},
 });

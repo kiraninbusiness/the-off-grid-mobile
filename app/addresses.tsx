@@ -172,20 +172,20 @@ export default function Addresses() {
   const makeDefault = (a: any) => runAction(`def-${a.id}`, () => api.setDefaultAddress(a.id), 'Could not set default address');
 
   return (
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
+    <View style={{flex: 1, backgroundColor: '#0A0A0A'}}>
       <ScrollView
         style={s.page}
         contentContainerStyle={s.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor="#111" title="Refreshing addresses…" />}>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor="#F2F0EA" title="Refreshing addresses…" />}>
         <Text style={s.eyebrow}>THE OFF GRID / ACCOUNT</Text>
         <Text style={s.title}>ADDRESSES</Text>
         <Text style={s.intro}>Your saved delivery details, all in one place.</Text>
 
         {busy ? (
-          <ActivityIndicator style={{marginTop: 28}} size="large" color="#111" />
+          <ActivityIndicator style={{marginTop: 28}} size="large" color="#F2F0EA" />
         ) : error ? (
           <View style={s.state} accessible accessibilityLiveRegion="polite">
-            <Ionicons name="cloud-offline-outline" size={28} color="#777" />
+            <Ionicons name="cloud-offline-outline" size={28} color="#9A978F" />
             <Text style={s.stateTitle}>ADDRESSES UNAVAILABLE</Text>
             <Text style={s.stateCopy}>{error}</Text>
             <Pressable accessibilityRole="button" accessibilityLabel="Retry loading addresses" style={s.button} onPress={() => load()}>
@@ -195,13 +195,13 @@ export default function Addresses() {
         ) : (
           <>
             <Pressable accessibilityRole="button" accessibilityLabel="Add a new address" style={s.addBtn} onPress={openAdd}>
-              <Ionicons name="add" size={18} color="#111" />
+              <Ionicons name="add" size={18} color="#F2F0EA" />
               <Text style={s.addBtnText}>ADD NEW ADDRESS</Text>
             </Pressable>
 
             {addresses.length === 0 ? (
               <View style={s.state} accessible accessibilityLiveRegion="polite">
-                <Ionicons name="location-outline" size={30} color="#777" />
+                <Ionicons name="location-outline" size={30} color="#9A978F" />
                 <Text style={s.stateTitle}>NO SAVED ADDRESSES</Text>
                 <Text style={s.stateCopy}>Add an address to check out faster next time.</Text>
               </View>
@@ -213,7 +213,7 @@ export default function Addresses() {
                   <View style={s.card} key={String(a.id ?? index)}>
                     <View style={s.cardTop}>
                       <View style={s.labelWrap}>
-                        <Ionicons name="location-outline" size={15} color="#111" />
+                        <Ionicons name="location-outline" size={15} color="#F2F0EA" />
                         <Text style={s.label}>{String(a.label || 'ADDRESS').toUpperCase()}</Text>
                       </View>
                       {isDefault ? (
@@ -235,7 +235,7 @@ export default function Addresses() {
                     )}
                     {phoneOf(a) ? (
                       <View style={s.phoneRow}>
-                        <Ionicons name="call-outline" size={14} color="#777" />
+                        <Ionicons name="call-outline" size={14} color="#9A978F" />
                         <Text style={s.phone}>{phoneOf(a)}</Text>
                       </View>
                     ) : null}
@@ -250,9 +250,9 @@ export default function Addresses() {
                         </Pressable>
                       )}
                       <Pressable accessibilityRole="button" accessibilityLabel={`Delete ${a.label || 'address'}`} disabled={rowBusy} hitSlop={6} onPress={() => remove(a)}>
-                        <Text style={[s.action, {color: '#b42318'}]}>DELETE</Text>
+                        <Text style={[s.action, {color: '#FF6B62'}]}>DELETE</Text>
                       </Pressable>
-                      {rowBusy && <ActivityIndicator size="small" color="#111" />}
+                      {rowBusy && <ActivityIndicator size="small" color="#F2F0EA" />}
                     </View>
                   </View>
                 );
@@ -283,41 +283,41 @@ export default function Addresses() {
               <View style={s.chips}>
                 {LABELS.map(l => (
                   <Pressable key={l} accessibilityRole="radio" accessibilityState={{selected: form.label === l}} onPress={() => set('label', l)} style={[s.chip, form.label === l && s.chipOn]}>
-                    <Text style={[s.chipText, form.label === l && {color: '#fff'}]}>{l}</Text>
+                    <Text style={[s.chipText, form.label === l && {color: '#0A0A0A'}]}>{l}</Text>
                   </Pressable>
                 ))}
               </View>
 
               <Text style={s.fLabel}>FULL NAME</Text>
-              <TextInput style={s.input} value={form.name} onChangeText={v => set('name', v)} placeholder="Recipient name" placeholderTextColor="#999" autoCapitalize="words" maxLength={100} editable={!saving} />
+              <TextInput style={s.input} value={form.name} onChangeText={v => set('name', v)} placeholder="Recipient name" placeholderTextColor="#8A877F" autoCapitalize="words" maxLength={100} editable={!saving} />
 
               <Text style={s.fLabel}>MOBILE NUMBER</Text>
-              <TextInput style={s.input} value={form.phone} onChangeText={v => set('phone', v.replace(/\D/g, '').slice(0, 10))} placeholder="10-digit mobile number" placeholderTextColor="#999" keyboardType="phone-pad" maxLength={10} editable={!saving} />
+              <TextInput style={s.input} value={form.phone} onChangeText={v => set('phone', v.replace(/\D/g, '').slice(0, 10))} placeholder="10-digit mobile number" placeholderTextColor="#8A877F" keyboardType="phone-pad" maxLength={10} editable={!saving} />
 
               <Text style={s.fLabel}>ADDRESS</Text>
-              <TextInput style={[s.input, {minHeight: 56}]} value={form.address} onChangeText={v => set('address', v)} placeholder="House no., street, area" placeholderTextColor="#999" multiline maxLength={250} editable={!saving} />
+              <TextInput style={[s.input, {minHeight: 56}]} value={form.address} onChangeText={v => set('address', v)} placeholder="House no., street, area" placeholderTextColor="#8A877F" multiline maxLength={250} editable={!saving} />
 
               <View style={s.two}>
                 <View style={{flex: 1}}>
                   <Text style={s.fLabel}>CITY</Text>
-                  <TextInput style={s.input} value={form.city} onChangeText={v => set('city', v)} placeholder="City" placeholderTextColor="#999" maxLength={80} editable={!saving} />
+                  <TextInput style={s.input} value={form.city} onChangeText={v => set('city', v)} placeholder="City" placeholderTextColor="#8A877F" maxLength={80} editable={!saving} />
                 </View>
                 <View style={{flex: 1}}>
                   <Text style={s.fLabel}>STATE</Text>
-                  <TextInput style={s.input} value={form.state} onChangeText={v => set('state', v)} placeholder="State" placeholderTextColor="#999" maxLength={80} editable={!saving} />
+                  <TextInput style={s.input} value={form.state} onChangeText={v => set('state', v)} placeholder="State" placeholderTextColor="#8A877F" maxLength={80} editable={!saving} />
                 </View>
               </View>
 
               <Text style={s.fLabel}>PIN CODE</Text>
-              <TextInput style={s.input} value={form.pincode} onChangeText={v => set('pincode', v.replace(/\D/g, '').slice(0, 6))} placeholder="6-digit PIN code" placeholderTextColor="#999" keyboardType="number-pad" maxLength={6} editable={!saving} />
+              <TextInput style={s.input} value={form.pincode} onChangeText={v => set('pincode', v.replace(/\D/g, '').slice(0, 6))} placeholder="6-digit PIN code" placeholderTextColor="#8A877F" keyboardType="number-pad" maxLength={6} editable={!saving} />
 
               <Pressable accessibilityRole="checkbox" accessibilityState={{checked: form.isDefault}} onPress={() => set('isDefault', !form.isDefault)} style={s.defaultRow}>
-                <Ionicons name={form.isDefault ? 'checkbox' : 'square-outline'} size={20} color="#111" />
+                <Ionicons name={form.isDefault ? 'checkbox' : 'square-outline'} size={20} color="#F2F0EA" />
                 <Text style={s.defaultLabel}>Make this my default address</Text>
               </Pressable>
 
               <Pressable accessibilityRole="button" disabled={saving} style={[s.save, saving && {opacity: 0.65}]} onPress={save}>
-                {saving ? <ActivityIndicator color="#fff" /> : <Text style={s.saveText}>{editingId !== null ? 'SAVE CHANGES' : 'SAVE ADDRESS'}</Text>}
+                {saving ? <ActivityIndicator color="#0A0A0A" /> : <Text style={s.saveText}>{editingId !== null ? 'SAVE CHANGES' : 'SAVE ADDRESS'}</Text>}
               </Pressable>
             </ScrollView>
           </View>
@@ -328,45 +328,45 @@ export default function Addresses() {
 }
 
 const s = StyleSheet.create({
-  page: {flex: 1, backgroundColor: '#fff'},
+  page: {flex: 1, backgroundColor: '#0A0A0A'},
   content: {padding: 24, paddingTop: 58, paddingBottom: 40},
-  eyebrow: {fontSize: 9, color: '#777', letterSpacing: 1.5},
-  title: {fontSize: 42, fontWeight: '900', letterSpacing: -2, marginTop: 4},
-  intro: {fontSize: 12, color: '#777', lineHeight: 18, marginTop: 7, marginBottom: 20},
-  addBtn: {flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: '#111', paddingVertical: 14, marginBottom: 16},
-  addBtnText: {fontSize: 10, fontWeight: '900', letterSpacing: 1},
+  eyebrow: {fontSize: 9,fontFamily:'DMSans-Regular', color: '#9A978F', letterSpacing: 1.5},
+  title: {fontSize: 42, fontFamily:'SpaceGrotesk-Bold', letterSpacing: -2, marginTop: 4},
+  intro: {fontSize: 12,fontFamily:'DMSans-Regular', color: '#9A978F', lineHeight: 18, marginTop: 7, marginBottom: 20},
+  addBtn: {flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: '#F2F0EA', paddingVertical: 14, marginBottom: 16},
+  addBtnText: {fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
   card: {borderWidth: 1, borderColor: '#e3e3e3', padding: 18, marginBottom: 12},
   cardTop: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'},
   labelWrap: {flexDirection: 'row', alignItems: 'center', gap: 7},
-  label: {fontSize: 9, fontWeight: '900', letterSpacing: 1.2},
-  defaultBadge: {backgroundColor: '#111', paddingHorizontal: 8, paddingVertical: 5},
-  defaultText: {fontSize: 8, color: '#fff', fontWeight: '900', letterSpacing: 0.8},
-  name: {fontSize: 15, fontWeight: '800', marginTop: 15, marginBottom: 7},
-  address: {fontSize: 12, color: '#555', lineHeight: 19},
+  label: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2},
+  defaultBadge: {backgroundColor: '#F2F0EA', paddingHorizontal: 8, paddingVertical: 5},
+  defaultText: {fontSize: 8, color: '#0A0A0A', fontFamily:'SpaceGrotesk-Bold', letterSpacing: 0.8},
+  name: {fontSize: 15, fontFamily:'SpaceGrotesk-Bold', marginTop: 15, marginBottom: 7},
+  address: {fontSize: 12,fontFamily:'DMSans-Regular', color: '#B5B2AA', lineHeight: 19},
   phoneRow: {flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 10},
-  phone: {fontSize: 11, color: '#555'},
-  actions: {flexDirection: 'row', alignItems: 'center', gap: 20, marginTop: 16, paddingTop: 14, borderTopWidth: 1, borderTopColor: '#eee', flexWrap: 'wrap'},
-  action: {fontSize: 9, fontWeight: '900', letterSpacing: 1, textDecorationLine: 'underline'},
+  phone: {fontSize: 11,fontFamily:'DMSans-Regular', color: '#B5B2AA'},
+  actions: {flexDirection: 'row', alignItems: 'center', gap: 20, marginTop: 16, paddingTop: 14, borderTopWidth: 1, borderTopColor: '#2A2A2A', flexWrap: 'wrap'},
+  action: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1, textDecorationLine: 'underline'},
   state: {alignItems: 'center', paddingVertical: 35, paddingHorizontal: 15},
-  stateTitle: {fontSize: 12, fontWeight: '900', letterSpacing: 1, marginTop: 13},
-  stateCopy: {fontSize: 12, color: '#777', lineHeight: 18, textAlign: 'center', marginTop: 8},
-  button: {backgroundColor: '#111', paddingVertical: 13, paddingHorizontal: 24, marginTop: 18},
-  buttonText: {color: '#fff', fontSize: 10, fontWeight: '900', letterSpacing: 1},
+  stateTitle: {fontSize: 12, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1, marginTop: 13},
+  stateCopy: {fontSize: 12,fontFamily:'DMSans-Regular', color: '#9A978F', lineHeight: 18, textAlign: 'center', marginTop: 8},
+  button: {backgroundColor: '#F2F0EA', paddingVertical: 13, paddingHorizontal: 24, marginTop: 18},
+  buttonText: {color: '#0A0A0A', fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
   modal: {flex: 1, backgroundColor: 'rgba(0,0,0,.35)', justifyContent: 'flex-end'},
-  sheet: {backgroundColor: '#fff', padding: 22, paddingBottom: 28, maxHeight: '92%'},
+  sheet: {backgroundColor: '#0A0A0A', padding: 22, paddingBottom: 28, maxHeight: '92%'},
   sheetHead: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6},
-  sheetTitle: {fontSize: 20, fontWeight: '900'},
-  formError: {backgroundColor: '#fdeceb', borderWidth: 1, borderColor: '#f3c8c4', padding: 11, marginTop: 10},
-  formErrorText: {color: '#a3231a', fontSize: 12, lineHeight: 17},
-  fLabel: {fontSize: 9, fontWeight: '900', letterSpacing: 1.2, color: '#333', marginTop: 14},
-  input: {borderBottomWidth: 1, borderBottomColor: '#111', paddingVertical: 10, fontSize: 15, color: '#111'},
+  sheetTitle: {fontSize: 20, fontFamily:'SpaceGrotesk-Bold'},
+  formError: {backgroundColor: '#2A1210', borderWidth: 1, borderColor: '#5A2420', padding: 11, marginTop: 10},
+  formErrorText: {color: '#FF6B62', fontSize: 12,fontFamily:'DMSans-Regular', lineHeight: 17},
+  fLabel: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2, color: '#D6D3CB', marginTop: 14},
+  input: {borderBottomWidth: 1, borderBottomColor: '#F2F0EA', paddingVertical: 10, fontSize: 15,fontFamily:'DMSans-Regular', color: '#F2F0EA'},
   two: {flexDirection: 'row', gap: 14},
   chips: {flexDirection: 'row', gap: 8, marginTop: 8},
-  chip: {borderWidth: 1, borderColor: '#ccc', paddingHorizontal: 14, paddingVertical: 10},
-  chipOn: {backgroundColor: '#111', borderColor: '#111'},
-  chipText: {fontSize: 9, fontWeight: '800', letterSpacing: 0.8},
+  chip: {borderWidth: 1, borderColor: '#3A3A3A', paddingHorizontal: 14, paddingVertical: 10},
+  chipOn: {backgroundColor: '#F2F0EA', borderColor: '#F2F0EA'},
+  chipText: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 0.8},
   defaultRow: {flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 20},
-  defaultLabel: {fontSize: 12, color: '#333'},
-  save: {backgroundColor: '#111', padding: 16, minHeight: 50, alignItems: 'center', justifyContent: 'center', marginTop: 22},
-  saveText: {color: '#fff', fontSize: 10, fontWeight: '900', letterSpacing: 1},
+  defaultLabel: {fontSize: 12,fontFamily:'DMSans-Regular', color: '#D6D3CB'},
+  save: {backgroundColor: '#F2F0EA', padding: 16, minHeight: 50, alignItems: 'center', justifyContent: 'center', marginTop: 22},
+  saveText: {color: '#0A0A0A', fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
 });

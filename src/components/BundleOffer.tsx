@@ -47,7 +47,7 @@ export default function BundleOffer({items, onSaving}: {items: Item[]; onSaving?
 }
 
 const s = StyleSheet.create({
-  wrap: {borderWidth: 1, borderColor: '#111', padding: 12, marginBottom: 12, gap: 4},
-  win: {fontSize: 11, fontWeight: '900', letterSpacing: 0.6, color: '#176b37'},
-  nudge: {fontSize: 11, fontWeight: '800', letterSpacing: 0.4, color: '#111'},
+  wrap: {borderWidth: 1, borderColor: '#F2F0EA', padding: 12, marginBottom: 12, gap: 4},
+  win: {fontSize: 11, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 0.6, color: '#5FD38A'},
+  nudge: {fontSize: 11, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 0.4, color: '#F2F0EA'},
 });

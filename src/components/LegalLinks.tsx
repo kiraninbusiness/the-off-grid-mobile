@@ -20,6 +20,6 @@ export default function LegalLinks({action}: {action: string}) {
 }
 
 const s = StyleSheet.create({
-  text: {fontSize: 11, lineHeight: 17, color: '#777', marginTop: 16},
-  link: {color: '#111', textDecorationLine: 'underline', fontWeight: '700'},
+  text: {fontSize: 11,fontFamily:'DMSans-Regular', lineHeight: 17, color: '#9A978F', marginTop: 16},
+  link: {color: '#F2F0EA', textDecorationLine: 'underline', fontFamily:'DMSans-Bold'},
 });

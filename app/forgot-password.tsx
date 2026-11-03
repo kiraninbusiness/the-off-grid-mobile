@@ -47,7 +47,7 @@ export default function ForgotPassword() {
 
       {sent ? (
         <View style={s.card} accessibilityLiveRegion="polite">
-          <Ionicons name="mail-outline" size={30} color="#111" />
+          <Ionicons name="mail-outline" size={30} color="#F2F0EA" />
           <Text style={s.cardTitle}>CHECK YOUR EMAIL</Text>
           <Text style={s.cardCopy}>
             If an account exists for {email.trim().toLowerCase()}, we have sent a link to reset your password. Open the link in the email to choose a new
@@ -81,13 +81,13 @@ export default function ForgotPassword() {
             keyboardType="email-address"
             textContentType="emailAddress"
             placeholder="Email"
-            placeholderTextColor="#999"
+            placeholderTextColor="#8A877F"
             maxLength={254}
             editable={!busy}
             returnKeyType="send"
           />
           <Pressable accessibilityRole="button" disabled={busy} style={[s.primary, busy && {opacity: 0.65}]} onPress={submit}>
-            {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.primaryText}>SEND RESET LINK</Text>}
+            {busy ? <ActivityIndicator color="#0A0A0A" /> : <Text style={s.primaryText}>SEND RESET LINK</Text>}
           </Pressable>
         </>
       )}
@@ -96,20 +96,20 @@ export default function ForgotPassword() {
 }
 
 const s = StyleSheet.create({
-  page: {flex: 1, backgroundColor: '#fff'},
+  page: {flex: 1, backgroundColor: '#0A0A0A'},
   content: {padding: 24, paddingTop: 58, paddingBottom: 45},
   back: {flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 26},
-  backText: {fontSize: 9, fontWeight: '800', letterSpacing: 1},
-  eyebrow: {fontSize: 9, letterSpacing: 1.5, color: '#777'},
-  title: {fontSize: 38, fontWeight: '900', letterSpacing: -2, marginTop: 5, color: '#111'},
-  sub: {color: '#777', marginTop: 8, marginBottom: 20, lineHeight: 19, fontSize: 12},
-  label: {fontSize: 9, fontWeight: '900', letterSpacing: 1.2, color: '#333', marginTop: 12},
-  input: {borderBottomWidth: 1, borderBottomColor: '#111', paddingVertical: 13, marginBottom: 10, fontSize: 15, color: '#111'},
-  primary: {backgroundColor: '#111', padding: 16, minHeight: 50, alignItems: 'center', justifyContent: 'center', marginTop: 18},
-  primaryText: {color: '#fff', fontWeight: '900', letterSpacing: 1, fontSize: 10},
-  error: {backgroundColor: '#fdeceb', borderWidth: 1, borderColor: '#f3c8c4', padding: 12, marginBottom: 8},
-  errorText: {color: '#a3231a', fontSize: 12, lineHeight: 17},
+  backText: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
+  eyebrow: {fontSize: 9,fontFamily:'DMSans-Regular', letterSpacing: 1.5, color: '#9A978F'},
+  title: {fontSize: 38, fontFamily:'SpaceGrotesk-Bold', letterSpacing: -2, marginTop: 5, color: '#F2F0EA'},
+  sub: {color: '#9A978F', marginTop: 8, marginBottom: 20, lineHeight: 19, fontSize: 12,fontFamily:'DMSans-Regular'},
+  label: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2, color: '#D6D3CB', marginTop: 12},
+  input: {borderBottomWidth: 1, borderBottomColor: '#F2F0EA', paddingVertical: 13, marginBottom: 10, fontSize: 15,fontFamily:'DMSans-Regular', color: '#F2F0EA'},
+  primary: {backgroundColor: '#F2F0EA', padding: 16, minHeight: 50, alignItems: 'center', justifyContent: 'center', marginTop: 18},
+  primaryText: {color: '#0A0A0A', fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1, fontSize: 10},
+  error: {backgroundColor: '#2A1210', borderWidth: 1, borderColor: '#5A2420', padding: 12, marginBottom: 8},
+  errorText: {color: '#FF6B62', fontSize: 12,fontFamily:'DMSans-Regular', lineHeight: 17},
   card: {alignItems: 'center', paddingVertical: 34, gap: 12},
-  cardTitle: {fontSize: 13, fontWeight: '900', letterSpacing: 1.2},
-  cardCopy: {fontSize: 12, color: '#666', lineHeight: 19, textAlign: 'center'},
+  cardTitle: {fontSize: 13, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2},
+  cardCopy: {fontSize: 12,fontFamily:'DMSans-Regular', color: '#A8A59D', lineHeight: 19, textAlign: 'center'},
 });
