@@ -1,6 +1,7 @@
 import { Stack, usePathname, router } from 'expo-router';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { StoreProvider } from '../src/store/store';
+import BrandMark from '../src/components/BrandMark';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
@@ -90,7 +91,7 @@ function Gate() {
 
   return <View style={{ flex: 1 }}>
     <Stack screenOptions={{ headerShown: false, animation: 'fade_from_bottom', animationDuration: 240, contentStyle: { backgroundColor: '#090909' } }} />
-    {configError ? <View style={styles.root}><Text style={styles.logo}>THE OFF GRID</Text><Text style={styles.title}>SETUP REQUIRED</Text><Text style={styles.body}>{configError}</Text><Text style={styles.hint}>Set the production environment variables and rebuild the app.</Text></View> : null}
+    {configError ? <View style={styles.root}><BrandMark size={26} color="#fff"/><Text style={styles.title}>SETUP REQUIRED</Text><Text style={styles.body}>{configError}</Text><Text style={styles.hint}>Set the production environment variables and rebuild the app.</Text></View> : null}
   </View>;
 }
 
