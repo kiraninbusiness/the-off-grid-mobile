@@ -89,8 +89,8 @@ export default function Checkout(){
 function Section({title,children}:{title:string;children:any}){return <View style={s.section}><Text style={s.sectionTitle}>{title}</Text>{children}</View>}
 function Input({label,value,onChangeText,keyboardType,wide}:{label:string;value:string;onChangeText:(v:string)=>void;keyboardType?:any;wide?:boolean}){return <View style={[s.inputWrap,wide&&{flex:1}]}><Text style={s.inputLabel}>{label}</Text><TextInput value={value} onChangeText={onChangeText} keyboardType={keyboardType} style={s.input}/></View>}
 const s=StyleSheet.create({
- page:{flex:1,backgroundColor:'#f7f7f5',padding:22,paddingTop:58},
- center:{flex:1,justifyContent:'center',alignItems:'center',padding:24,backgroundColor:'#f7f7f5'},
+ page:{flex:1,backgroundColor:'#141414',padding:22,paddingTop:58},
+ center:{flex:1,justifyContent:'center',alignItems:'center',padding:24,backgroundColor:'#141414'},
  eyebrow:{fontSize:9,color:'#9A978F',letterSpacing:2,fontFamily:'SpaceGrotesk-Bold'},
  title:{fontSize:42,fontFamily:'SpaceGrotesk-Bold',letterSpacing:-2,marginTop:5,color:'#F2F0EA'},
  progress:{flexDirection:'row',alignItems:'center',marginTop:22,marginBottom:2},
@@ -98,7 +98,7 @@ const s=StyleSheet.create({
  progressNumber:{fontSize:10,fontFamily:'SpaceGrotesk-Bold',color:'#F2F0EA',borderWidth:1,borderColor:'#F2F0EA',borderRadius:20,width:25,height:25,textAlign:'center',textAlignVertical:'center'},
  progressLabel:{fontSize:8,fontFamily:'SpaceGrotesk-Bold',letterSpacing:.8,color:'#B5B2AA'},
  progressLine:{height:1,backgroundColor:'#ccc',flex:1,marginHorizontal:9,marginBottom:13},
- section:{marginTop:24,backgroundColor:'#0A0A0A',padding:16,borderRadius:4,borderWidth:1,borderColor:'#ececea'},
+ section:{marginTop:24,backgroundColor:'#0A0A0A',padding:16,borderRadius:4,borderWidth:1,borderColor:'#2A2A2A'},
  sectionTitle:{fontSize:10,fontFamily:'SpaceGrotesk-Bold',letterSpacing:1.4,marginBottom:15,color:'#F2F0EA'},
  saved:{width:250,borderWidth:1,borderColor:'#2A2A2A',padding:14,borderRadius:3,backgroundColor:'#141414'},
  savedTitle:{fontSize:9,fontFamily:'SpaceGrotesk-Bold',letterSpacing:.8,color:'#F2F0EA'},
@@ -106,7 +106,7 @@ const s=StyleSheet.create({
  emptySaved:{fontSize:11,fontFamily:'DMSans-Regular',color:'#9A978F'},
  inputWrap:{marginBottom:12},
  inputLabel:{fontSize:9,color:'#A8A59D',marginBottom:6,fontFamily:'DMSans-Bold',letterSpacing:.3},
- input:{borderWidth:1,borderColor:'#e1e1df',backgroundColor:'#141414',padding:13,fontSize:12,fontFamily:'DMSans-Regular',color:'#F2F0EA',borderRadius:3},
+ input:{borderWidth:1,borderColor:'#2A2A2A',backgroundColor:'#141414',padding:13,fontSize:12,fontFamily:'DMSans-Regular',color:'#F2F0EA',borderRadius:3},
  two:{flexDirection:'row',gap:10},
  deliveryCheck:{borderWidth:1,borderColor:'#F2F0EA',padding:13,alignItems:'center',justifyContent:'center',borderRadius:3,marginTop:2},
  deliveryCheckText:{fontSize:9,fontFamily:'SpaceGrotesk-Bold',letterSpacing:1,color:'#F2F0EA'},
@@ -130,7 +130,7 @@ const s=StyleSheet.create({
  msg:{fontSize:10,fontFamily:'DMSans-Regular',marginTop:9},
  paymentRow:{gap:10},
  payment:{borderWidth:1,borderColor:'#2A2A2A',padding:15,borderRadius:3,backgroundColor:'#141414'},
- paymentActive:{borderColor:'#F2F0EA',backgroundColor:'#f0f0ed'},
+ paymentActive:{borderColor:'#F2F0EA',backgroundColor:'#2A2A2A'},
  paymentText:{fontSize:9,fontFamily:'SpaceGrotesk-Bold',letterSpacing:.7,color:'#A8A59D'},
  paymentTextActive:{color:'#F2F0EA'},
  summary:{borderWidth:1,borderColor:'#2A2A2A',backgroundColor:'#0A0A0A',marginTop:20,padding:18,borderRadius:3},

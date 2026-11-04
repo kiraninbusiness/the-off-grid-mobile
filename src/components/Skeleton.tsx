@@ -14,7 +14,7 @@ export function SkeletonBlock({width = '100%', height, style}: {width?: Dimensio
     loop.start();
     return () => loop.stop();
   }, [opacity]);
-  return <Animated.View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[{width, height, backgroundColor: '#e7e7e4', opacity}, style]} />;
+  return <Animated.View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[{width, height, backgroundColor: '#2A2A2A', opacity}, style]} />;
 }
 
 // Placeholder shaped like a product card (image, name, price).

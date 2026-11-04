@@ -136,7 +136,7 @@ const s = StyleSheet.create({
   btn: { backgroundColor: '#F2F0EA', minHeight: 52, padding: 17, alignItems: 'center', justifyContent: 'center', marginTop: 17 },
   btnDisabled: { opacity: 0.65 },
   btnText: { color: '#0A0A0A', fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2 },
-  errorBox: { borderWidth: 1, borderColor: '#e2b8b8', backgroundColor: '#2A1210', padding: 16, marginTop: 22 },
+  errorBox: { borderWidth: 1, borderColor: '#5A2420', backgroundColor: '#2A1210', padding: 16, marginTop: 22 },
   errorTitle: { color: '#9b2424', fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2 },
   errorText: { color: '#6d3333', fontSize: 12,fontFamily:'DMSans-Regular', lineHeight: 18, marginTop: 7 },
   retry: { alignSelf: 'flex-start', paddingVertical: 10, paddingRight: 12, marginTop: 4 },
