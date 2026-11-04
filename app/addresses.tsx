@@ -335,7 +335,7 @@ const s = StyleSheet.create({
   intro: {fontSize: 12,fontFamily:'DMSans-Regular', color: '#9A978F', lineHeight: 18, marginTop: 7, marginBottom: 20},
   addBtn: {flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderWidth: 1, borderColor: '#F2F0EA', paddingVertical: 14, marginBottom: 16},
   addBtnText: {fontSize: 10, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1},
-  card: {borderWidth: 1, borderColor: '#e3e3e3', padding: 18, marginBottom: 12},
+  card: {borderWidth: 1, borderColor: '#2A2A2A', padding: 18, marginBottom: 12},
   cardTop: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'},
   labelWrap: {flexDirection: 'row', alignItems: 'center', gap: 7},
   label: {fontSize: 9, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.2},

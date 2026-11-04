@@ -105,7 +105,7 @@ const s = StyleSheet.create({
   input:{borderBottomWidth:1,borderBottomColor:'#444',paddingVertical:12,fontSize:13,fontFamily:'DMSans-Regular',color:'#F2F0EA'},bio:{minHeight:110,borderWidth:1,borderColor:'#444',padding:12,marginTop:3},
   button:{backgroundColor:'#F2F0EA',padding:16,alignItems:'center',justifyContent:'center',minHeight:50,marginTop:24},
   buttonText:{fontSize:10,fontFamily:'SpaceGrotesk-Bold',letterSpacing:1,color:'#0A0A0A'},fine:{fontSize:10,fontFamily:'DMSans-Regular',color:'#8F8C85',lineHeight:16,marginTop:14},
-  error:{color:'#9f2525',backgroundColor:'#fff5f5',padding:12,marginTop:14,fontSize:11,fontFamily:'DMSans-Regular'},notice:{color:'#5FD38A',backgroundColor:'#f2faf4',padding:12,marginTop:14,fontSize:11,fontFamily:'DMSans-Regular'},
+  error:{color:'#9f2525',backgroundColor:'#2A1210',padding:12,marginTop:14,fontSize:11,fontFamily:'DMSans-Regular'},notice:{color:'#5FD38A',backgroundColor:'#0F2A18',padding:12,marginTop:14,fontSize:11,fontFamily:'DMSans-Regular'},
   card:{borderWidth:1,borderColor:'#2A2A2A',padding:18,marginTop:25},status:{fontSize:25,fontFamily:'SpaceGrotesk-Bold',color:'#F2F0EA',marginTop:4},
   detail:{fontSize:11,color:'#D6D3CB',marginTop:9,fontFamily:'DMSans-Bold'}
 });
