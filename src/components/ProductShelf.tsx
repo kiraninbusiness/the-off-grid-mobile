@@ -9,12 +9,12 @@ export default function ProductShelf({title, hint, items, onSeeAll}: {title: str
     <View style={s.wrap}>
       <View style={s.head}>
         <View style={{flex: 1}}>
-          <Text style={s.title}>{title}</Text>
+          <Text style={[s.title,{color:'#FFFFFF'}]}>{title}</Text>
           {!!hint && <Text style={s.hint}>{hint}</Text>}
         </View>
         {onSeeAll ? (
           <Pressable accessibilityRole="button" accessibilityLabel={`See all ${title.toLowerCase()}`} onPress={onSeeAll} hitSlop={8}>
-            <Text style={s.all}>VIEW ALL →</Text>
+            <Text style={[s.all,{color:'#FFFFFF'}]}>VIEW ALL →</Text>
           </Pressable>
         ) : null}
       </View>

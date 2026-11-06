@@ -178,7 +178,7 @@ export default function Addresses() {
         contentContainerStyle={s.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor="#F2F0EA" title="Refreshing addresses…" />}>
         <Text style={s.eyebrow}>THE OFF GRID / ACCOUNT</Text>
-        <Text style={s.title}>ADDRESSES</Text>
+        <Text style={[s.title,{color:'#FFFFFF'}]}>ADDRESSES</Text>
         <Text style={s.intro}>Your saved delivery details, all in one place.</Text>
 
         {busy ? (
@@ -186,7 +186,7 @@ export default function Addresses() {
         ) : error ? (
           <View style={s.state} accessible accessibilityLiveRegion="polite">
             <Ionicons name="cloud-offline-outline" size={28} color="#9A978F" />
-            <Text style={s.stateTitle}>ADDRESSES UNAVAILABLE</Text>
+            <Text style={[s.stateTitle,{color:'#FFFFFF'}]}>ADDRESSES UNAVAILABLE</Text>
             <Text style={s.stateCopy}>{error}</Text>
             <Pressable accessibilityRole="button" accessibilityLabel="Retry loading addresses" style={s.button} onPress={() => load()}>
               <Text style={s.buttonText}>TRY AGAIN</Text>
@@ -196,13 +196,13 @@ export default function Addresses() {
           <>
             <Pressable accessibilityRole="button" accessibilityLabel="Add a new address" style={s.addBtn} onPress={openAdd}>
               <Ionicons name="add" size={18} color="#F2F0EA" />
-              <Text style={s.addBtnText}>ADD NEW ADDRESS</Text>
+              <Text style={[s.addBtnText,{color:'#FFFFFF'}]}>ADD NEW ADDRESS</Text>
             </Pressable>
 
             {addresses.length === 0 ? (
               <View style={s.state} accessible accessibilityLiveRegion="polite">
                 <Ionicons name="location-outline" size={30} color="#9A978F" />
-                <Text style={s.stateTitle}>NO SAVED ADDRESSES</Text>
+                <Text style={[s.stateTitle,{color:'#FFFFFF'}]}>NO SAVED ADDRESSES</Text>
                 <Text style={s.stateCopy}>Add an address to check out faster next time.</Text>
               </View>
             ) : (
@@ -214,7 +214,7 @@ export default function Addresses() {
                     <View style={s.cardTop}>
                       <View style={s.labelWrap}>
                         <Ionicons name="location-outline" size={15} color="#F2F0EA" />
-                        <Text style={s.label}>{String(a.label || 'ADDRESS').toUpperCase()}</Text>
+                        <Text style={[s.label,{color:'#FFFFFF'}]}>{String(a.label || 'ADDRESS').toUpperCase()}</Text>
                       </View>
                       {isDefault ? (
                         <View style={s.defaultBadge}>
@@ -222,7 +222,7 @@ export default function Addresses() {
                         </View>
                       ) : null}
                     </View>
-                    <Text style={s.name}>{recipient(a) || 'Recipient'}</Text>
+                    <Text style={[s.name,{color:'#FFFFFF'}]}>{recipient(a) || 'Recipient'}</Text>
                     <Text style={s.address}>
                       {street(a)}
                       {secondLine(a) ? '\n' + secondLine(a) : ''}
@@ -242,11 +242,11 @@ export default function Addresses() {
 
                     <View style={s.actions}>
                       <Pressable accessibilityRole="button" accessibilityLabel={`Edit ${a.label || 'address'}`} disabled={rowBusy} hitSlop={6} onPress={() => openEdit(a)}>
-                        <Text style={s.action}>EDIT</Text>
+                        <Text style={[s.action,{color:'#FFFFFF'}]}>EDIT</Text>
                       </Pressable>
                       {!isDefault && (
                         <Pressable accessibilityRole="button" accessibilityLabel="Set as default address" disabled={rowBusy} hitSlop={6} onPress={() => makeDefault(a)}>
-                          <Text style={s.action}>SET AS DEFAULT</Text>
+                          <Text style={[s.action,{color:'#FFFFFF'}]}>SET AS DEFAULT</Text>
                         </Pressable>
                       )}
                       <Pressable accessibilityRole="button" accessibilityLabel={`Delete ${a.label || 'address'}`} disabled={rowBusy} hitSlop={6} onPress={() => remove(a)}>
@@ -266,7 +266,7 @@ export default function Addresses() {
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={s.modal}>
           <View style={s.sheet}>
             <View style={s.sheetHead}>
-              <Text style={s.sheetTitle}>{editingId !== null ? 'EDIT ADDRESS' : 'NEW ADDRESS'}</Text>
+              <Text style={[s.sheetTitle,{color:'#FFFFFF'}]}>{editingId !== null ? 'EDIT ADDRESS' : 'NEW ADDRESS'}</Text>
               <Pressable accessibilityRole="button" accessibilityLabel="Close address form" disabled={saving} hitSlop={10} onPress={() => setFormOpen(false)}>
                 <Ionicons name="close" size={23} />
               </Pressable>

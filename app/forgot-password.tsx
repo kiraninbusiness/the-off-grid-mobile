@@ -39,7 +39,7 @@ export default function ForgotPassword() {
     <ScrollView style={s.page} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
       <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={10} onPress={() => router.back()} style={s.back}>
         <Ionicons name="arrow-back" size={19} />
-        <Text style={s.backText}>BACK</Text>
+        <Text style={[s.backText,{color:'#FFFFFF'}]}>BACK</Text>
       </Pressable>
 
       <Text style={s.eyebrow}>THE OFF GRID / ACCOUNT</Text>
@@ -48,7 +48,7 @@ export default function ForgotPassword() {
       {sent ? (
         <View style={s.card} accessibilityLiveRegion="polite">
           <Ionicons name="mail-outline" size={30} color="#F2F0EA" />
-          <Text style={s.cardTitle}>CHECK YOUR EMAIL</Text>
+          <Text style={[s.cardTitle,{color:'#FFFFFF'}]}>CHECK YOUR EMAIL</Text>
           <Text style={s.cardCopy}>
             If an account exists for {email.trim().toLowerCase()}, we have sent a link to reset your password. Open the link in the email to choose a new
             password. The link is only valid for a short time.

@@ -105,7 +105,7 @@ export default function Returns() {
 
       <Text style={s.label}>REQUEST TYPE</Text>
       <View style={s.choices}>
-        {(['return', 'exchange'] as const).map(value => <Pressable key={value} accessibilityRole="button" accessibilityLabel={value === 'return' ? 'Request a return' : 'Request an exchange'} accessibilityState={{ selected: type === value }} hitSlop={4} style={[s.choice, type === value && s.choiceActive]} onPress={() => { setType(value); setNotice(''); }}><Text style={[s.choiceText, type === value && s.choiceTextActive]}>{value.toUpperCase()}</Text></Pressable>)}
+        {(['return', 'exchange'] as const).map(value => <Pressable key={value} accessibilityRole="button" accessibilityLabel={value === 'return' ? 'Request a return' : 'Request an exchange'} accessibilityState={{ selected: type === value }} hitSlop={4} style={[s.choice, type === value && s.choiceActive]} onPress={() => { setType(value); setNotice(''); }}><Text style={[s.choiceText,{color:'#0A0A0A'}, type === value && s.choiceTextActive]}>{value.toUpperCase()}</Text></Pressable>)}
       </View>
 
       <Text style={s.label}>REASON</Text>
@@ -115,7 +115,7 @@ export default function Returns() {
 
       <View style={s.sectionRow}><Text style={s.section}>ELIGIBLE ORDERS</Text><Pressable onPress={() => load(true)} disabled={refreshing}><Text style={s.refresh}>{refreshing ? 'REFRESHING…' : 'REFRESH ↻'}</Text></Pressable></View>
       {loading ? <View style={s.loading}><ActivityIndicator color="#F2F0EA" /><Text style={s.empty}>Loading your orders…</Text></View> : eligible.length ? eligible.map(order => <View key={String(order.id)} style={s.card}>
-        <View style={s.orderRow}><Text style={s.order}>ORDER #{order.id}</Text><Text style={s.delivered}>DELIVERED</Text></View>
+        <View style={s.orderRow}><Text style={s.order}>ORDER #{order.id}</Text><Text style={[s.delivered,{color:'#5FD38A'}]}>DELIVERED</Text></View>
         {!!formatDate(order.created_at) && <Text style={s.date}>Placed {formatDate(order.created_at)}</Text>}
         <Text style={s.amount}>{formatAmount(order.total ?? order.total_amount)}</Text>
         <Pressable disabled={busyId !== null || loading || refreshing} accessibilityRole="button" accessibilityLabel={`Submit ${type} request for order ${order.id}`} accessibilityState={{ disabled: busyId !== null || loading || refreshing }} style={[s.btn, (busyId !== null || loading || refreshing) && s.disabled]} onPress={() => request(order)}>{busyId === order.id ? <ActivityIndicator color="#0A0A0A" /> : <Text style={s.btnText}>SUBMIT {type.toUpperCase()} REQUEST</Text>}</Pressable>

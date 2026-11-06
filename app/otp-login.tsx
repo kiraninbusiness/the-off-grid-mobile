@@ -74,13 +74,13 @@ export default function OtpLogin() {
     <KeyboardAvoidingView style={{flex: 1, backgroundColor: '#0A0A0A'}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView contentContainerStyle={s.page} keyboardShouldPersistTaps="handled">
         <Text style={s.eyebrow}>THE OFF GRID / ACCOUNT</Text>
-        <Text style={s.title}>{step === 'signup' ? 'ONE LAST STEP' : 'SIGN IN WITH OTP'}</Text>
+        <Text style={[s.title,{color:'#FFFFFF'}]}>{step === 'signup' ? 'ONE LAST STEP' : 'SIGN IN WITH OTP'}</Text>
 
         {step === 'phone' && (
           <>
             <Text style={s.copy}>We will text a 6-digit code to your mobile number.</Text>
             <View style={s.phoneRow}>
-              <Text style={s.prefix}>+91</Text>
+              <Text style={[s.prefix,{color:'#FFFFFF'}]}>+91</Text>
               <TextInput
                 value={phone}
                 onChangeText={v => setPhone(v.replace(/\D/g, '').slice(0, 10))}

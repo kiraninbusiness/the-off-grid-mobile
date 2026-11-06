@@ -14,6 +14,6 @@ export default function BrandMark({size=30,color='#111'}:{size?:number,color?:st
 }
 const s=StyleSheet.create({
  wrap:{alignSelf:'flex-start'},
- the:{fontWeight:'500',includeFontPadding:false},
+ the:{fontFamily:'SpaceGrotesk-Medium',includeFontPadding:false},
  word:{fontFamily:CONDENSED,includeFontPadding:false,marginTop:-2},
 });

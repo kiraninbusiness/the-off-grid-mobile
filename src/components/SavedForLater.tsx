@@ -9,7 +9,7 @@ export default function SavedForLater({items, onMoveToBag, onRemove, busyKey}: {
   if (!items.length) return null;
   return (
     <View style={s.wrap}>
-      <Text style={s.title}>SAVED FOR LATER ({items.length})</Text>
+      <Text style={[s.title,{color:'#FFFFFF'}]}>SAVED FOR LATER ({items.length})</Text>
       {items.map(x => {
         const key = savedKey(x);
         const busy = busyKey === key;
@@ -17,12 +17,12 @@ export default function SavedForLater({items, onMoveToBag, onRemove, busyKey}: {
           <View key={key} style={s.row}>
             {x.image ? <Image source={{uri: x.image}} style={s.img} resizeMode="cover" /> : <View style={[s.img, {backgroundColor: '#2A2A2A'}]} />}
             <View style={{flex: 1}}>
-              <Text style={s.name} numberOfLines={2}>{x.name || 'Product'}</Text>
+              <Text style={[s.name,{color:'#FFFFFF'}]} numberOfLines={2}>{x.name || 'Product'}</Text>
               <Text style={s.variant}>{[x.selected_size ? `Size ${x.selected_size}` : '', x.selected_color || ''].filter(Boolean).join('  ·  ') || ' '}</Text>
-              <Text style={s.price}>{money(x.price)}</Text>
+              <Text style={[s.price,{color:'#FFFFFF'}]}>{money(x.price)}</Text>
               <View style={s.actions}>
                 <Pressable accessibilityRole="button" accessibilityLabel={`Move ${x.name || 'item'} to bag`} disabled={busy} onPress={() => onMoveToBag(x)} style={[s.move, busy && {opacity: 0.5}]}>
-                  <Text style={s.moveText}>{busy ? 'MOVING…' : 'MOVE TO BAG'}</Text>
+                  <Text style={[s.moveText,{color:'#FFFFFF'}]}>{busy ? 'MOVING…' : 'MOVE TO BAG'}</Text>
                 </Pressable>
                 <Pressable accessibilityRole="button" accessibilityLabel={`Remove ${x.name || 'item'} from saved items`} disabled={busy} onPress={() => onRemove(key)} hitSlop={8}>
                   <Text style={s.remove}>REMOVE</Text>

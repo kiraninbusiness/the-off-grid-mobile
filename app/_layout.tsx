@@ -1,5 +1,6 @@
 import { Stack, usePathname, router } from 'expo-router';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, StatusBar } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StoreProvider } from '../src/store/store';
 import BrandMark from '../src/components/BrandMark';
 import { useEffect, useState } from 'react';
@@ -39,6 +40,7 @@ function Gate() {
   const [configError, setConfigError] = useState<string | null>(null);
   const [onboarded, setOnboarded] = useState(false);
   const pathname = usePathname();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     try { validateProductionConfig(); } catch (e: any) {
@@ -90,9 +92,11 @@ function Gate() {
     router.replace('/onboarding');
   }, [ready, configError, onboarded, pathname]);
 
-  return <View style={{ flex: 1 }}>
+  return <View style={{ flex: 1, backgroundColor: '#0A0A0A' }}>
+    <StatusBar barStyle="light-content" backgroundColor="#0A0A0A" />
     <Stack screenOptions={{ headerShown: false, animation: 'fade_from_bottom', animationDuration: 240, contentStyle: { backgroundColor: '#0A0A0A' } }} />
-    {configError ? <View style={styles.root}><BrandMark size={26} color="#0A0A0A"/><Text style={styles.title}>SETUP REQUIRED</Text><Text style={styles.body}>{configError}</Text><Text style={styles.hint}>Set the production environment variables and rebuild the app.</Text></View> : null}
+    {insets.top > 0 ? <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: insets.top, backgroundColor: '#0A0A0A' }} /> : null}
+    {configError ? <View style={styles.root}><BrandMark size={26} color="#0A0A0A"/><Text style={[styles.title,{color:'#FFFFFF'}]}>SETUP REQUIRED</Text><Text style={[styles.body,{color:'#FFFFFF'}]}>{configError}</Text><Text style={styles.hint}>Set the production environment variables and rebuild the app.</Text></View> : null}
   </View>;
 }
 

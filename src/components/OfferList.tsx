@@ -15,17 +15,17 @@ export default function OfferList({onPick, subtotal = 0}: {onPick?: (code: strin
   if (!offers.length) return null;
   return (
     <View style={s.wrap}>
-      <Text style={s.title}>AVAILABLE OFFERS</Text>
+      <Text style={[s.title,{color:'#FFFFFF'}]}>AVAILABLE OFFERS</Text>
       {offers.map(o => {
         const locked = o.min_order > subtotal && subtotal > 0;
         const body = (
           <>
-            <View style={s.code}><Text style={s.codeText}>{o.code}</Text></View>
+            <View style={s.code}><Text style={[s.codeText,{color:'#FFFFFF'}]}>{o.code}</Text></View>
             <View style={{flex: 1}}>
               <Text style={s.desc}>{o.description}</Text>
-              {locked ? <Text style={s.hint}>Add ₹{(o.min_order - subtotal).toLocaleString('en-IN')} more to unlock</Text> : null}
+              {locked ? <Text style={[s.hint,{color:'#FF6B62'}]}>Add ₹{(o.min_order - subtotal).toLocaleString('en-IN')} more to unlock</Text> : null}
             </View>
-            {onPick ? <Text style={s.use}>USE</Text> : null}
+            {onPick ? <Text style={[s.use,{color:'#FFFFFF'}]}>USE</Text> : null}
           </>
         );
         return onPick ? (
