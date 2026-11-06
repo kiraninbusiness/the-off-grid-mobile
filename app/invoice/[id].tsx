@@ -46,7 +46,7 @@ export default function Invoice() {
 
   const header = (
     <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={10} onPress={() => router.back()} style={s.back}>
-      <Ionicons name="arrow-back" size={19} />
+      <Ionicons color="#FFFFFF" name="arrow-back" size={19} />
       <Text style={[s.backText,{color:'#FFFFFF'}]}>BACK</Text>
     </Pressable>
   );
