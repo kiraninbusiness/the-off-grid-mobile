@@ -39,7 +39,7 @@ export default function SizeFinder({
           <View style={s.head}>
             <Text style={[s.title,{color:'#FFFFFF'}]}>FIND MY SIZE</Text>
             <Pressable onPress={onClose}>
-              <Ionicons name="close" size={22} />
+              <Ionicons color="#FFFFFF" name="close" size={22} />
             </Pressable>
           </View>
           <Text style={s.note}>General guidance from height, weight and fit preference. Check the size guide if you are between sizes.</Text>
@@ -47,11 +47,11 @@ export default function SizeFinder({
           <View style={s.row}>
             <View style={{flex: 1}}>
               <Text style={[s.label,{color:'#FFFFFF'}]}>HEIGHT (CM)</Text>
-              <TextInput style={[s.input,{color:'#FFFFFF'}]} value={height} onChangeText={v => {setHeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="175" placeholderTextColor="#FFFFFF" />
+              <TextInput style={[s.input,{color:'#FFFFFF'}]} value={height} onChangeText={v => {setHeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="175" placeholderTextColor="#8A877F" />
             </View>
             <View style={{flex: 1}}>
               <Text style={[s.label,{color:'#FFFFFF'}]}>WEIGHT (KG)</Text>
-              <TextInput style={[s.input,{color:'#FFFFFF'}]} value={weight} onChangeText={v => {setWeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="70" placeholderTextColor="#FFFFFF" />
+              <TextInput style={[s.input,{color:'#FFFFFF'}]} value={weight} onChangeText={v => {setWeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="70" placeholderTextColor="#8A877F" />
             </View>
           </View>
 
@@ -88,8 +88,8 @@ export default function SizeFinder({
 }
 
 const s = StyleSheet.create({
-  backdrop: {flex: 1, backgroundColor: 'rgba(0,0,0,.35)', justifyContent: 'flex-end'},
-  sheet: {backgroundColor: '#0A0A0A', padding: 24, paddingBottom: 36},
+  backdrop: {flex: 1, backgroundColor: 'rgba(0,0,0,.65)', justifyContent: 'flex-end'},
+  sheet: {backgroundColor: '#141414', padding: 24, paddingBottom: 36, borderTopWidth: 1, borderTopColor: '#2A2A2A'},
   head: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'},
   title: {fontSize: 20, fontFamily:'SpaceGrotesk-Bold'},
   note: {fontSize: 11,fontFamily:'DMSans-Regular', color: '#A8A59D', lineHeight: 17, marginVertical: 14},

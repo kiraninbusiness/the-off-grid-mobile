@@ -268,7 +268,7 @@ export default function Addresses() {
             <View style={s.sheetHead}>
               <Text style={[s.sheetTitle,{color:'#FFFFFF'}]}>{editingId !== null ? 'EDIT ADDRESS' : 'NEW ADDRESS'}</Text>
               <Pressable accessibilityRole="button" accessibilityLabel="Close address form" disabled={saving} hitSlop={10} onPress={() => setFormOpen(false)}>
-                <Ionicons name="close" size={23} />
+                <Ionicons color="#FFFFFF" name="close" size={23} />
               </Pressable>
             </View>
 
