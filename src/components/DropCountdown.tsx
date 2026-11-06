@@ -8,7 +8,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 function Cell({value, label}: {value: number; label: string}) {
   return (
     <View style={s.cell}>
-      <Text style={s.num}>{pad(value)}</Text>
+      <Text style={[s.num,{color:'#FFFFFF'}]}>{pad(value)}</Text>
       <Text style={s.unit}>{label}</Text>
     </View>
   );
@@ -28,7 +28,7 @@ export default function DropCountdown() {
   return (
     <Pressable style={s.wrap} onPress={() => router.push('/deals' as any)}>
       <View style={{flex: 1}}>
-        <Text style={s.kicker}>NEXT DROP IN</Text>
+        <Text style={[s.kicker,{color:'#FFFFFF'}]}>NEXT DROP IN</Text>
         <Text style={s.sub}>Tap to see what is coming</Text>
       </View>
       <View style={s.timer}>
@@ -46,7 +46,10 @@ export default function DropCountdown() {
 
 const s = StyleSheet.create({
   wrap: {
-    backgroundColor: '#F2F0EA',
+    backgroundColor: '#141414',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#2A2A2A',
     paddingHorizontal: 22,
     paddingVertical: 16,
     flexDirection: 'row',

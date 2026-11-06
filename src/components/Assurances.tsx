@@ -17,7 +17,7 @@ export default function Assurances() {
       {ITEMS.map(i => (
         <View key={i.title} style={s.item}>
           <Ionicons name={i.icon} size={20} color="#F2F0EA" />
-          <Text style={s.title}>{i.title}</Text>
+          <Text style={[s.title,{color:'#FFFFFF'}]}>{i.title}</Text>
           <Text style={s.sub}>{i.sub}</Text>
         </View>
       ))}

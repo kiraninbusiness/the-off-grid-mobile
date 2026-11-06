@@ -48,7 +48,7 @@ export default function GalleryPager({images, active, onChange, onOpen, height =
 
 const s = StyleSheet.create({
   badge: {position: 'absolute', right: 14, bottom: 14, backgroundColor: 'rgba(255,255,255,.94)', paddingHorizontal: 11, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 5, borderRadius: 2},
-  badgeText: {fontSize: 8, fontWeight: '900', letterSpacing: 1.1, color: '#111'},
+  badgeText: {fontSize: 8, fontFamily:'SpaceGrotesk-Bold', letterSpacing: 1.1, color: '#111'},
   dots: {position: 'absolute', left: 0, right: 0, bottom: 16, flexDirection: 'row', justifyContent: 'center', gap: 6},
   dot: {width: 6, height: 6, borderRadius: 3, backgroundColor: 'rgba(17,17,17,.28)'},
   dotActive: {width: 18, backgroundColor: '#111'},

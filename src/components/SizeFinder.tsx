@@ -37,7 +37,7 @@ export default function SizeFinder({
       <View style={s.backdrop}>
         <View style={s.sheet}>
           <View style={s.head}>
-            <Text style={s.title}>FIND MY SIZE</Text>
+            <Text style={[s.title,{color:'#FFFFFF'}]}>FIND MY SIZE</Text>
             <Pressable onPress={onClose}>
               <Ionicons name="close" size={22} />
             </Pressable>
@@ -46,16 +46,16 @@ export default function SizeFinder({
 
           <View style={s.row}>
             <View style={{flex: 1}}>
-              <Text style={s.label}>HEIGHT (CM)</Text>
-              <TextInput style={s.input} value={height} onChangeText={v => {setHeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="175" placeholderTextColor="#77746E" />
+              <Text style={[s.label,{color:'#FFFFFF'}]}>HEIGHT (CM)</Text>
+              <TextInput style={[s.input,{color:'#FFFFFF'}]} value={height} onChangeText={v => {setHeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="175" placeholderTextColor="#FFFFFF" />
             </View>
             <View style={{flex: 1}}>
-              <Text style={s.label}>WEIGHT (KG)</Text>
-              <TextInput style={s.input} value={weight} onChangeText={v => {setWeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="70" placeholderTextColor="#77746E" />
+              <Text style={[s.label,{color:'#FFFFFF'}]}>WEIGHT (KG)</Text>
+              <TextInput style={[s.input,{color:'#FFFFFF'}]} value={weight} onChangeText={v => {setWeight(v.replace(/\D/g, '').slice(0, 3)); setResult(undefined);}} keyboardType="number-pad" placeholder="70" placeholderTextColor="#FFFFFF" />
             </View>
           </View>
 
-          <Text style={s.label}>HOW DO YOU LIKE IT TO FIT?</Text>
+          <Text style={[s.label,{color:'#FFFFFF'}]}>HOW DO YOU LIKE IT TO FIT?</Text>
           <View style={s.fits}>
             {FITS.map(f => (
               <Pressable key={f.key} style={[s.fit, fit === f.key && s.fitOn]} onPress={() => {setFit(f.key); setResult(undefined);}}>
@@ -75,7 +75,7 @@ export default function SizeFinder({
           {typeof result === 'string' && (
             <View style={s.result}>
               <Text style={s.resultLabel}>WE SUGGEST</Text>
-              <Text style={s.resultSize}>{result}</Text>
+              <Text style={[s.resultSize,{color:'#FFFFFF'}]}>{result}</Text>
               <Pressable style={s.btn} onPress={() => {onPick(result); onClose();}}>
                 <Text style={s.btnText}>SELECT SIZE {result}</Text>
               </Pressable>

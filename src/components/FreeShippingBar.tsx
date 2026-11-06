@@ -9,7 +9,7 @@ export default function FreeShippingBar({subtotal}: {subtotal: number}) {
 
   return (
     <View style={s.wrap}>
-      <Text style={s.text}>
+      <Text style={[s.text,{color:'#FFFFFF'}]}>
         {unlocked
           ? 'FREE SHIPPING UNLOCKED'
           : `ADD ₹${remaining.toLocaleString('en-IN')} MORE FOR FREE SHIPPING`}

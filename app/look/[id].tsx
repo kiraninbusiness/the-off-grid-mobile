@@ -19,10 +19,10 @@ export default function Look(){
  return <ScrollView style={s.page} contentContainerStyle={{paddingBottom:60}}>
   <Image source={{uri:look.image}} style={s.cover} contentFit="cover"/>
   <View style={s.body}>
-   <Text style={s.title}>{String(look.title).toUpperCase()}</Text>
+   <Text style={[s.title,{color:'#FFFFFF'}]}>{String(look.title).toUpperCase()}</Text>
    {look.creator?<Text style={s.by}>STYLED BY {String(look.creator).toUpperCase()}</Text>:null}
    {look.description?<Text style={s.desc}>{look.description}</Text>:null}
-   <Text style={s.total}>COMPLETE THE LOOK · {money(total)}</Text>
+   <Text style={[s.total,{color:'#FFFFFF'}]}>COMPLETE THE LOOK · {money(total)}</Text>
    <Pressable accessibilityRole="button" style={s.btn} onPress={share}><Text style={s.btnText}>SHARE THIS LOOK</Text></Pressable>
    <View style={s.grid}>{products.map(p=><ProductCard key={p.id} p={p} width={cardW}/>)}</View>
   </View>

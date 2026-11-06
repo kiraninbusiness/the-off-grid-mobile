@@ -47,7 +47,7 @@ export default function DeleteAccount() {
     <ScrollView style={s.page} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
       <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={10} onPress={() => router.back()} style={s.back}>
         <Ionicons name="arrow-back" size={19} />
-        <Text style={s.backText}>BACK</Text>
+        <Text style={[s.backText,{color:'#FFFFFF'}]}>BACK</Text>
       </Pressable>
 
       <Text style={s.eyebrow}>THE OFF GRID / ACCOUNT</Text>
@@ -57,7 +57,7 @@ export default function DeleteAccount() {
         <View style={s.notice}>
           <Text style={s.copy}>Sign in to manage your account.</Text>
           <Pressable accessibilityRole="button" style={s.secondary} onPress={() => router.replace('/(tabs)/profile' as any)}>
-            <Text style={s.secondaryText}>SIGN IN</Text>
+            <Text style={[s.secondaryText,{color:'#FFFFFF'}]}>SIGN IN</Text>
           </Pressable>
         </View>
       ) : (
@@ -66,10 +66,10 @@ export default function DeleteAccount() {
             <Ionicons name="warning-outline" size={20} color="#FF6B62" />
             <View style={{flex: 1}}>
               <Text style={s.warningTitle}>THIS PERMANENTLY DELETES YOUR ACCOUNT</Text>
-              <Text style={s.warningCopy}>
+              <Text style={[s.warningCopy,{color:'#FFFFFF'}]}>
                 You will be signed out and will no longer be able to sign in with {user.email || 'this email'}. This cannot be undone.
               </Text>
-              <Text style={s.warningCopy}>
+              <Text style={[s.warningCopy,{color:'#FFFFFF'}]}>
                 Order records may be kept, without a link to your account, for legal and accounting purposes. Cancel any open orders before you delete your account.
               </Text>
             </View>
@@ -100,10 +100,10 @@ export default function DeleteAccount() {
           />
 
           <Pressable accessibilityRole="button" disabled={busy} style={[s.danger, busy && {opacity: 0.65}]} onPress={confirm}>
-            {busy ? <ActivityIndicator color="#0A0A0A" /> : <Text style={s.dangerText}>DELETE MY ACCOUNT</Text>}
+            {busy ? <ActivityIndicator color="#0A0A0A" /> : <Text style={[s.dangerText,{color:'#FFFFFF'}]}>DELETE MY ACCOUNT</Text>}
           </Pressable>
           <Pressable accessibilityRole="button" disabled={busy} style={s.secondary} onPress={() => router.back()}>
-            <Text style={s.secondaryText}>CANCEL</Text>
+            <Text style={[s.secondaryText,{color:'#FFFFFF'}]}>CANCEL</Text>
           </Pressable>
         </>
       )}

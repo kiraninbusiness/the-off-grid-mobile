@@ -3,10 +3,10 @@ import {router} from 'expo-router';
 
 export default function ErrorScreen({error, retry}: {error: Error; retry: () => void}) {
   return <View style={styles.root}>
-    <Text style={styles.logo}>THE OFF GRID</Text>
-    <Text style={styles.title}>Something went off grid.</Text>
+    <Text style={[styles.logo,{color:'#FFFFFF'}]}>THE OFF GRID</Text>
+    <Text style={[styles.title,{color:'#FFFFFF'}]}>Something went off grid.</Text>
     <Text style={styles.body}>{error?.message || 'Please try again.'}</Text>
-    <Pressable style={styles.button} onPress={retry}><Text style={styles.buttonText}>TRY AGAIN</Text></Pressable>
+    <Pressable style={styles.button} onPress={retry}><Text style={[styles.buttonText,{color:'#FFFFFF'}]}>TRY AGAIN</Text></Pressable>
     <Pressable style={styles.link} onPress={() => router.replace('/(tabs)')}><Text style={styles.linkText}>BACK TO SHOP</Text></Pressable>
   </View>;
 }

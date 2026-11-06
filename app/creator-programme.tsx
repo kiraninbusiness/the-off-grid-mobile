@@ -63,8 +63,8 @@ export default function CreatorProgramme() {
     <Text style={s.eyebrow}>THE OFF GRID / COMMUNITY</Text>
     <Text style={s.title}>CREATOR{ '\n' }PROGRAMME</Text>
     <Text style={s.copy}>Create with the brand, share your style and build with our community. Tell us about your public social profile and the audience you reach.</Text>
-    <View style={s.info}><Text style={s.infoTitle}>HOW IT WORKS</Text><Text style={s.infoText}>1. Submit your public creator profile.{ '\n' }2. Our team reviews your application.{ '\n' }3. If approved, we contact you with the next steps.</Text></View>
-    {!!error && <Text style={s.error}>{error}</Text>}
+    <View style={s.info}><Text style={[s.infoTitle,{color:'#FFFFFF'}]}>HOW IT WORKS</Text><Text style={[s.infoText,{color:'#FFFFFF'}]}>1. Submit your public creator profile.{ '\n' }2. Our team reviews your application.{ '\n' }3. If approved, we contact you with the next steps.</Text></View>
+    {!!error && <Text style={[s.error,{color:'#FFFFFF'}]}>{error}</Text>}
     {!!notice && <Text style={s.notice}>{notice}</Text>}
     {loading ? <ActivityIndicator style={{marginTop:30}} color="#F2F0EA"/> : application ? <View style={s.card}>
       <Text style={s.label}>APPLICATION STATUS</Text>
@@ -76,7 +76,7 @@ export default function CreatorProgramme() {
       <Text style={s.fine}>One application is allowed per account. If your profile details change, contact support.</Text>
     </View> : <>
       <Text style={s.label}>MAIN PLATFORM</Text>
-      <View style={s.pills}>{platforms.map(p => <Pressable key={p} onPress={() => setPlatform(p)} style={[s.pill, platform === p && s.pillActive]}><Text style={[s.pillText, platform === p && s.pillTextActive]}>{p.toUpperCase()}</Text></Pressable>)}</View>
+      <View style={s.pills}>{platforms.map(p => <Pressable key={p} onPress={() => setPlatform(p)} style={[s.pill, platform === p && s.pillActive]}><Text style={[s.pillText,{color:'#0A0A0A'}, platform === p && s.pillTextActive]}>{p.toUpperCase()}</Text></Pressable>)}</View>
       <Text style={s.label}>PUBLIC HANDLE</Text>
       <TextInput style={s.input} value={handle} onChangeText={setHandle} autoCapitalize="none" placeholder="@yourhandle" placeholderTextColor="#8A877F" maxLength={80}/>
       <Text style={s.label}>SECONDARY HANDLE (OPTIONAL)</Text>
@@ -97,7 +97,7 @@ const s = StyleSheet.create({
   page:{flex:1,backgroundColor:'#0A0A0A'},content:{padding:24,paddingTop:48,paddingBottom:50},
   center:{flex:1,justifyContent:'center',padding:28,backgroundColor:'#0A0A0A'},eyebrow:{fontSize:9,fontFamily:'DMSans-Regular',letterSpacing:1.5,color:'#9A978F'},
   title:{fontSize:40,fontFamily:'SpaceGrotesk-Bold',letterSpacing:-2,lineHeight:41,color:'#F2F0EA',marginTop:8},
-  copy:{fontSize:12,fontFamily:'DMSans-Regular',color:'#A8A59D',lineHeight:19,marginTop:12},info:{backgroundColor:'#F2F0EA',padding:17,marginTop:24,marginBottom:22},
+  copy:{fontSize:12,fontFamily:'DMSans-Regular',color:'#A8A59D',lineHeight:19,marginTop:12},info:{backgroundColor:'#141414',padding:17,marginTop:24,marginBottom:22,borderWidth:1,borderColor:'#2A2A2A'},
   infoTitle:{fontSize:10,fontFamily:'SpaceGrotesk-Bold',letterSpacing:1.2,color:'#0A0A0A'},infoText:{fontSize:11,fontFamily:'DMSans-Regular',lineHeight:19,color:'#44413D',marginTop:9},
   label:{fontSize:9,fontFamily:'SpaceGrotesk-Bold',letterSpacing:1.2,color:'#D6D3CB',marginTop:19,marginBottom:8},
   pills: { flexDirection: 'row', gap: 8 }, pill: { borderWidth: 1, borderColor: '#2A2A2A', paddingVertical: 12, paddingHorizontal: 15 }, pillActive: { backgroundColor: '#F2F0EA', borderColor: '#F2F0EA' },

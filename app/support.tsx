@@ -38,7 +38,7 @@ export default function Support() {
       <Text style={s.eyebrow}>THE OFF GRID / HELP</Text>
       <Text style={s.title}>SUPPORT</Text>
       <Text style={s.copy}>Need help with an order, payment, sizing, return or exchange? Send a request and our team will get back to you.</Text>
-      {sent && <View style={s.success} accessibilityLiveRegion="polite" accessible><Text style={s.successTitle}>REQUEST SENT</Text><Text style={s.successText}>Your message has been submitted successfully.{contactEmail.trim() ? ' We will use the email address you provided for any follow-up.' : ''}</Text><Pressable onPress={() => setSent(false)} style={s.dismiss}><Text style={s.dismissText}>SEND ANOTHER REQUEST</Text></Pressable></View>}
+      {sent && <View style={s.success} accessibilityLiveRegion="polite" accessible><Text style={s.successTitle}>REQUEST SENT</Text><Text style={[s.successText,{color:'#FFFFFF'}]}>Your message has been submitted successfully.{contactEmail.trim() ? ' We will use the email address you provided for any follow-up.' : ''}</Text><Pressable onPress={() => setSent(false)} style={s.dismiss}><Text style={s.dismissText}>SEND ANOTHER REQUEST</Text></Pressable></View>}
       <Text style={s.label}>EMAIL FOR OUR REPLY</Text>
       <TextInput value={contactEmail} onChangeText={value => { setContactEmail(value.slice(0, 254)); setError(''); setSent(false); }} placeholder="you@example.com" placeholderTextColor="#8A877F" style={s.emailInput} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} editable={!busy} accessibilityLabel="Contact email" />
       <Text style={s.label}>WHAT DO YOU NEED HELP WITH?</Text>
@@ -68,7 +68,7 @@ const s = StyleSheet.create({
   emailInput: { borderWidth: 1, borderColor: '#2A2A2A', minHeight: 48, paddingHorizontal: 14, marginTop: 10, fontSize: 13,fontFamily:'DMSans-Regular', color: '#F2F0EA' },
   input: { borderWidth: 1, borderColor: '#2A2A2A', minHeight: 145, padding: 14, marginTop: 10, fontSize: 13,fontFamily:'DMSans-Regular', lineHeight: 19, color: '#F2F0EA' },
   counter: { fontSize: 10,fontFamily:'DMSans-Regular', color: '#8F8C85', textAlign: 'right', marginTop: 7 },
-  counterWarn: { color: '#8a4a14' },
+  counterWarn: { color: '#F5B83D' },
   btn: { backgroundColor: '#F2F0EA', minHeight: 50, padding: 16, alignItems: 'center', justifyContent: 'center', marginTop: 14 },
   btnDisabled: { opacity: 0.65 },
   btnText: { color: '#0A0A0A', fontFamily:'SpaceGrotesk-Bold', fontSize: 9, letterSpacing: 1 },

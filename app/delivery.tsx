@@ -106,7 +106,7 @@ export default function Delivery() {
       <Pressable style={[s.btn, busy && s.btnDisabled]} onPress={check} disabled={busy} accessibilityRole="button" accessibilityLabel={busy ? "Checking delivery availability" : "Check delivery for entered pincode"} accessibilityState={{ disabled: busy }}>
         {busy ? <ActivityIndicator color="#0A0A0A" /> : <Text style={s.btnText}>CHECK PINCODE</Text>}
       </Pressable>
-      {!!error && <View style={s.errorBox} accessibilityLiveRegion="polite"><Text style={s.errorTitle}>UNABLE TO CHECK</Text><Text style={s.errorText}>{error}</Text>{!busy && pin.length === 6 && <Pressable onPress={check} style={s.retry}><Text style={s.retryText}>TRY AGAIN</Text></Pressable>}</View>}
+      {!!error && <View style={s.errorBox} accessibilityLiveRegion="polite"><Text style={[s.errorTitle,{color:'#FFFFFF'}]}>UNABLE TO CHECK</Text><Text style={[s.errorText,{color:'#FFFFFF'}]}>{error}</Text>{!busy && pin.length === 6 && <Pressable onPress={check} style={s.retry}><Text style={s.retryText}>TRY AGAIN</Text></Pressable>}</View>}
       {result && !error && (
         <View style={s.result} accessibilityLiveRegion="polite" accessible accessibilityLabel={result.serviceable?'Delivery available for this pincode':'Delivery unavailable for this pincode'}>
           <Text style={s.status}>{result.serviceable ? 'DELIVERY AVAILABLE' : 'NOT SERVICEABLE'}</Text>

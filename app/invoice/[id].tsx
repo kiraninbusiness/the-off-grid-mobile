@@ -47,7 +47,7 @@ export default function Invoice() {
   const header = (
     <Pressable accessibilityRole="button" accessibilityLabel="Go back" hitSlop={10} onPress={() => router.back()} style={s.back}>
       <Ionicons name="arrow-back" size={19} />
-      <Text style={s.backText}>BACK</Text>
+      <Text style={[s.backText,{color:'#FFFFFF'}]}>BACK</Text>
     </Pressable>
   );
 
@@ -65,7 +65,7 @@ export default function Invoice() {
         {header}
         <View style={s.state}>
           <Ionicons name="document-text-outline" size={30} color="#9A978F" />
-          <Text style={s.stateTitle}>INVOICE UNAVAILABLE</Text>
+          <Text style={[s.stateTitle,{color:'#FFFFFF'}]}>INVOICE UNAVAILABLE</Text>
           <Text style={s.stateCopy}>{error || 'We could not find this order.'}</Text>
           <Pressable accessibilityRole="button" style={s.button} onPress={load}>
             <Text style={s.buttonText}>TRY AGAIN</Text>
