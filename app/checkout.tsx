@@ -19,6 +19,7 @@ export default function Checkout(){
  const [payment,setPayment]=useState<'cod'|'online'>('cod'),[busy,setBusy]=useState(false),[checking,setChecking]=useState(false),[couponBusy,setCouponBusy]=useState(false);
  const [deliveryCheckBusy,setDeliveryCheckBusy]=useState(false),[deliveryStatus,setDeliveryStatus]=useState('');
  const checkoutInFlight=useRef(false),couponLock=useRef(false);
+ const orderAttemptKey=useRef<string|null>(null);
  const razorpayConfigured=Boolean(process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID);
  useEffect(()=>{if(!razorpayConfigured && payment==='online')setPayment('cod')},[razorpayConfigured,payment]);
  useEffect(()=>{if(user){api.addresses().then(x=>setSavedAddresses(Array.isArray(x)?x:(x?.items||x?.addresses||[]))).catch(()=>{});api.customerLoyalty().then((x:any)=>{const n=Number(x?.points);setLoyaltyPoints(Number.isFinite(n)&&n>0?Math.floor(n):0)}).catch(()=>setLoyaltyPoints(0))}else{setLoyaltyPoints(0);setRedeemInput('0')}},[user]);
@@ -46,15 +47,18 @@ export default function Checkout(){
    const catalogueResults=await Promise.all(cart.map(async(item:any)=>{try{const response:any=await api.product(String(item.product_id));const product=response?.product??response?.data?.product??response?.data??response;if(!product||String(product.id??product.product_id)!==String(item.product_id))return `Could not confirm ${item.name||'an item'} in the catalogue. Return to your bag and try again.`;const livePrice=Number(product.price);if(!Number.isFinite(livePrice)||livePrice<=0)return `The current price for ${item.name||'an item'} is unavailable. Return to your bag and try again.`;if(Math.abs(livePrice-Number(item.price))>0.009)return `The price for ${item.name||'an item'} has changed to ₹${livePrice.toLocaleString('en-IN')}. Return to your bag to review it before ordering.`;const stockRaw=product.stock_quantity??product.inventory??product.stockCount??product.stock;const stock=typeof stockRaw==='number'?stockRaw:typeof stockRaw==='string'&&stockRaw.trim()!==''&&Number.isFinite(Number(stockRaw))?Number(stockRaw):null;if((stock!==null&&stock<=0)||product.in_stock===false||product.is_available===false)return `${item.name||'An item'} is currently unavailable. Remove it from your bag.`;const variants=Array.isArray(product.variants)?product.variants:[];if(variants.length&&(item.selected_size||item.selected_color)){const variant=variants.find((v:any)=>String(v.size??'').trim().toLowerCase()===String(item.selected_size||'').trim().toLowerCase()&&String(v.color??v.colour??'').trim().toLowerCase()===String(item.selected_color||'').trim().toLowerCase());if(!variant)return `The selected size/colour for ${item.name||'an item'} is no longer available. Return to your bag and choose another.`;const raw=variant.stock_quantity??variant.stock??variant.inventory;const qty=typeof raw==='number'?raw:typeof raw==='string'&&raw.trim()!==''&&Number.isFinite(Number(raw))?Number(raw):null;if(qty!==null&&qty<Number(item.quantity))return qty<=0?`${item.name||'This variant'} is sold out. Remove it or choose another.`:`Only ${qty} of ${item.name||'this variant'} remain. Reduce the quantity in your bag.`;}return null}catch{return 'We could not verify the latest catalogue price and availability. Check your connection and try again.'}}));const catalogueIssue=catalogueResults.find(Boolean);if(catalogueIssue)throw new Error(catalogueIssue);const orderItems=cart.map(x=>({productId:Number(x.product_id),quantity:Number(x.quantity),selectedSize:x.selected_size?.trim()||null,selectedColor:x.selected_color?.trim()||null}));const shippingDetails={name:f.name.trim(),phone:f.phone.replace(/\D/g,''),email:f.email.trim().toLowerCase(),address:f.address.trim(),city:f.city.trim(),state:f.state.trim(),pincode:f.pincode.trim()};
    let response:any;
    try {
-    response=await api.createOrder({items:orderItems,shipping:shippingDetails,payment_method:payment,coupon_code:coupon?.code||'',redeem_points:pointsToRedeem,gift_wrap:giftWrap,gift_message:giftWrap?giftMsg.trim():''});
+    if(!orderAttemptKey.current)orderAttemptKey.current=`og-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+    response=await api.createOrder({items:orderItems,shipping:shippingDetails,payment_method:payment,coupon_code:coupon?.code||'',redeem_points:pointsToRedeem,gift_wrap:giftWrap,gift_message:giftWrap?giftMsg.trim():''},orderAttemptKey.current);
    } catch(createError:any) {
-    // A received 4xx is a definite rejection; network failures and 5xx responses
-    // may occur after the server has committed the order, so those are uncertain.
+    // Keep the same key after network/5xx uncertainty: a retry must recover
+    // the original order instead of creating a second one.
     orderStatusUncertain=!createError?.status||Number(createError.status)>=500;
+    if(!orderStatusUncertain)orderAttemptKey.current=null;
     throw createError;
    }
    const order=response?.order||response?.data?.order||response;
    if(!order?.id){orderStatusUncertain=true;throw new Error('The server did not return a valid order. Please check My Orders before trying again.');}
+   orderAttemptKey.current=null;
    if(payment==='cod'){try{await refresh()}catch{}r.replace({pathname:'/order-success',params:{orderId:String(order.id),payment:'cod'}});return;}
    let Razorpay:any;
    try{Razorpay=require('react-native-razorpay').default||require('react-native-razorpay');}catch{await api.cancelPayment(order.id);throw new Error('Online payments require a development/production build with Razorpay enabled. Use COD in Expo Go.');}
