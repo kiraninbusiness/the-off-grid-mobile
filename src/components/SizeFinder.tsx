@@ -59,7 +59,7 @@ export default function SizeFinder({
           <View style={s.fits}>
             {FITS.map(f => (
               <Pressable key={f.key} style={[s.fit, fit === f.key && s.fitOn]} onPress={() => {setFit(f.key); setResult(undefined);}}>
-                <Text style={[s.fitText, fit === f.key && {color: '#0A0A0A'}]}>{f.label}</Text>
+                <Text style={[s.fitText,{color:'#FFFFFF'}, fit === f.key && {color: '#0A0A0A'}]}>{f.label}</Text>
               </Pressable>
             ))}
           </View>
