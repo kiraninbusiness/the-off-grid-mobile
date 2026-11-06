@@ -93,7 +93,7 @@ export default function DeliveryCheck() {
 
       {result && (
         <View accessibilityLiveRegion="polite" style={s.result}>
-          <Text style={[s.line, {color: result.serviceable ? '#5FD38A' : '#FF6B62'}]}>
+          <Text style={[s.line, {color: result.serviceable ? '#5FD38A' : '#FF6B62'},{color:'#FFFFFF'}]}>
             {result.serviceable ? '✓ Delivery available' : '✕ Not deliverable to this pincode'}
           </Text>
           {result.serviceable && !!result.eta && <Text style={s.sub}>{result.eta}</Text>}

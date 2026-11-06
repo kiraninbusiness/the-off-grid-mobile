@@ -76,7 +76,7 @@ export default function CreatorProgramme() {
       <Text style={s.fine}>One application is allowed per account. If your profile details change, contact support.</Text>
     </View> : <>
       <Text style={s.label}>MAIN PLATFORM</Text>
-      <View style={s.pills}>{platforms.map(p => <Pressable key={p} onPress={() => setPlatform(p)} style={[s.pill, platform === p && s.pillActive]}><Text style={[s.pillText,{color:'#0A0A0A'}, platform === p && s.pillTextActive]}>{p.toUpperCase()}</Text></Pressable>)}</View>
+      <View style={s.pills}>{platforms.map(p => <Pressable key={p} onPress={() => setPlatform(p)} style={[s.pill, platform === p && s.pillActive]}><Text style={[s.pillText,{color:'#F2F0EA'}, platform === p && s.pillTextActive]}>{p.toUpperCase()}</Text></Pressable>)}</View>
       <Text style={s.label}>PUBLIC HANDLE</Text>
       <TextInput style={s.input} value={handle} onChangeText={setHandle} autoCapitalize="none" placeholder="@yourhandle" placeholderTextColor="#8A877F" maxLength={80}/>
       <Text style={s.label}>SECONDARY HANDLE (OPTIONAL)</Text>

@@ -105,7 +105,7 @@ export default function Returns() {
 
       <Text style={s.label}>REQUEST TYPE</Text>
       <View style={s.choices}>
-        {(['return', 'exchange'] as const).map(value => <Pressable key={value} accessibilityRole="button" accessibilityLabel={value === 'return' ? 'Request a return' : 'Request an exchange'} accessibilityState={{ selected: type === value }} hitSlop={4} style={[s.choice, type === value && s.choiceActive]} onPress={() => { setType(value); setNotice(''); }}><Text style={[s.choiceText,{color:'#0A0A0A'}, type === value && s.choiceTextActive]}>{value.toUpperCase()}</Text></Pressable>)}
+        {(['return', 'exchange'] as const).map(value => <Pressable key={value} accessibilityRole="button" accessibilityLabel={value === 'return' ? 'Request a return' : 'Request an exchange'} accessibilityState={{ selected: type === value }} hitSlop={4} style={[s.choice, type === value && s.choiceActive]} onPress={() => { setType(value); setNotice(''); }}><Text style={[s.choiceText,{color:'#F2F0EA'}, type === value && s.choiceTextActive]}>{value.toUpperCase()}</Text></Pressable>)}
       </View>
 
       <Text style={s.label}>REASON</Text>

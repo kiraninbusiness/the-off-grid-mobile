@@ -283,7 +283,7 @@ export default function Addresses() {
               <View style={s.chips}>
                 {LABELS.map(l => (
                   <Pressable key={l} accessibilityRole="radio" accessibilityState={{selected: form.label === l}} onPress={() => set('label', l)} style={[s.chip, form.label === l && s.chipOn]}>
-                    <Text style={[s.chipText, form.label === l && {color: '#0A0A0A'}]}>{l}</Text>
+                    <Text style={[s.chipText,{color:'#FFFFFF'}, form.label === l && {color: '#0A0A0A'}]}>{l}</Text>
                   </Pressable>
                 ))}
               </View>

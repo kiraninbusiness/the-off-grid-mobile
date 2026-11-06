@@ -13,9 +13,9 @@ export default function GiftIdeas(){
   <Text style={s.eyebrow}>THE OFF GRID / GIFTS</Text><Text style={[s.title,{color:'#FFFFFF'}]}>GIFT IDEAS</Text>
   <Text style={s.sub}>Tell us who it is for and your budget. Add premium packaging with a card at checkout.</Text>
   <Text style={[s.label,{color:'#FFFFFF'}]}>WHO IS IT FOR?</Text>
-  <View style={s.row}>{FOR.map(f=><Pressable key={f.k} accessibilityRole="radio" accessibilityState={{selected:who===f.k}} onPress={()=>setWho(f.k)} style={[s.chip,who===f.k&&s.chipOn]}><Text style={[s.chipText,{color:'#0A0A0A'},who===f.k&&{color:'#0A0A0A'}]}>{f.l}</Text></Pressable>)}</View>
+  <View style={s.row}>{FOR.map(f=><Pressable key={f.k} accessibilityRole="radio" accessibilityState={{selected:who===f.k}} onPress={()=>setWho(f.k)} style={[s.chip,who===f.k&&s.chipOn]}><Text style={[s.chipText,{color:'#F2F0EA'},who===f.k&&{color:'#0A0A0A'}]}>{f.l}</Text></Pressable>)}</View>
   <Text style={[s.label,{color:'#FFFFFF'}]}>BUDGET (₹)</Text>
-  <View style={s.row}>{BUDGETS.map(b=><Pressable key={b} accessibilityRole="radio" accessibilityState={{selected:budget===String(b)}} onPress={()=>setBudget(String(b))} style={[s.chip,budget===String(b)&&s.chipOn]}><Text style={[s.chipText,{color:'#0A0A0A'},budget===String(b)&&{color:'#0A0A0A'}]}>{b.toLocaleString('en-IN')}</Text></Pressable>)}</View>
+  <View style={s.row}>{BUDGETS.map(b=><Pressable key={b} accessibilityRole="radio" accessibilityState={{selected:budget===String(b)}} onPress={()=>setBudget(String(b))} style={[s.chip,budget===String(b)&&s.chipOn]}><Text style={[s.chipText,{color:'#F2F0EA'},budget===String(b)&&{color:'#0A0A0A'}]}>{b.toLocaleString('en-IN')}</Text></Pressable>)}</View>
   <TextInput style={[s.input,{color:'#FFFFFF'}]} value={budget} onChangeText={t=>setBudget(t.replace(/\D/g,'').slice(0,6))} keyboardType="number-pad" accessibilityLabel="Budget in rupees"/>
   <Pressable accessibilityRole="button" style={s.btn} onPress={()=>find()}>{busy?<ActivityIndicator color="#0A0A0A"/>:<Text style={s.btnText}>SHOW GIFT IDEAS</Text>}</Pressable>
   {error?<Text style={s.note}>{error}</Text>:null}
